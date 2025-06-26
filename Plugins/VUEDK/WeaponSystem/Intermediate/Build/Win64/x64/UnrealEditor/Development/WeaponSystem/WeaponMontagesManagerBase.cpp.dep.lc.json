@@ -1,0 +1,25 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\private\\montages\\weaponmontagesmanagerbase.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectbw\\intermediate\\build\\win64\\x64\\projectbweditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\weaponsystem\\definitions.weaponsystem.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\montages\\weaponmontagesmanagerbase.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\weapons\\weaponbase.h",
+            "c:\\program files\\unreal\\ue_5.5\\engine\\source\\runtime\\engine\\classes\\components\\arrowcomponent.h",
+            "c:\\program files\\unreal\\ue_5.5\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\arrowcomponent.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\weapons\\data\\weapondata.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weapondata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\montages\\data\\weaponmontagedata.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\montages\\data\\montageendpriority.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weaponmontagedata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weaponbase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weaponmontagesmanagerbase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\weaponsystem.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

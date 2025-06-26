@@ -1,0 +1,15 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-CheckpointSystem.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"X:/Programs/Unreal/Projects/ProjectEK/Intermediate/Build/Win64/x64/ProjectEKEditor/Development/UnrealEd/SharedPCH.UnrealEd.Project.ValApi.ValExpApi.Cpp20.h.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/CheckpointSystem/Intermediate/Build/Win64/x64/UnrealEditor/Development/CheckpointSystem/Module.CheckpointSystem.cpp.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/CheckpointSystem/Intermediate/Build/Win64/x64/UnrealEditor/Development/CheckpointSystem/CheckpointsManager.cpp.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/CheckpointSystem/Intermediate/Build/Win64/x64/UnrealEditor/Development/CheckpointSystem/CheckpointSystem.cpp.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/CheckpointSystem/Intermediate/Build/Win64/x64/UnrealEditor/Development/CheckpointSystem/CSUtility.cpp.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/CheckpointSystem/Intermediate/Build/Win64/x64/UnrealEditor/Development/CheckpointSystem/Default.rc2.res"
+/OUT:"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/CheckpointSystem/Intermediate/Build/Win64/x64/UnrealEditor/Development/CheckpointSystem/UnrealEditor-CheckpointSystem.lib"

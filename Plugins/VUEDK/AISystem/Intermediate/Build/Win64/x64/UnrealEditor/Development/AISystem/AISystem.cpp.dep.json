@@ -1,0 +1,18 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\aisystem\\source\\aisystem\\private\\aisystem.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\aisystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\aisystem\\definitions.aisystem.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\aimodule\\classes\\aisystem.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\ai\\aisystembase.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\aisystembase.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\aimodule\\uht\\aisystem.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\aisystem\\source\\aisystem\\public\\aisystem.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

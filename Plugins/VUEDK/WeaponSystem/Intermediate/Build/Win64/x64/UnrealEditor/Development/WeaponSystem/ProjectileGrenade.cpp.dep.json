@@ -1,0 +1,27 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\private\\shooter\\projectiles\\projectilegrenade.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\weaponsystem\\definitions.weaponsystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\projectiles\\projectilegrenade.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\projectiles\\projectileexplosive.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\projectiles\\projectilebase.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\objectpool\\source\\objectpool\\public\\pooledactorbase.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\objectpool\\source\\objectpool\\public\\interfaces\\pooledactor.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\objectpool\\intermediate\\build\\win64\\unrealeditor\\inc\\objectpool\\uht\\pooledactor.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\objectpool\\intermediate\\build\\win64\\unrealeditor\\inc\\objectpool\\uht\\pooledactorbase.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\gameframework\\projectilemovementcomponent.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\gameframework\\movementcomponent.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\movementcomponent.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\projectilemovementcomponent.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\projectilebase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\projectileexplosive.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\projectilegrenade.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

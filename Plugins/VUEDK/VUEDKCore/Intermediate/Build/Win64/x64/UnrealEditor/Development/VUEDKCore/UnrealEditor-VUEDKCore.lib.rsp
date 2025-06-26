@@ -1,0 +1,14 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-VUEDKCore.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"X:/Programs/Unreal/Projects/ProjectEK/Intermediate/Build/Win64/x64/ProjectEKEditor/Development/UnrealEd/SharedPCH.UnrealEd.Project.ValApi.ValExpApi.Cpp20.h.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/VUEDKCore/Intermediate/Build/Win64/x64/UnrealEditor/Development/VUEDKCore/Module.VUEDKCore.cpp.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/VUEDKCore/Intermediate/Build/Win64/x64/UnrealEditor/Development/VUEDKCore/VUEDKCore.cpp.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/VUEDKCore/Intermediate/Build/Win64/x64/UnrealEditor/Development/VUEDKCore/CurrenciesManager.cpp.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/VUEDKCore/Intermediate/Build/Win64/x64/UnrealEditor/Development/VUEDKCore/Default.rc2.res"
+/OUT:"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/VUEDKCore/Intermediate/Build/Win64/x64/UnrealEditor/Development/VUEDKCore/UnrealEditor-VUEDKCore.lib"

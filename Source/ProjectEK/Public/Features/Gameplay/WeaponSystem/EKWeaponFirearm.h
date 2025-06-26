@@ -1,0 +1,28 @@
+// Copyright zVoyder, Inc. All Rights Reserved.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Features/Gameplay/InventorySystem/EKWeaponFirearmItem.h"
+#include "Weapons/WeaponFirearm.h"
+#include "EKWeaponFirearm.generated.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogEKWeapons, All, All);
+
+UCLASS()
+class PROJECTEK_API AEKWeaponFirearm : public AWeaponFirearm
+{
+	GENERATED_BODY()
+
+private:
+	UPROPERTY()
+	UEKWeaponFirearmItem* WeaponFirearmItem;
+
+public:
+	AEKWeaponFirearm();
+
+	virtual void Init(APawn* InOwner, UObject* InPayload = nullptr) override;
+
+	UFUNCTION(BlueprintPure)
+	UEKWeaponFirearmItem* GetWeaponFirearmItem() const;
+};

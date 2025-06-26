@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-CursorHandlerSystem.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"X:\Programs\Unreal\Projects\ProjectBW\Intermediate\Build\Win64\x64\ProjectBWEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
+"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\CursorHandlerSystem\Intermediate\Build\Win64\x64\UnrealEditor\Development\CursorHandlerSystem\Module.CursorHandlerSystem.cpp.obj"
+"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\CursorHandlerSystem\Intermediate\Build\Win64\x64\UnrealEditor\Development\CursorHandlerSystem\Default.rc2.res"
+/OUT:"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\CursorHandlerSystem\Intermediate\Build\Win64\x64\UnrealEditor\Development\CursorHandlerSystem\UnrealEditor-CursorHandlerSystem.lib"

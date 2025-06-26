@@ -1,0 +1,21 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\checkpointsystem\\source\\checkpointsystem\\private\\utility\\csutility.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\checkpointsystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\checkpointsystem\\definitions.checkpointsystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\checkpointsystem\\source\\checkpointsystem\\public\\utility\\csutility.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\checkpointsystem\\source\\checkpointsystem\\public\\checkpointsmanager.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\checkpointsystem\\source\\checkpointsystem\\public\\data\\checkpointindexdata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\checkpointsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\checkpointsystem\\uht\\checkpointindexdata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\checkpointsystem\\source\\checkpointsystem\\public\\data\\savedata\\checkpointssavedata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\checkpointsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\checkpointsystem\\uht\\checkpointssavedata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\checkpointsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\checkpointsystem\\uht\\checkpointsmanager.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\checkpointsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\checkpointsystem\\uht\\csutility.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

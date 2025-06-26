@@ -1,0 +1,23 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\vuedkcore\\source\\vuedkcore\\private\\features\\gameplay\\currencysystem\\currenciesmanager.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\vuedkcore\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\vuedkcore\\definitions.vuedkcore.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\vuedkcore\\source\\vuedkcore\\public\\features\\gameplay\\currencysystem\\currenciesmanager.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\vuedkcore\\source\\vuedkcore\\public\\features\\gameplay\\currencysystem\\data\\currencydata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\vuedkcore\\intermediate\\build\\win64\\unrealeditor\\inc\\vuedkcore\\uht\\currencydata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\vuedkcore\\source\\vuedkcore\\public\\features\\gameplay\\currencysystem\\data\\savedata\\currenciessavedata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\public\\data\\savedata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\unrealeditor\\inc\\savesystem\\uht\\savedata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\vuedkcore\\intermediate\\build\\win64\\unrealeditor\\inc\\vuedkcore\\uht\\currenciessavedata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\public\\interfaces\\saveable.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\unrealeditor\\inc\\savesystem\\uht\\saveable.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\vuedkcore\\intermediate\\build\\win64\\unrealeditor\\inc\\vuedkcore\\uht\\currenciesmanager.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

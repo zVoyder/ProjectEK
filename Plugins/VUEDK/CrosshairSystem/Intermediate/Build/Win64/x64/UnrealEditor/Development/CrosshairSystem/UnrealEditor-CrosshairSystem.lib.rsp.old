@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-CrosshairSystem.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"X:\Programs\Unreal\Projects\ProjectBW\Intermediate\Build\Win64\x64\ProjectBWEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
+"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\CrosshairSystem\Intermediate\Build\Win64\x64\UnrealEditor\Development\CrosshairSystem\Module.CrosshairSystem.cpp.obj"
+"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\CrosshairSystem\Intermediate\Build\Win64\x64\UnrealEditor\Development\CrosshairSystem\Default.rc2.res"
+/OUT:"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\CrosshairSystem\Intermediate\Build\Win64\x64\UnrealEditor\Development\CrosshairSystem\UnrealEditor-CrosshairSystem.lib"

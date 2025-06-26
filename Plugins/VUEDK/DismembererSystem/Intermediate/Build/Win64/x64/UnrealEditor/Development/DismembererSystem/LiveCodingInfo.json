@@ -1,0 +1,29 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.DismembererSystem.cpp.obj": [
+			"BloodDecal.gen.cpp.obj",
+			"BloodDecalSpawnParams.gen.cpp.obj",
+			"BloodDecalsPool.gen.cpp.obj",
+			"BloodParticlesNiagaraCallbackHandler.gen.cpp.obj",
+			"DismemberableAvatarData.gen.cpp.obj",
+			"DismemberableLimbData.gen.cpp.obj",
+			"DismemberedLimb.gen.cpp.obj",
+			"Dismemberer.gen.cpp.obj",
+			"DismembererBloodsData.gen.cpp.obj",
+			"DismembererFactory.gen.cpp.obj",
+			"DismembererSystem.init.gen.cpp.obj",
+			"DismembererSystemSettings.gen.cpp.obj",
+			"PerModuleInline.gen.cpp.obj",
+			"BloodDecal.cpp.obj",
+			"BloodDecalsPool.cpp.obj",
+			"BloodParticlesNiagaraCallbackHandler.cpp.obj",
+			"DismemberableAvatarData.cpp.obj",
+			"DismemberedLimb.cpp.obj",
+			"Dismemberer.cpp.obj",
+			"DismembererSystem.cpp.obj",
+			"DismembererSystemSettings.cpp.obj",
+			"DismembererFactory.cpp.obj"
+		]
+	}
+}

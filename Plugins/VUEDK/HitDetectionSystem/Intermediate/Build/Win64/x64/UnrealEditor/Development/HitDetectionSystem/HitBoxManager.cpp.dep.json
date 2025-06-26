@@ -1,0 +1,37 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\source\\hitdetectionsystem\\private\\hitboxmanager.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\hitdetectionsystem\\definitions.hitdetectionsystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\source\\hitdetectionsystem\\public\\hitboxmanager.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\source\\hitdetectionsystem\\public\\hitdetectionsubsystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\hitdetectionsystem\\uht\\hitdetectionsubsystem.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\source\\hitdetectionsystem\\public\\data\\hitboxbonesdata.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\physicsengine\\physicsasset.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\physicsengine\\rigidbodyindexpair.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\physicsasset.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\hitdetectionsystem\\uht\\hitboxbonesdata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\hitdetectionsystem\\uht\\hitboxmanager.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\source\\hitdetectionsystem\\public\\hitdetectionsystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\source\\hitdetectionsystem\\public\\interfaces\\hitzone.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\source\\hitdetectionsystem\\public\\hitzones\\hitzonehandler.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\source\\hitdetectionsystem\\public\\data\\hitzoneredirectormode.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\hitdetectionsystem\\uht\\hitzonehandler.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\hitdetectionsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\hitdetectionsystem\\uht\\hitzone.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\kismet\\gameplaystatics.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\kismet\\kismetsystemlibrary.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\coreuobject\\public\\uobject\\propertyaccessutil.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\kismetsystemlibrary.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\sound\\dialoguetypes.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\dialoguetypes.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\kismet\\gameplaystaticstypes.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\gameplaystaticstypes.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\gameplaystatics.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

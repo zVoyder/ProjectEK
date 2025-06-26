@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\private\\feedbackscomposersystem.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectbw\\intermediate\\build\\win64\\x64\\projectbweditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\feedbackscomposersystem\\definitions.feedbackscomposersystem.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\public\\feedbackscomposersystem.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

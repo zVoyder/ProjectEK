@@ -1,0 +1,25 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.CustomSettingsSystem.cpp.obj": [
+			"CSSSettings.gen.cpp.obj",
+			"CustomGameUserSettings.gen.cpp.obj",
+			"CustomGameUserSettingsUtility.gen.cpp.obj",
+			"CustomOptionData.gen.cpp.obj",
+			"CustomSettingsSystem.init.gen.cpp.obj",
+			"InputModifierSettingsBase.gen.cpp.obj",
+			"InputModifierSettingsDeadZone.gen.cpp.obj",
+			"InputModifierSettingsScalar.gen.cpp.obj",
+			"InputModifiersSettingsNegate.gen.cpp.obj",
+			"PerModuleInline.gen.cpp.obj",
+			"CSSSettings.cpp.obj",
+			"CustomGameUserSettings.cpp.obj",
+			"CustomSettingsSystem.cpp.obj",
+			"InputModifierSettingsBase.cpp.obj",
+			"InputModifierSettingsDeadZone.cpp.obj",
+			"InputModifierSettingsScalar.cpp.obj",
+			"InputModifiersSettingsNegate.cpp.obj",
+			"CustomGameUserSettingsUtility.cpp.obj"
+		]
+	}
+}

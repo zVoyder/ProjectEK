@@ -1,0 +1,27 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.ObjectPool.cpp.obj": [
+			"ActorPool.gen.cpp.obj",
+			"ActorPoolData.gen.cpp.obj",
+			"ObjectPool.init.gen.cpp.obj",
+			"ObjectPoolFactory.gen.cpp.obj",
+			"ObjectPoolSettings.gen.cpp.obj",
+			"ObjectPoolSubsystem.gen.cpp.obj",
+			"PooledActor.gen.cpp.obj",
+			"PooledActorBase.gen.cpp.obj",
+			"PoolsManager.gen.cpp.obj",
+			"PoolsManagersData.gen.cpp.obj",
+			"PoolsUtility.gen.cpp.obj",
+			"PerModuleInline.gen.cpp.obj",
+			"ActorPool.cpp.obj",
+			"ObjectPoolFactory.cpp.obj",
+			"ObjectPool.cpp.obj",
+			"ObjectPoolSettings.cpp.obj",
+			"ObjectPoolSubsystem.cpp.obj",
+			"PooledActorBase.cpp.obj",
+			"PoolsManager.cpp.obj",
+			"PoolsUtility.cpp.obj"
+		]
+	}
+}

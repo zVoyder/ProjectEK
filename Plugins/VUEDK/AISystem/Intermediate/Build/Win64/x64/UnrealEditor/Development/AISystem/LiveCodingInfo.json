@@ -1,0 +1,12 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.AISystem.cpp.obj": [
+			"AISystem.init.gen.cpp.obj",
+			"AIUtility.gen.cpp.obj",
+			"PerModuleInline.gen.cpp.obj",
+			"AISystem.cpp.obj",
+			"AIUtility.cpp.obj"
+		]
+	}
+}

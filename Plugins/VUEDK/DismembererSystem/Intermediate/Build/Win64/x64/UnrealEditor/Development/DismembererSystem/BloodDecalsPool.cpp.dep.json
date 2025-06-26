@@ -1,0 +1,22 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\dismemberersystem\\source\\dismemberersystem\\private\\blooddecalspool.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\dismemberersystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\dismemberersystem\\definitions.dismemberersystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\dismemberersystem\\source\\dismemberersystem\\public\\blooddecalspool.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\dismemberersystem\\source\\dismemberersystem\\public\\blooddecal.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\dismemberersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\dismemberersystem\\uht\\blooddecal.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\dismemberersystem\\source\\dismemberersystem\\public\\dismemberersystemsettings.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\gameplaytags\\classes\\gameplaytagcontainer.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\core\\public\\misc\\comparisonutility.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaytags\\uht\\gameplaytagcontainer.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\dismemberersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\dismemberersystem\\uht\\dismemberersystemsettings.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\dismemberersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\dismemberersystem\\uht\\blooddecalspool.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

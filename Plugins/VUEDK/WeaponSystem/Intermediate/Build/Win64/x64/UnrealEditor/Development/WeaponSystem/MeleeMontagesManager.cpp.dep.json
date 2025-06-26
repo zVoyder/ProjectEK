@@ -1,0 +1,37 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\private\\montages\\meleemontagesmanager.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\weaponsystem\\definitions.weaponsystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\montages\\meleemontagesmanager.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\montages\\base\\weaponmontagesmanagerbase.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\weapons\\weaponbase.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\components\\arrowcomponent.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\arrowcomponent.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\weapons\\data\\weapondata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weapondata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\montages\\data\\weaponmontagedata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\montages\\data\\montageendpriority.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weaponmontagedata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weaponbase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weaponmontagesmanagerbase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\montages\\data\\weaponmeleeattackmontagedata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weaponmeleeattackmontagedata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\meleemontagesmanager.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\weaponsystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\weapons\\weaponmelee.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\components\\capsulecomponent.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\components\\shapecomponent.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\shapecomponent.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\capsulecomponent.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\weapons\\data\\weaponmeleedata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weaponmeleedata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weaponmelee.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

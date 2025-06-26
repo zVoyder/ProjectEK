@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-BetterDragSystem.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"X:\Programs\Unreal\Projects\ProjectBW\Intermediate\Build\Win64\x64\ProjectBWEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
+"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\BetterDragSystem\Intermediate\Build\Win64\x64\UnrealEditor\Development\BetterDragSystem\Module.BetterDragSystem.cpp.obj"
+"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\BetterDragSystem\Intermediate\Build\Win64\x64\UnrealEditor\Development\BetterDragSystem\Default.rc2.res"
+/OUT:"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\BetterDragSystem\Intermediate\Build\Win64\x64\UnrealEditor\Development\BetterDragSystem\UnrealEditor-BetterDragSystem.lib"

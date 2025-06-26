@@ -1,0 +1,15 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-CursorHandlerSystem.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"X:/Programs/Unreal/Projects/ProjectEK/Intermediate/Build/Win64/x64/ProjectEKEditor/Development/UnrealEd/SharedPCH.UnrealEd.Project.ValApi.ValExpApi.Cpp20.h.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/CursorHandlerSystem/Intermediate/Build/Win64/x64/UnrealEditor/Development/CursorHandlerSystem/Module.CursorHandlerSystem.cpp.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/CursorHandlerSystem/Intermediate/Build/Win64/x64/UnrealEditor/Development/CursorHandlerSystem/CursorHandlerSubsystem.cpp.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/CursorHandlerSystem/Intermediate/Build/Win64/x64/UnrealEditor/Development/CursorHandlerSystem/CursorHandlerSystem.cpp.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/CursorHandlerSystem/Intermediate/Build/Win64/x64/UnrealEditor/Development/CursorHandlerSystem/CursorHandlerSystemSettings.cpp.obj"
+"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/CursorHandlerSystem/Intermediate/Build/Win64/x64/UnrealEditor/Development/CursorHandlerSystem/Default.rc2.res"
+/OUT:"X:/Programs/Unreal/Projects/ProjectEK/Plugins/VUEDK/CursorHandlerSystem/Intermediate/Build/Win64/x64/UnrealEditor/Development/CursorHandlerSystem/UnrealEditor-CursorHandlerSystem.lib"

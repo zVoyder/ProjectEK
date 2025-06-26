@@ -1,0 +1,39 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\private\\shooter\\handlers\\shooterhandlerbase.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\weaponsystem\\definitions.weaponsystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\handlers\\shooterhandlerbase.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\data\\shootdata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\data\\shoottype.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\curves\\curvevector.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\curvevector.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\shootdata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\shooterhandlerbase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\shooter.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\shootbarrel.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\shootpoint.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\components\\arrowcomponent.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\arrowcomponent.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\shootpoint.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\shootbarrel.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\behaviours\\shooterbehaviourbase.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\data\\shootfailreason.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\handlers\\cooldownhandler.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\cooldownhandler.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\handlers\\recoilhandler.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\recoilhandler.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\handlers\\spreadhandler.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\spreadhandler.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\shooter\\interfaces\\shooterbehaviour.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\shooterbehaviour.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\shooterbehaviourbase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\shooter.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

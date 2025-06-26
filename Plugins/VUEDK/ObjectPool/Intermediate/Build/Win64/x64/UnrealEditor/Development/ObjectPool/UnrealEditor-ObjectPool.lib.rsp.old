@@ -1,0 +1,14 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-ObjectPool.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"X:\Programs\Unreal\Projects\ProjectBW\Intermediate\Build\Win64\x64\ProjectBWEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
+"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\ObjectPool\Intermediate\Build\Win64\x64\UnrealEditor\Development\ObjectPool\Module.ObjectPool.cpp.obj"
+"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\ObjectPool\Intermediate\Build\Win64\x64\UnrealEditor\Development\ObjectPool\PoolsManager.cpp.obj"
+"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\ObjectPool\Intermediate\Build\Win64\x64\UnrealEditor\Development\ObjectPool\PoolsUtility.cpp.obj"
+"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\ObjectPool\Intermediate\Build\Win64\x64\UnrealEditor\Development\ObjectPool\Default.rc2.res"
+/OUT:"X:\Programs\Unreal\Projects\ProjectBW\Plugins\VUEDK\ObjectPool\Intermediate\Build\Win64\x64\UnrealEditor\Development\ObjectPool\UnrealEditor-ObjectPool.lib"

@@ -1,0 +1,17 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\feedbackscomposersystem\\source\\gameeffectscuesystem\\private\\gameeffectscue.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\gameeffectscuesystem\\definitions.gameeffectscuesystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\feedbackscomposersystem\\source\\gameeffectscuesystem\\public\\gameeffectscue.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\feedbackscomposersystem\\source\\gameeffectscuesystem\\public\\effects\\gameeffectbase.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\gameeffectscuesystem\\uht\\gameeffectbase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\gameeffectscuesystem\\uht\\gameeffectscue.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

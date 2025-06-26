@@ -1,0 +1,15 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\betterui\\source\\betterui\\private\\styles\\betterstyle.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectbw\\intermediate\\build\\win64\\x64\\projectbweditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\betterui\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\betterui\\definitions.betterui.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\betterui\\source\\betterui\\public\\styles\\betterstyle.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\betterui\\intermediate\\build\\win64\\unrealeditor\\inc\\betterui\\uht\\betterstyle.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\private\\components\\savers\\transformsaver.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\savesystem\\definitions.savesystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\public\\components\\savers\\transformsaver.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\public\\components\\savers\\saver.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\public\\data\\saves\\defaultsavegame.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\gameframework\\savegame.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\savegame.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\unrealeditor\\inc\\savesystem\\uht\\defaultsavegame.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\public\\savemanager.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\public\\data\\saves\\slotinfoitem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\unrealeditor\\inc\\savesystem\\uht\\slotinfoitem.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\public\\data\\saves\\slotinfos.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\public\\data\\structs\\slotinfodata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\unrealeditor\\inc\\savesystem\\uht\\slotinfodata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\unrealeditor\\inc\\savesystem\\uht\\slotinfos.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\public\\data\\structs\\savemanagerdata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\unrealeditor\\inc\\savesystem\\uht\\savemanagerdata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\unrealeditor\\inc\\savesystem\\uht\\savemanager.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\unrealeditor\\inc\\savesystem\\uht\\saver.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\unrealeditor\\inc\\savesystem\\uht\\transformsaver.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\public\\utility\\ssutility.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\public\\autosavemanager.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\source\\savesystem\\public\\data\\structs\\autosavemanagerdata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\unrealeditor\\inc\\savesystem\\uht\\autosavemanagerdata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\unrealeditor\\inc\\savesystem\\uht\\autosavemanager.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\savesystem\\intermediate\\build\\win64\\unrealeditor\\inc\\savesystem\\uht\\ssutility.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

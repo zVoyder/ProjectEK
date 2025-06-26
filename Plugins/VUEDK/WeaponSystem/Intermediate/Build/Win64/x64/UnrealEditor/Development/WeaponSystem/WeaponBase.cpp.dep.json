@@ -1,0 +1,38 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\private\\weapons\\weaponbase.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\weaponsystem\\definitions.weaponsystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\weapons\\weaponbase.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\components\\arrowcomponent.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\arrowcomponent.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\weapons\\data\\weapondata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weapondata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\montages\\data\\weaponmontagedata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\montages\\data\\montageendpriority.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weaponmontagedata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weaponbase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\weaponsystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\factories\\weaponanimfactory.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\source\\weaponsystem\\public\\montages\\data\\weaponanimmetadata.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\animation\\animmetadata.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\animmetadata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weaponanimmetadata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\weaponsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\weaponsystem\\uht\\weaponanimfactory.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\gameframework\\character.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\gameframework\\charactermovementreplication.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\net\\core\\public\\net\\core\\nettoken\\nettokenexportcontext.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\experimental\\iris\\core\\public\\iris\\serialization\\irisobjectreferencepackagemap.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\iriscore\\uht\\irisobjectreferencepackagemap.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\charactermovementreplication.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\gameframework\\rootmotionsource.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\rootmotionsource.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\character.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

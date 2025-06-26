@@ -1,0 +1,16 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\hitboxsystem\\source\\hitboxsystem\\private\\hitboxes\\hitboxhandler.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectbw\\intermediate\\build\\win64\\x64\\projectbweditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\hitboxsystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\hitboxsystem\\definitions.hitboxsystem.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\hitboxsystem\\source\\hitboxsystem\\public\\hitboxes\\hitboxhandler.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\hitboxsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\hitboxsystem\\uht\\hitboxhandler.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\hitboxsystem\\source\\hitboxsystem\\public\\hitboxsystem.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

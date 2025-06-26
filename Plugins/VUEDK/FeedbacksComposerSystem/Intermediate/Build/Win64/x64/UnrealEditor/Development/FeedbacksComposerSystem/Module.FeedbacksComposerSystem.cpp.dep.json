@@ -1,0 +1,42 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\feedbackscomposersystem\\module.feedbackscomposersystem.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectbw\\intermediate\\build\\win64\\x64\\projectbweditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\feedbackscomposersystem\\definitions.feedbackscomposersystem.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbackbase.gen.cpp",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\public\\feedbackbase.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbackbase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbackscomposersystem.init.gen.cpp",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbackscue.gen.cpp",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\public\\feedbackscue.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbackscue.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbackscuedata.gen.cpp",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\public\\data\\feedbackscuedata.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbackscuedata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbackscuenotify.gen.cpp",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\public\\feedbackscuenotify.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbackscuenotify.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbacksfactory.gen.cpp",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\public\\factories\\feedbacksfactory.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbacksfactory.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbacksmanager.gen.cpp",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\public\\feedbacksmanager.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbacksmanager.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\feedbackscomposersystem\\permoduleinline.gen.cpp",
+            "c:\\program files\\unreal\\ue_5.5\\engine\\source\\runtime\\core\\public\\hal\\permoduleinline.inl",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\private\\data\\feedbackscuedata.cpp",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\private\\factories\\feedbacksfactory.cpp",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\public\\feedbackscomposersystem.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\private\\feedbackbase.cpp",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\private\\feedbackscomposersystem.cpp",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\private\\feedbackscue.cpp",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\private\\feedbackscuenotify.cpp",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\private\\feedbacksmanager.cpp"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

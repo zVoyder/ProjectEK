@@ -1,0 +1,30 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\source\\objectpool\\private\\actorpool.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectbw\\intermediate\\build\\win64\\x64\\projectbweditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\objectpool\\definitions.objectpool.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\source\\objectpool\\public\\actorpool.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\source\\objectpool\\public\\data\\actorpooldata.h",
+            "c:\\program files\\unreal\\ue_5.5\\engine\\source\\runtime\\gameplaytags\\classes\\gameplaytagcontainer.h",
+            "c:\\program files\\unreal\\ue_5.5\\engine\\source\\runtime\\core\\public\\misc\\comparisonutility.h",
+            "c:\\program files\\unreal\\ue_5.5\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaytags\\uht\\gameplaytagcontainer.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\intermediate\\build\\win64\\unrealeditor\\inc\\objectpool\\uht\\actorpooldata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\intermediate\\build\\win64\\unrealeditor\\inc\\objectpool\\uht\\actorpool.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\source\\objectpool\\public\\objectpoolsubsystem.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\source\\objectpool\\public\\objectpoolsettings.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\source\\objectpool\\public\\data\\poolsmanagersdata.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\intermediate\\build\\win64\\unrealeditor\\inc\\objectpool\\uht\\poolsmanagersdata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\intermediate\\build\\win64\\unrealeditor\\inc\\objectpool\\uht\\objectpoolsettings.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\source\\objectpool\\public\\poolsmanager.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\intermediate\\build\\win64\\unrealeditor\\inc\\objectpool\\uht\\poolsmanager.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\intermediate\\build\\win64\\unrealeditor\\inc\\objectpool\\uht\\objectpoolsubsystem.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\source\\objectpool\\public\\interfaces\\pooledactor.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\objectpool\\intermediate\\build\\win64\\unrealeditor\\inc\\objectpool\\uht\\pooledactor.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

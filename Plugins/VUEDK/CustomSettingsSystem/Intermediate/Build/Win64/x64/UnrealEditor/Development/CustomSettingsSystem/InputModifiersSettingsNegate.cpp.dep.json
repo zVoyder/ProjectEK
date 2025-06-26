@@ -1,0 +1,35 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\source\\customsettingssystem\\private\\inputsmodifiers\\inputmodifierssettingsnegate.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\customsettingssystem\\definitions.customsettingssystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\source\\customsettingssystem\\public\\inputsmodifiers\\inputmodifierssettingsnegate.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\gameplaytags\\classes\\gameplaytagcontainer.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\core\\public\\misc\\comparisonutility.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaytags\\uht\\gameplaytagcontainer.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\source\\customsettingssystem\\public\\inputsmodifiers\\inputmodifiersettingsbase.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\plugins\\enhancedinput\\source\\enhancedinput\\public\\inputmodifiers.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\plugins\\enhancedinput\\source\\enhancedinput\\public\\inputactionvalue.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\plugins\\enhancedinput\\intermediate\\build\\win64\\unrealeditor\\inc\\enhancedinput\\uht\\inputactionvalue.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\plugins\\enhancedinput\\intermediate\\build\\win64\\unrealeditor\\inc\\enhancedinput\\uht\\inputmodifiers.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\intermediate\\build\\win64\\unrealeditor\\inc\\customsettingssystem\\uht\\inputmodifiersettingsbase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\intermediate\\build\\win64\\unrealeditor\\inc\\customsettingssystem\\uht\\inputmodifierssettingsnegate.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\source\\customsettingssystem\\public\\customgameusersettings.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\source\\customsettingssystem\\public\\csssettings.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\source\\customsettingssystem\\public\\data\\customoptiondata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\intermediate\\build\\win64\\unrealeditor\\inc\\customsettingssystem\\uht\\customoptiondata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\intermediate\\build\\win64\\unrealeditor\\inc\\customsettingssystem\\uht\\csssettings.generated.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\gameframework\\gameusersettings.h",
+            "c:\\program files\\unreal\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\gameusersettings.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\intermediate\\build\\win64\\unrealeditor\\inc\\customsettingssystem\\uht\\customgameusersettings.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\source\\customsettingssystem\\public\\customsettingssystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\source\\customsettingssystem\\public\\utility\\customgameusersettingsutility.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\customsettingssystem\\intermediate\\build\\win64\\unrealeditor\\inc\\customsettingssystem\\uht\\customgameusersettingsutility.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

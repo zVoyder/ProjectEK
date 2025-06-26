@@ -1,0 +1,34 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\source\\questsystem\\private\\uobjects\\quests\\questbase.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\questsystem\\definitions.questsystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\source\\questsystem\\public\\uobjects\\quests\\questbase.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\source\\questsystem\\public\\data\\dataassets\\questdata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\source\\questsystem\\public\\data\\dataassets\\questfilterdata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\questsystem\\uht\\questfilterdata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\source\\questsystem\\public\\data\\dataassets\\taskdata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\source\\questsystem\\public\\data\\enums\\tasktype.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\questsystem\\uht\\taskdata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\questsystem\\uht\\questdata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\source\\questsystem\\public\\data\\enums\\queststatus.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\source\\questsystem\\public\\data\\structs\\questentrydata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\source\\questsystem\\public\\data\\enums\\questtype.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\questsystem\\uht\\questentrydata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\source\\questsystem\\public\\data\\structs\\questsavedata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\source\\questsystem\\public\\data\\structs\\tasksavedata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\questsystem\\uht\\tasksavedata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\questsystem\\uht\\questsavedata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\questsystem\\uht\\questbase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\source\\questsystem\\public\\uobjects\\tasks\\taskbase.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\questsystem\\uht\\taskbase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\source\\questsystem\\public\\utility\\qsfactory.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\questsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\questsystem\\uht\\qsfactory.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

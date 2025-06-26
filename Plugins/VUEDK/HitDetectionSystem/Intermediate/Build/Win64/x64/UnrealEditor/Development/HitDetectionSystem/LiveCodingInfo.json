@@ -1,0 +1,26 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.HitDetectionSystem.cpp.obj": [
+			"HitBoxBonesData.gen.cpp.obj",
+			"HitBoxManager.gen.cpp.obj",
+			"HitDetectionSubsystem.gen.cpp.obj",
+			"HitDetectionSystem.init.gen.cpp.obj",
+			"HitZone.gen.cpp.obj",
+			"HitZoneBox.gen.cpp.obj",
+			"HitZoneCapsule.gen.cpp.obj",
+			"HitZoneHandler.gen.cpp.obj",
+			"HitZoneRedirectorMode.gen.cpp.obj",
+			"HitZoneSphere.gen.cpp.obj",
+			"PerModuleInline.gen.cpp.obj",
+			"HitBoxBonesData.cpp.obj",
+			"HitBoxManager.cpp.obj",
+			"HitDetectionSubsystem.cpp.obj",
+			"HitDetectionSystem.cpp.obj",
+			"HitZoneBox.cpp.obj",
+			"HitZoneCapsule.cpp.obj",
+			"HitZoneHandler.cpp.obj",
+			"HitZoneSphere.cpp.obj"
+		]
+	}
+}

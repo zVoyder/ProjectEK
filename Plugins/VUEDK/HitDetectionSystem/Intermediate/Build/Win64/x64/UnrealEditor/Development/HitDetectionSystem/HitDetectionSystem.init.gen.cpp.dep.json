@@ -1,0 +1,13 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\hitdetectionsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\hitdetectionsystem\\uht\\hitdetectionsystem.init.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectbw\\intermediate\\build\\win64\\x64\\projectbweditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\hitdetectionsystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\hitdetectionsystem\\definitions.hitdetectionsystem.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

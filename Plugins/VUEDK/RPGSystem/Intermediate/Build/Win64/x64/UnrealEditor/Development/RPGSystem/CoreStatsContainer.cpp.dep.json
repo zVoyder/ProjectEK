@@ -1,0 +1,21 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\rpgsystem\\source\\rpgsystem\\private\\statssystem\\containers\\corestatscontainer.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\rpgsystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\rpgsystem\\definitions.rpgsystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\rpgsystem\\source\\rpgsystem\\public\\statssystem\\containers\\corestatscontainer.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\rpgsystem\\source\\rpgsystem\\public\\statssystem\\containers\\statscontainer.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\rpgsystem\\source\\rpgsystem\\public\\statssystem\\data\\corestatdata.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\rpgsystem\\source\\rpgsystem\\public\\statssystem\\data\\statdatabase.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\rpgsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\rpgsystem\\uht\\statdatabase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\rpgsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\rpgsystem\\uht\\corestatdata.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\rpgsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\rpgsystem\\uht\\statscontainer.generated.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\rpgsystem\\intermediate\\build\\win64\\unrealeditor\\inc\\rpgsystem\\uht\\corestatscontainer.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

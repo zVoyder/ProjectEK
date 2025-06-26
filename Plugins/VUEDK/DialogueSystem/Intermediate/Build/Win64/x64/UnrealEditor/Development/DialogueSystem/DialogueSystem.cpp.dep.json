@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\dialoguesystem\\source\\dialoguesystem\\private\\dialoguesystem.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectek\\intermediate\\build\\win64\\x64\\projectekeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\dialoguesystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\dialoguesystem\\definitions.dialoguesystem.h",
+            "x:\\programs\\unreal\\projects\\projectek\\plugins\\vuedk\\dialoguesystem\\source\\dialoguesystem\\public\\dialoguesystem.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\gameeffectscuesystem\\private\\feedbackscomposersystem.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectbw\\intermediate\\build\\win64\\x64\\projectbweditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\gameeffectscuesystem\\definitions.gameeffectscuesystem.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\gameeffectscuesystem\\public\\feedbackscomposersystem.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

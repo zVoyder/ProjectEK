@@ -1,0 +1,44 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.QuestSystem.cpp.obj": [
+			"CountTask.gen.cpp.obj",
+			"CountTaskData.gen.cpp.obj",
+			"QSFactory.gen.cpp.obj",
+			"QSUtility.gen.cpp.obj",
+			"QuestBase.gen.cpp.obj",
+			"QuestData.gen.cpp.obj",
+			"QuestEntryData.gen.cpp.obj",
+			"QuestFilterData.gen.cpp.obj",
+			"QuestLogData.gen.cpp.obj",
+			"QuestLogSaveData.gen.cpp.obj",
+			"QuestManager.gen.cpp.obj",
+			"QuestParallel.gen.cpp.obj",
+			"QuestSaveData.gen.cpp.obj",
+			"QuestSequencial.gen.cpp.obj",
+			"QuestStatus.gen.cpp.obj",
+			"QuestSystem.init.gen.cpp.obj",
+			"QuestType.gen.cpp.obj",
+			"SingleTask.gen.cpp.obj",
+			"TaskAchiever.gen.cpp.obj",
+			"TaskBase.gen.cpp.obj",
+			"TaskData.gen.cpp.obj",
+			"TaskSaveData.gen.cpp.obj",
+			"TaskType.gen.cpp.obj",
+			"PerModuleInline.gen.cpp.obj",
+			"TaskAchiever.cpp.obj",
+			"CountTaskData.cpp.obj",
+			"TaskData.cpp.obj",
+			"QuestManager.cpp.obj",
+			"QuestSystem.cpp.obj",
+			"QuestBase.cpp.obj",
+			"QuestParallel.cpp.obj",
+			"QuestSequencial.cpp.obj",
+			"CountTask.cpp.obj",
+			"SingleTask.cpp.obj",
+			"TaskBase.cpp.obj",
+			"QSFactory.cpp.obj",
+			"QSUtility.cpp.obj"
+		]
+	}
+}

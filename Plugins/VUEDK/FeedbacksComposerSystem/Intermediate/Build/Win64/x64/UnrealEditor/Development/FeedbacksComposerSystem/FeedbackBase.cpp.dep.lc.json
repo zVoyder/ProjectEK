@@ -1,0 +1,18 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\private\\feedbackbase.cpp",
+        "ProvidedModule": "",
+        "PCH": "x:\\programs\\unreal\\projects\\projectbw\\intermediate\\build\\win64\\x64\\projectbweditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\feedbackscomposersystem\\definitions.feedbackscomposersystem.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\public\\feedbackbase.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbackbase.generated.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\public\\feedbackscomposersystem.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\source\\feedbackscomposersystem\\public\\feedbackscue.h",
+            "x:\\programs\\unreal\\projects\\projectbw\\plugins\\vuedk\\feedbackscomposersystem\\intermediate\\build\\win64\\unrealeditor\\inc\\feedbackscomposersystem\\uht\\feedbackscue.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

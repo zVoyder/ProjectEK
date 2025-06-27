@@ -29,6 +29,11 @@ void UTetrisInventoryEventsHandlerSubsystem::RequestEquipUnequip(const int32 Swa
 	OnRequestEquipUnequip.Broadcast(SwapPriority);
 }
 
+void UTetrisInventoryEventsHandlerSubsystem::RequestTransferItemToTargetInventory() const
+{
+	OnRequestTransferItemToTargetInventory.Broadcast();
+}
+
 void UTetrisInventoryEventsHandlerSubsystem::RequestDiscard() const
 {
 	OnRequestDiscard.Broadcast();

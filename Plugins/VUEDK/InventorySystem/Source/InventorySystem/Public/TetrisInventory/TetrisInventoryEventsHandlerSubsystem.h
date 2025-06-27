@@ -35,6 +35,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(
 	FOnRequestCancelSplit
 );
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(
+	FOnRequestTransferItemToTargetInventory
+);
+
 UCLASS(NotBlueprintable, BlueprintType)
 class INVENTORYSYSTEM_API UTetrisInventoryEventsHandlerSubsystem : public UGameInstanceSubsystem
 {
@@ -50,6 +54,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnRequestEquipUnequip OnRequestEquipUnequip;
 	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnRequestTransferItemToTargetInventory OnRequestTransferItemToTargetInventory;
+	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnRequestDiscard OnRequestDiscard;
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnRequestSplit OnRequestSplit;
@@ -61,7 +67,7 @@ private:
 
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-	
+
 	UFUNCTION(BlueprintCallable)
 	void RequestDrag() const;
 
@@ -73,6 +79,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RequestEquipUnequip(const int32 SwapPriority = 0) const;
+
+	UFUNCTION(BlueprintCallable)
+	void RequestTransferItemToTargetInventory() const;
 
 	UFUNCTION(BlueprintCallable)
 	void RequestDiscard() const;

@@ -24,7 +24,10 @@ public:
 	static UTetrisInventoriesManager* GetTetrisInventoriesManager();
 
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|Gameplay|Tetris Inventory System")
-	static bool TryTransferItem(UTetrisItem* Item, UTetrisInventory* DestinationInventory, const FIntPoint& DestinationPosition);
+	static bool TryTransferItem(UTetrisItem* Item, UTetrisInventory* DestinationInventory);
+	
+	UFUNCTION(BlueprintCallable, Category = "VUEDK|Gameplay|Tetris Inventory System")
+	static bool TryTransferItemAtPosition(UTetrisItem* Item, UTetrisInventory* DestinationInventory, const FIntPoint& DestinationPosition);
 
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|Gameplay|Tetris Inventory System")
 	static bool TryTransferSwitchItems(UTetrisItem* ItemA, UTetrisItem* ItemB);
@@ -40,6 +43,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|Gameplay|Tetris Inventory System")
 	static void RequestEquipUnequip(const int32 SwapPriority = 0);
+
+	UFUNCTION(BlueprintCallable, Category = "VUEDK|Gameplay|Tetris Inventory System")
+	static void RequestTransferItemToTargetInventory();
 
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|Gameplay|Tetris Inventory System")
 	static void RequestDiscard();

@@ -7,11 +7,33 @@ UTetrisInventoriesManager::UTetrisInventoriesManager()
 {
 }
 
-bool UTetrisInventoriesManager::TryTransferItem(UTetrisItem* Item, UTetrisInventory* DestinationInventory, const FIntPoint& DestinationPosition)
+bool UTetrisInventoriesManager::TryTransferItem(UTetrisItem* Item, UTetrisInventory* DestinationInventory)
 {
 	if (!IsValid(Item) || !IsValid(DestinationInventory))
 	{
 		UE_LOG(LogTemp, Error, TEXT("UTetrisInventoriesManager::TryTransferItem: Params not valid."));
+		return false;
+	}
+
+	UTetrisInventory* SourceInventory = Cast<UTetrisInventory>(Item->RelatedInventory);
+	if (SourceInventory == DestinationInventory)
+		return false;
+
+	const FIntPoint CachedPosition = Item->GetCurrentPosition();
+	Item->Remove();
+	
+	if (DestinationInventory->TryAddItem(Item))
+		return true;
+
+	SourceInventory->TryAddItemAtSlots(Item, CachedPosition);
+	return false;
+}
+
+bool UTetrisInventoriesManager::TryTransferItemAtPosition(UTetrisItem* Item, UTetrisInventory* DestinationInventory, const FIntPoint& DestinationPosition)
+{
+	if (!IsValid(Item) || !IsValid(DestinationInventory))
+	{
+		UE_LOG(LogTemp, Error, TEXT("UTetrisInventoriesManager::TryTransferItemAtPosition: Params not valid."));
 		return false;
 	}
 

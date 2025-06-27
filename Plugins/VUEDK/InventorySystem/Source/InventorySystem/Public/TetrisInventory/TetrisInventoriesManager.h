@@ -16,8 +16,11 @@ public:
 	UTetrisInventoriesManager();
 	
 	UFUNCTION(BlueprintCallable)
-	bool TryTransferItem(UTetrisItem* Item, UTetrisInventory* DestinationInventory, const FIntPoint& DestinationPosition);
-
+	bool TryTransferItem(UTetrisItem* Item, UTetrisInventory* DestinationInventory);
+	
+	UFUNCTION(BlueprintCallable)
+	bool TryTransferItemAtPosition(UTetrisItem* Item, UTetrisInventory* DestinationInventory, const FIntPoint& DestinationPosition);
+	
 	UFUNCTION(BlueprintCallable)
 	bool TryTransferSwitchItems(UTetrisItem* ItemA, UTetrisItem* ItemB);
 };

@@ -7,6 +7,8 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "ISInventoriesUtility.generated.h"
 
+class UInventoryBase;
+
 UCLASS()
 class INVENTORYSYSTEM_API UISInventoriesUtility : public UBlueprintFunctionLibrary
 {
@@ -14,13 +16,20 @@ class INVENTORYSYSTEM_API UISInventoriesUtility : public UBlueprintFunctionLibra
 
 public:
 	static UInventoriesManager* InventoriesManager;
+	static UInventoryBase* MainInventory;
 	static UInventoryBase* TargetInventory;
-	
+
 public:
 	static void Init(UInventoriesManager* Manager);
 
 	/**
-	 * @brief Sets the target inventory for the utility functions, used to perform equip and unequip actions so the item knows where to go.
+	 * @brief Sets the main inventory for the utility functions, used to perform equip and unequip actions so the item knows where to go.
+	 * @param Inventory The inventory to set as main.
+	 */
+	static void SetMainInventory(UInventoryBase* Inventory);
+	
+	/**
+	 * @brief Sets the target inventory for the utility functions, used to perform transfer actions so the item knows where to go.
 	 * @param Inventory The inventory to set as target.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Tetris Inventory System")
@@ -32,6 +41,13 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category = "Tetris Inventory System")
 	static UInventoryBase* GetTargetInventory();
+
+	/**
+	 * @brief Gets the main inventory set by SetMainInventory.
+	 * @return The main inventory.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Tetris Inventory System")
+	static UInventoryBase* GetMainInventory();
 
 	UFUNCTION(BlueprintPure, Category = "Tetris Inventory System")
 	static UInventoriesManager* GetInventoriesManager();

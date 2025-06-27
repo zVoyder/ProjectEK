@@ -384,7 +384,7 @@ void UInputsHandlerSubsystem::SetInputModeUI() const
 	FInputModeGameAndUI InputMode;
 	InputMode.SetLockMouseToViewportBehavior(InputModeUI.LockMouseToViewportBehavior);
 	InputMode.SetHideCursorDuringCapture(InputModeUI.bHideCursorDuringCapture);
-
+	
 	if (InputModeUI.bFlushInputs)
 		PlayerController->FlushPressedKeys();
 

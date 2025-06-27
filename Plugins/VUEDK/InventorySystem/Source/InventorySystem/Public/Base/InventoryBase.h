@@ -68,6 +68,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "1", UIMin = "1", ToolTip = "The maximum number of items that can be stored in the inventory."))
 	int32 Capacity = 16;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bIsMainInventory = false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bUseWeight;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0", EditCondition = "bUseWeight"))
 	float WeightMaxCapacity;
@@ -153,6 +155,8 @@ public:
 	double GetCurrentWeight() const;
 
 protected:
+	virtual void BeginPlay() override;
+	
 	UFUNCTION(BlueprintNativeEvent)
 	USaveData* CreateSaveDataObject();
 

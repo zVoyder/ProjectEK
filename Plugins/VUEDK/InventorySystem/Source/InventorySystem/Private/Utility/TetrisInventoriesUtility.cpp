@@ -17,9 +17,14 @@ UTetrisInventoriesManager* UTetrisInventoriesUtility::GetTetrisInventoriesManage
 	return Cast<UTetrisInventoriesManager>(UISInventoriesUtility::GetInventoriesManager());
 }
 
-bool UTetrisInventoriesUtility::TryTransferItem(UTetrisItem* Item, UTetrisInventory* DestinationInventory, const FIntPoint& DestinationPosition)
+bool UTetrisInventoriesUtility::TryTransferItem(UTetrisItem* Item, UTetrisInventory* DestinationInventory)
 {
-	return GetTetrisInventoriesManager()->TryTransferItem(Item, DestinationInventory, DestinationPosition);
+	return GetTetrisInventoriesManager()->TryTransferItem(Item, DestinationInventory);
+}
+
+bool UTetrisInventoriesUtility::TryTransferItemAtPosition(UTetrisItem* Item, UTetrisInventory* DestinationInventory, const FIntPoint& DestinationPosition)
+{
+	return GetTetrisInventoriesManager()->TryTransferItemAtPosition(Item, DestinationInventory, DestinationPosition);
 }
 
 bool UTetrisInventoriesUtility::TryTransferSwitchItems(UTetrisItem* ItemA, UTetrisItem* ItemB)
@@ -57,6 +62,14 @@ void UTetrisInventoriesUtility::RequestEquipUnequip(const int32 SwapPriority)
 		return;
 
 	EventsHandlerSubsystem->RequestEquipUnequip(SwapPriority);
+}
+
+void UTetrisInventoriesUtility::RequestTransferItemToTargetInventory()
+{
+	if (!Check())
+		return;
+
+	EventsHandlerSubsystem->RequestTransferItemToTargetInventory();
 }
 
 void UTetrisInventoriesUtility::RequestDiscard()

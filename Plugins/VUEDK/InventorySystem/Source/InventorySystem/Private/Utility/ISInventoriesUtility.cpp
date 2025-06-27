@@ -8,11 +8,20 @@
 #include "Kismet/GameplayStatics.h"
 
 UInventoriesManager* UISInventoriesUtility::InventoriesManager = nullptr;
+UInventoryBase* UISInventoriesUtility::MainInventory = nullptr;
 UInventoryBase* UISInventoriesUtility::TargetInventory = nullptr;
 
 void UISInventoriesUtility::Init(UInventoriesManager* Manager)
 {
 	InventoriesManager = Manager;
+}
+
+void UISInventoriesUtility::SetMainInventory(UInventoryBase* Inventory)
+{
+	if (!Check())
+		return;
+
+	MainInventory = Inventory;
 }
 
 void UISInventoriesUtility::SetTargetInventory(UInventoryBase* Inventory)
@@ -26,6 +35,11 @@ void UISInventoriesUtility::SetTargetInventory(UInventoryBase* Inventory)
 UInventoryBase* UISInventoriesUtility::GetTargetInventory()
 {
 	return TargetInventory;
+}
+
+UInventoryBase* UISInventoriesUtility::GetMainInventory()
+{
+	return MainInventory;
 }
 
 UInventoriesManager* UISInventoriesUtility::GetInventoriesManager()

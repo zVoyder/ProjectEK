@@ -319,6 +319,14 @@ double UInventoryBase::GetCurrentWeight() const
 	return CurrentWeight;
 }
 
+void UInventoryBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (bIsMainInventory)
+		UISInventoriesUtility::SetMainInventory(this);
+}
+
 USaveData* UInventoryBase::CreateSaveDataObject_Implementation()
 {
 	return NewObject<UInventoryBaseSaveData>();

@@ -1,9 +1,0 @@
-{
-	"RemapUnityFiles": 
-	{
-		"Module.DialogueSystem.cpp.obj": [
-			"PerModuleInline.gen.cpp.obj",
-			"DialogueSystem.cpp.obj"
-		]
-	}
-}

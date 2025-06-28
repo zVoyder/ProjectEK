@@ -13,15 +13,45 @@ void UWeaponMontagesManagerBase::StartWeaponMontage(FWeaponMontageData WeaponMon
 	if (!Check())
 		return;
 
-	Weapon->StartWeaponMontage(WeaponMontageData, WeaponPlayRate, CharacterPlayRate);
+	Weapon->StartWeaponMontage(
+		WeaponMontageData,
+		WeaponPlayRate,
+		CharacterPlayRate
+	);
 }
 
-void UWeaponMontagesManagerBase::InterruptWeaponMontage(const FWeaponMontageData& WeaponMontageData, const float CharacterBlendOutTime, const float WeaponBlendOutTime) const
+void UWeaponMontagesManagerBase::StartWeaponMontageWithBlends(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate, const FAlphaBlendArgs& WeaponBlendIn, const FAlphaBlendArgs& CharacterBlendIn) const
 {
 	if (!Check())
 		return;
 
-	Weapon->InterruptWeaponMontage(WeaponMontageData, CharacterBlendOutTime, WeaponBlendOutTime);
+	Weapon->StartWeaponMontageWithBlends(
+		WeaponMontageData,
+		WeaponPlayRate,
+		CharacterPlayRate,
+		WeaponBlendIn,
+		CharacterBlendIn
+	);
+}
+
+void UWeaponMontagesManagerBase::StopWeaponMontage(const FWeaponMontageData WeaponMontageData) const
+{
+	if (!Check())
+		return;
+
+	Weapon->StopWeaponMontage(WeaponMontageData);
+}
+
+void UWeaponMontagesManagerBase::StopWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut) const
+{
+	if (!Check())
+		return;
+
+	Weapon->StopWeaponMontageWithBlends(
+		WeaponMontageData,
+		WeaponBlendOut,
+		CharacterBlendOut
+	);
 }
 
 bool UWeaponMontagesManagerBase::IsPlayingWeaponMontage(const FWeaponMontageData& WeaponMontageData) const
@@ -101,7 +131,7 @@ void UWeaponMontagesManagerBase::StartUnequipMontage()
 {
 	if (UnequipMontageData.CharacterMontage == nullptr && UnequipMontageData.GetWeaponMontage() == nullptr)
 		return;
-	
+
 	bIsWeaponReadyToUse = false;
 	UnequipMontageData.OnMontageFinished.AddDynamic(this, &UWeaponMontagesManagerBase::OnWeaponReadyToUse);
 	StartWeaponMontage(UnequipMontageData, 1.0f, 1.0f);

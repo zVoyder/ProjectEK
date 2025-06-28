@@ -137,10 +137,16 @@ public:
 	bool IsPlayingWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
 
 	UFUNCTION(BlueprintCallable)
-	void StartWeaponMontage(FWeaponMontageData WeaponMontageData, float WeaponPlayRate, float CharacterPlayRate);
+	void StartWeaponMontage(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate);
 
 	UFUNCTION(BlueprintCallable)
-	void InterruptWeaponMontage(const FWeaponMontageData& WeaponMontageData, const float CharacterBlendOutTime, const float WeaponBlendOutTime);
+	void StartWeaponMontageWithBlends(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate, const FAlphaBlendArgs& WeaponBlendIn, const FAlphaBlendArgs& CharacterBlendIn);
+
+	UFUNCTION(BlueprintCallable)
+	void StopWeaponMontage(const FWeaponMontageData WeaponMontageData);
+	
+	UFUNCTION(BlueprintCallable)
+	void StopWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut);
 
 protected:
 	UFUNCTION(BlueprintNativeEvent)
@@ -162,8 +168,12 @@ protected:
 	void OnWeaponUnequipped();
 
 private:
+	void PlayMontageInternal(UAnimInstance* AnimInstance, FWeaponMontageData& WeaponMontageData, UAnimMontage* Montage, float PlayRate, bool bStopAll, bool bRegisterPlayingMontage = true);
+
+	void PlayMontageWithBlendInternal(UAnimInstance* AnimInstance, FWeaponMontageData& WeaponMontageData, UAnimMontage* Montage, float PlayRate, bool bStopAll, const FAlphaBlendArgs& BlendIn, bool bRegisterPlayingMontage = true);
+
 	void SetOwnerAnimInstance();
-	
+
 	void AddPlayingMontage(UAnimMontage* Montage, const FWeaponMontageData& WeaponMontageData);
 
 	void RemovePlayingMontage(const UAnimMontage* Montage);

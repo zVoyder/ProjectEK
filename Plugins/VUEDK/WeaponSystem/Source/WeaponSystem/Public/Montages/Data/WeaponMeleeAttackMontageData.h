@@ -14,9 +14,5 @@ struct FWeaponMeleeAttackMontageData
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
 	FWeaponMontageData AttackMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
-	float AttackPlayRate = 1.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
 	FWeaponMontageData AttackInterruptMontage;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
-	float InterruptPlayRate = 1.0f;
 };

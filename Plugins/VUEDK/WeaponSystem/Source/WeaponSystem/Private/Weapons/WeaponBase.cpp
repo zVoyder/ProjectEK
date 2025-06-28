@@ -5,6 +5,7 @@
 #include "Factories/WeaponAnimFactory.h"
 #include "GameFramework/Character.h"
 #include "Montages/Data/WeaponAnimMetaData.h"
+#include "UniversalObjectLocators/AnimInstanceLocatorFragment.h"
 
 AWeaponBase::AWeaponBase()
 {
@@ -139,58 +140,88 @@ bool AWeaponBase::IsPlayingWeaponMontage(const FWeaponMontageData& WeaponMontage
 
 void AWeaponBase::StartWeaponMontage(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate)
 {
-	auto PlayMontage = [&](UAnimInstance* AnimInstance, UAnimMontage* Montage, float PlayRate, bool bStopAll, bool& bIsBound) -> void
-	{
-		if (IsValid(AnimInstance) && IsValid(Montage))
-		{
-			AnimInstance->Montage_Play(Montage, PlayRate, EMontagePlayReturnType::MontageLength, 0.f, bStopAll);
-			SetWeaponMetaData(Montage);
-
-			if (bIsBound)
-				return;
-
-			WeaponMontageData.OnMontageBegin.Broadcast();
-			WeaponMontageData.OnMontageEndedDelegate.Unbind();
-			WeaponMontageData.OnMontageEndedDelegate.BindUObject(this, &AWeaponBase::OnMontageEnded);
-			AnimInstance->Montage_SetEndDelegate(WeaponMontageData.OnMontageEndedDelegate, Montage);
-			AddPlayingMontage(Montage, WeaponMontageData);
-			bIsBound = true;
-		}
-	};
-
-	bool bMontageBound = false;
-	switch (WeaponMontageData.MontageEndPriority)
-	{
-	case EMontageEndPriority::CharacterPriority:
-		PlayMontage(GetOwnerAnimInstance(), WeaponMontageData.CharacterMontage, CharacterPlayRate, WeaponMontageData.bCharacterMontageStopAllMontages, bMontageBound);
-		PlayMontage(GetWeaponAnimInstance(), WeaponMontageData.GetWeaponMontage(), WeaponPlayRate, WeaponMontageData.bWeaponMontageStopAllMontages, bMontageBound);
-		break;
-
-	case EMontageEndPriority::WeaponPriority:
-		PlayMontage(GetWeaponAnimInstance(), WeaponMontageData.GetWeaponMontage(), WeaponPlayRate, WeaponMontageData.bWeaponMontageStopAllMontages, bMontageBound);
-		PlayMontage(GetOwnerAnimInstance(), WeaponMontageData.CharacterMontage, CharacterPlayRate, WeaponMontageData.bCharacterMontageStopAllMontages, bMontageBound);
-		break;
-
-	default:
-		break;
-	}
+	const bool bHasCharacterPriority = IsValid(WeaponMontageData.CharacterMontage) && WeaponMontageData.MontageEndPriority == EMontageEndPriority::CharacterPriority;
+	PlayMontageInternal(GetOwnerAnimInstance(), WeaponMontageData, WeaponMontageData.CharacterMontage, CharacterPlayRate, WeaponMontageData.bCharacterMontageStopAllMontages, bHasCharacterPriority);
+	PlayMontageInternal(GetWeaponAnimInstance(), WeaponMontageData, WeaponMontageData.GetWeaponMontage(), WeaponPlayRate, WeaponMontageData.bWeaponMontageStopAllMontages, !bHasCharacterPriority);
 }
 
-void AWeaponBase::InterruptWeaponMontage(const FWeaponMontageData& WeaponMontageData, const float CharacterBlendOutTime, const float WeaponBlendOutTime)
+void AWeaponBase::StartWeaponMontageWithBlends(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate, const FAlphaBlendArgs& WeaponBlendIn, const FAlphaBlendArgs& CharacterBlendIn)
+{
+	const bool bHasCharacterPriority = IsValid(WeaponMontageData.CharacterMontage) && WeaponMontageData.MontageEndPriority == EMontageEndPriority::CharacterPriority;
+	PlayMontageWithBlendInternal(GetOwnerAnimInstance(), WeaponMontageData, WeaponMontageData.CharacterMontage, CharacterPlayRate, WeaponMontageData.bCharacterMontageStopAllMontages, CharacterBlendIn, bHasCharacterPriority);
+	PlayMontageWithBlendInternal(GetWeaponAnimInstance(), WeaponMontageData, WeaponMontageData.GetWeaponMontage(), WeaponPlayRate, WeaponMontageData.bWeaponMontageStopAllMontages, WeaponBlendIn, !bHasCharacterPriority);
+}
+
+void AWeaponBase::StopWeaponMontage(const FWeaponMontageData WeaponMontageData)
 {
 	if (!PlayingMontages.Contains(WeaponMontageData.GetWeaponMontage()) && !PlayingMontages.Contains(WeaponMontageData.CharacterMontage))
 		return;
 
 	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
 	if (IsValid(AnimInstance))
-		AnimInstance->Montage_Stop(CharacterBlendOutTime, WeaponMontageData.CharacterMontage);
+		AnimInstance->Montage_Stop(0.f, WeaponMontageData.CharacterMontage);
 
 	UAnimInstance* WeaponAnimInstance = GetWeaponAnimInstance();
 	if (IsValid(WeaponAnimInstance))
-		WeaponAnimInstance->Montage_Stop(WeaponBlendOutTime, WeaponMontageData.GetWeaponMontage());
+		WeaponAnimInstance->Montage_Stop(0.f, WeaponMontageData.GetWeaponMontage());
 
 	RemovePlayingMontage(WeaponMontageData.GetWeaponMontage());
 	RemovePlayingMontage(WeaponMontageData.CharacterMontage);
+}
+
+void AWeaponBase::StopWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut)
+{
+	if (!PlayingMontages.Contains(WeaponMontageData.GetWeaponMontage()) && !PlayingMontages.Contains(WeaponMontageData.CharacterMontage))
+		return;
+
+	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
+	if (IsValid(AnimInstance))
+		AnimInstance->Montage_StopWithBlendOut(CharacterBlendOut, WeaponMontageData.CharacterMontage);
+
+	UAnimInstance* WeaponAnimInstance = GetWeaponAnimInstance();
+	if (IsValid(WeaponAnimInstance))
+		WeaponAnimInstance->Montage_StopWithBlendOut(WeaponBlendOut, WeaponMontageData.GetWeaponMontage());
+
+	RemovePlayingMontage(WeaponMontageData.GetWeaponMontage());
+	RemovePlayingMontage(WeaponMontageData.CharacterMontage);
+}
+
+void AWeaponBase::PlayMontageInternal(UAnimInstance* AnimInstance, FWeaponMontageData& WeaponMontageData, UAnimMontage* Montage, float PlayRate, bool bStopAll, bool bRegisterPlayingMontage)
+{
+	if (IsValid(AnimInstance) && IsValid(Montage))
+	{
+		SetWeaponMetaData(Montage);
+
+		AnimInstance->Montage_Play(Montage, PlayRate, EMontagePlayReturnType::MontageLength, 0.f, bStopAll);
+
+		if (bRegisterPlayingMontage)
+		{
+			WeaponMontageData.OnMontageBegin.Broadcast();
+			WeaponMontageData.OnMontageEndedDelegate.Unbind();
+			WeaponMontageData.OnMontageEndedDelegate.BindUObject(this, &AWeaponBase::OnMontageEnded);
+			AnimInstance->Montage_SetEndDelegate(WeaponMontageData.OnMontageEndedDelegate, Montage);
+			AddPlayingMontage(Montage, WeaponMontageData);
+		}
+	}
+}
+
+void AWeaponBase::PlayMontageWithBlendInternal(UAnimInstance* AnimInstance, FWeaponMontageData& WeaponMontageData, UAnimMontage* Montage, float PlayRate, bool bStopAll, const FAlphaBlendArgs& BlendIn, bool bRegisterPlayingMontage)
+{
+	if (IsValid(AnimInstance) && IsValid(Montage))
+	{
+		SetWeaponMetaData(Montage);
+
+		AnimInstance->Montage_PlayWithBlendIn(Montage, BlendIn, PlayRate, EMontagePlayReturnType::MontageLength, 0.f, bStopAll);
+		
+		if (bRegisterPlayingMontage)
+		{
+			WeaponMontageData.OnMontageBegin.Broadcast();
+			WeaponMontageData.OnMontageEndedDelegate.Unbind();
+			WeaponMontageData.OnMontageEndedDelegate.BindUObject(this, &AWeaponBase::OnMontageEnded);
+			AnimInstance->Montage_SetEndDelegate(WeaponMontageData.OnMontageEndedDelegate, Montage);
+			AddPlayingMontage(Montage, WeaponMontageData);
+		}
+	}
 }
 
 void AWeaponBase::OnEndWeaponAttack_Implementation()
@@ -263,7 +294,7 @@ void AWeaponBase::SetWeaponMetaData(UAnimMontage* Montage)
 	UWeaponAnimMetaData* MetaData = Cast<UWeaponAnimMetaData>(Montage->FindMetaDataByClass(UWeaponAnimMetaData::StaticClass()));
 	if (IsValid(MetaData) && MetaData->Weapon == this)
 		return;
-	
+
 	Montage->RemoveMetaData(MetaData);
 	UWeaponAnimMetaData* NewMetaData = UWeaponAnimFactory::CreateWeaponAnimMetaData(this);
 	if (!IsValid(NewMetaData))
@@ -271,7 +302,7 @@ void AWeaponBase::SetWeaponMetaData(UAnimMontage* Montage)
 		UE_LOG(LogWeaponSystem, Error, TEXT("AWeaponBase::SetWeaponMetaData: Failed to create weapon anim meta data for montage '%s'."), *Montage->GetName());
 		return;
 	}
-	
+
 	Montage->AddMetaData(NewMetaData);
 }
 
@@ -279,7 +310,7 @@ void AWeaponBase::OnMontageEnded(UAnimMontage* AnimMontage, bool bInterrupted)
 {
 	if (!PlayingMontages.Contains(AnimMontage))
 		return;
-
+	
 	const FWeaponMontageData& WeaponMontage = PlayingMontages[AnimMontage];
 	WeaponMontage.OnMontageFinished.Broadcast(bInterrupted);
 	RemovePlayingMontage(AnimMontage);

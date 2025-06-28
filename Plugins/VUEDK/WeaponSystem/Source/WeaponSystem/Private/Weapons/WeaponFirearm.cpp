@@ -190,15 +190,15 @@ void AWeaponFirearm::ReloadWithMontage(UAmmoTypeData* AmmoData, const int32 Ammo
 	const FReloadEventData ReloadEventData = FReloadEventData(Ammo);
 	SetReloadPayload(ReloadEventData);
 
-	if (IsValid(ReloadMontage.GetWeaponMontage()))
-		WeaponPlayRate = ReloadMontage.GetWeaponMontage()->GetPlayLength() / GetWeaponReloadTime();
+	if (IsValid(FirearmMontagesManager->ReloadMontage.GetWeaponMontage()))
+		WeaponPlayRate = FirearmMontagesManager->ReloadMontage.GetWeaponMontage()->GetPlayLength() / GetWeaponReloadTime();
 
-	if (IsValid(ReloadMontage.CharacterMontage))
-		CharacterPlayRate = ReloadMontage.CharacterMontage->GetPlayLength() / GetWeaponReloadTime();
+	if (IsValid(FirearmMontagesManager->ReloadMontage.CharacterMontage))
+		CharacterPlayRate = FirearmMontagesManager->ReloadMontage.CharacterMontage->GetPlayLength() / GetWeaponReloadTime();
 
 	OnReloadStarted.Broadcast(ReloadEventData);
 	StartWeaponMontage(
-		ReloadMontage,
+		FirearmMontagesManager->ReloadMontage,
 		WeaponPlayRate,
 		CharacterPlayRate
 	);
@@ -206,7 +206,7 @@ void AWeaponFirearm::ReloadWithMontage(UAmmoTypeData* AmmoData, const int32 Ammo
 
 void AWeaponFirearm::InterruptReload(const float CharacterBlendOutTime, const float WeaponBlendOutTime)
 {
-	InterruptWeaponMontage(ReloadMontage, CharacterBlendOutTime, WeaponBlendOutTime);
+	StopWeaponMontageWithBlends(FirearmMontagesManager->ReloadMontage, WeaponBlendOutTime, CharacterBlendOutTime);
 }
 
 int32 AWeaponFirearm::Refill(const int32 Ammo) const
@@ -241,7 +241,7 @@ bool AWeaponFirearm::HasJustShot() const
 
 bool AWeaponFirearm::IsReloading() const
 {
-	return IsPlayingWeaponMontage(ReloadMontage);
+	return IsPlayingWeaponMontage(FirearmMontagesManager->ReloadMontage);
 }
 
 void AWeaponFirearm::BeginPlay()
@@ -338,7 +338,7 @@ void AWeaponFirearm::OnEndWeaponAttack_Implementation()
 
 void AWeaponFirearm::BindEvents()
 {
-	ReloadMontage.OnMontageFinished.AddDynamic(this, &AWeaponFirearm::OnReloadMontageEnded);
+	FirearmMontagesManager->ReloadMontage.OnMontageFinished.AddDynamic(this, &AWeaponFirearm::OnReloadMontageEnded);
 
 	if (!IsValid(Shooter->ShooterBehaviour))
 		return;
@@ -350,7 +350,7 @@ void AWeaponFirearm::BindEvents()
 
 void AWeaponFirearm::UnbindEvents()
 {
-	ReloadMontage.OnMontageFinished.RemoveDynamic(this, &AWeaponFirearm::OnReloadMontageEnded);
+	FirearmMontagesManager->ReloadMontage.OnMontageFinished.RemoveDynamic(this, &AWeaponFirearm::OnReloadMontageEnded);
 
 	if (!IsValid(Shooter->ShooterBehaviour))
 		return;

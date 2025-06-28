@@ -13,16 +13,18 @@ class WEAPONSYSTEM_API UFirearmMontagesManager : public UWeaponMontagesManagerBa
 {
 	GENERATED_BODY()
 
-protected:
-	// -- Montages --
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions")
+	FWeaponMontageData ReloadMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions")
 	FWeaponMontageData ShootMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions")
 	FWeaponMontageData FailShootMontage;
-	
+
+protected:
 	UPROPERTY()
 	AWeaponFirearm* WeaponFirearm;
-	
+
 public:
 	UFirearmMontagesManager();
 

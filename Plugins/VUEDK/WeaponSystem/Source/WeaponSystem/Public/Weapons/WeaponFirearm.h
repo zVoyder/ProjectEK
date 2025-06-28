@@ -76,10 +76,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Configuration")
 	FName ShootBarrelSocketName;
 
-	// -- Montages --
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
-	FWeaponMontageData ReloadMontage;
-
 	// -- Advanced --
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Advanced")
 	bool bCanDeployAttackIfReloading = false;

@@ -30,7 +30,6 @@ void UMeleeMontagesManager::BeginPlay()
 	{
 		UE_LOG(LogWeaponSystem, Error, TEXT("UMeleeMontagesManager::BeginPlay: %s in %s is not in a WeaponMelee."), *GetName(), *GetOwner()->GetName());
 		UActorComponent::SetActive(false);
-		return;
 	}
 }
 
@@ -41,7 +40,7 @@ void UMeleeMontagesManager::OnWeaponAttackSuccess()
 
 	if (!bIsAttacking && bWantsToAttack)
 	{
-		PlayNextAttackMontage();
+		StartComboAttack();
 		bIsAttacking = true;
 	}
 }
@@ -58,21 +57,79 @@ bool UMeleeMontagesManager::IsMontageAttacking() const
 	return bIsAttacking;
 }
 
+void UMeleeMontagesManager::CheckBufferAttack()
+{
+	if (bWantsToAttack)
+		bHasBufferedAttack = true;
+}
+
+void UMeleeMontagesManager::ClearBufferedAttack()
+{
+	bHasBufferedAttack = false;
+}
+
+void UMeleeMontagesManager::OnAttackBeginNotify()
+{
+	ClearBufferedAttack();
+}
+
+void UMeleeMontagesManager::OnAttackFinishedNotify()
+{
+	//print has buffered attack and wants to attack
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Buffered: %s, Wants: %s"), bHasBufferedAttack ? TEXT("True") : TEXT("False"), bWantsToAttack ? TEXT("True") : TEXT("False")));
+	
+	if (/*bWantsToAttack || */bHasBufferedAttack)
+	{
+		bEndAttack = false;
+		PlayNextAttackMontage();
+		return;
+	}
+
+	EndAttackSequence();
+}
+
+void UMeleeMontagesManager::StartComboAttack()
+{
+	if (AttackMontages.IsEmpty())
+	{
+		UE_LOG(LogWeaponSystem, Warning, TEXT("UMeleeMontagesManager::StartComboAttack: %s in %s has no attack montages."), *GetName(), *GetOwner()->GetName());
+		return;
+	}
+
+	CurrentAttackIndex = 0;
+	FWeaponMeleeAttackMontageData& AttackMontage = AttackMontages[0];
+
+	CurrentAttackMontage = &AttackMontage;
+	StartWeaponMontageWithBlends(
+		AttackMontage.AttackMontage,
+		1.0f, // Use the default play rate, since it can be set in the montage itself
+		1.0f,
+		FAlphaBlendArgs(), // No need to BlendIn the Weapon
+		StartBlendIn
+	);
+}
+
+void UMeleeMontagesManager::EndComboAttack() const
+{
+	if (CurrentAttackMontage == nullptr || !IsValid(CurrentAttackMontage->AttackMontage.CharacterMontage))
+		return;
+
+	StopWeaponMontageWithBlends(
+		CurrentAttackMontage->AttackMontage,
+		FAlphaBlendArgs(),
+		StopBlendOut
+	);
+}
+
 void UMeleeMontagesManager::PlayNextAttackMontage()
 {
-	PlayAttackMontageAt(CurrentAttackIndex);
 	CurrentAttackIndex++;
 	CurrentAttackIndex %= AttackMontages.Num();
+	PlayAttackMontageAt(CurrentAttackIndex);
 }
 
 void UMeleeMontagesManager::PlayAttackMontageAt(const int32 AttackIndex)
 {
-	if (AttackMontages.IsEmpty())
-	{
-		UE_LOG(LogWeaponSystem, Warning, TEXT("UMeleeMontagesManager::PlayAttackMontageAt: %s in %s has no attack montages."), *GetName(), *GetOwner()->GetName());
-		return;
-	}
-
 	if (!AttackMontages.IsValidIndex(AttackIndex))
 	{
 		UE_LOG(LogWeaponSystem, Error, TEXT("UMeleeMontagesManager::PlayAttackMontageAt: Invalid index %d for attack montage in %s."), AttackIndex, *GetName());
@@ -85,50 +142,20 @@ void UMeleeMontagesManager::PlayAttackMontageAt(const int32 AttackIndex)
 
 void UMeleeMontagesManager::PlayAttackMontage(FWeaponMeleeAttackMontageData& AttackMontage)
 {
-	ClearCurrentMontage();
-	AttackMontage.AttackMontage.OnMontageFinished.AddDynamic(this, &UMeleeMontagesManager::OnMontageAttackFinished);
 	CurrentAttackMontage = &AttackMontage;
 
 	StartWeaponMontage(
 		AttackMontage.AttackMontage,
-		AttackMontage.AttackPlayRate,
-		AttackMontage.AttackPlayRate
+		1.0f,
+		1.0f
 	);
-}
-
-void UMeleeMontagesManager::OnMontageAttackFinished(bool bInterrupted)
-{
-	bIsAttacking = false;
-
-	if (bEndAttack && !bWantsToAttack)
-	{
-		EndAttackSequence();
-		return;
-	}
-
-	if (bWantsToAttack)
-	{
-		bEndAttack = false;
-		PlayNextAttackMontage();
-		return;
-	}
-
-	EndAttackSequence();
 }
 
 void UMeleeMontagesManager::EndAttackSequence()
 {
-	ClearCurrentMontage();
+	EndComboAttack();
 	CurrentAttackIndex = 0;
 	bIsAttacking = false;
 	bEndAttack = false;
-}
-
-void UMeleeMontagesManager::ClearCurrentMontage()
-{
-	if (CurrentAttackMontage == nullptr)
-		return;
-
-	CurrentAttackMontage->AttackMontage.OnMontageFinished.RemoveDynamic(this, &UMeleeMontagesManager::OnMontageAttackFinished);
 	CurrentAttackMontage = nullptr;
 }

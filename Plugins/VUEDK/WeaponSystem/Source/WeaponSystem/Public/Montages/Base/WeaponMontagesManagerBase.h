@@ -27,13 +27,19 @@ private:
 
 public:
 	UWeaponMontagesManagerBase();
-
+	
 	UFUNCTION(BlueprintCallable)
 	void StartWeaponMontage(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate) const;
 
 	UFUNCTION(BlueprintCallable)
-	void InterruptWeaponMontage(const FWeaponMontageData& WeaponMontageData, const float CharacterBlendOutTime, const float WeaponBlendOutTime) const;
+	void StartWeaponMontageWithBlends(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate, const FAlphaBlendArgs& WeaponBlendIn, const FAlphaBlendArgs& CharacterBlendIn) const;
 
+	UFUNCTION(BlueprintCallable)
+	void StopWeaponMontage(const FWeaponMontageData WeaponMontageData) const;
+	
+	UFUNCTION(BlueprintCallable)
+	void StopWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut) const;
+	
 	UFUNCTION(BlueprintPure)
 	bool IsPlayingWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
 

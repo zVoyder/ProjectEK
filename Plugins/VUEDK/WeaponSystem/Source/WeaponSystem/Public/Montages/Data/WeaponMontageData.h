@@ -24,6 +24,7 @@ struct WEAPONSYSTEM_API FWeaponMontageData
 	FOnMontageBegin OnMontageBegin;
 	UPROPERTY(BlueprintAssignable)
 	FOnMontageFinished OnMontageFinished;
+	FOnMontageEnded OnMontageEndedDelegate;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
 	TSoftObjectPtr<UAnimMontage> WeaponMontage;
@@ -35,8 +36,6 @@ struct WEAPONSYSTEM_API FWeaponMontageData
 	bool bCharacterMontageStopAllMontages = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
 	TEnumAsByte<EMontageEndPriority> MontageEndPriority;
-
-	FOnMontageEnded OnMontageEndedDelegate;
 
 	FWeaponMontageData(): WeaponMontage(nullptr),
 	                      CharacterMontage(nullptr),

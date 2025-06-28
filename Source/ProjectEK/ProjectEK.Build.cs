@@ -30,7 +30,8 @@ public class ProjectEK : ModuleRules
 			"RPGSystem",
 			"SaveSystem",
 			"BetterUI",
-			"WeaponSystem"
+			"WeaponSystem",
+			"ResourceAttributesSystem"
 		});
 
 		PublicIncludePaths.AddRange(new string[]

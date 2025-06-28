@@ -1,13 +1,13 @@
 ﻿// Copyright zVoyder, Inc. All Rights Reserved.
 
 #include "UGameFramework/PlayerStates/GameplayPlayerState.h"
-
 #include "RPGInventory/Utility/RPGInventoriesUtility.h"
 
 AGameplayPlayerState::AGameplayPlayerState()
 {
 	Inventory = CreateDefaultSubobject<URPGInventory>(TEXT("Inventory"));
 	Equipment = CreateDefaultSubobject<UEquipment>(TEXT("Equipment"));
+	ResourceAttributesManager = CreateDefaultSubobject<UResourceAttributesManager>(TEXT("ResourceAttributesManager"));
 }
 
 void AGameplayPlayerState::BeginPlay()

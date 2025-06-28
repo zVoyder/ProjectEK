@@ -45,7 +45,6 @@ void UFirearmMontagesManager::BeginPlay()
 	{
 		UE_LOG(LogWeaponSystem, Error, TEXT("UFirearmMontagesManager::BeginPlay: %s in %s is not in a WeaponFirearm."), *GetName(), *GetOwner()->GetName());
 		UActorComponent::SetActive(false);
-		return;
 	}
 }
 

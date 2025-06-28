@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ResourceAttributesManager.h"
 #include "RPGInventory/RPGInventory.h"
 #include "StatsSystem/CharacterStats/CharacterStats.h"
 #include "UGameFramework/PlayerStates/Base/ProjectEKPlayerState.h"
@@ -18,6 +19,8 @@ public:
 	URPGInventory* Inventory;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player|Equipment")
 	UEquipment* Equipment;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player|Resource Attributes")
+	UResourceAttributesManager* ResourceAttributesManager;
 	
 public:
 	AGameplayPlayerState();

@@ -28,8 +28,16 @@ bool AWeaponMelee::IsWeaponBlocking() const
 	return MeleeMontagesManager->IsMontageDefending() && bIsBlockActive;
 }
 
+bool AWeaponMelee::CanDefend_Implementation() const
+{
+	return true;
+}
+
 void AWeaponMelee::StartDefense() const
 {
+	if (!CanDefend())
+        return;
+	
 	MeleeMontagesManager->SetWantsToDefend(true);
 }
 

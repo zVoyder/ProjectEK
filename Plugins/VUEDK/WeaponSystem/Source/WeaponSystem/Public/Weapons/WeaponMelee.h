@@ -42,6 +42,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	bool IsWeaponBlocking() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	bool CanDefend() const;
 	
 	UFUNCTION(BlueprintCallable)
 	void StartDefense() const;

@@ -29,6 +29,7 @@ public:
 
 private:
 	bool bIsHitboxEnabled = false;
+	bool bIsBlockActive = false;
 	UPROPERTY()
 	TSet<AActor*> ActorsCurrentlyInHitbox;
 
@@ -38,6 +39,15 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual bool IsWeaponAttacking() const override;
+
+	UFUNCTION(BlueprintPure)
+	bool IsWeaponBlocking() const;
+	
+	UFUNCTION(BlueprintCallable)
+	void StartDefense() const;
+
+	UFUNCTION(BlueprintCallable)
+	void StopDefense();
 	
 	UFUNCTION(BlueprintCallable)
 	void EnableDamageHitbox();
@@ -45,9 +55,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DisableDamageHitbox();
 
+	void SetBlockActive(const bool bActive);
+
 protected:
-	virtual bool DeployWeaponAttack_Implementation() override;
-	
+	virtual bool NativeDeployWeaponAttack() override;
+
 private:
 	void TraceDamageHitbox();
 

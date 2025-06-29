@@ -8,6 +8,37 @@ UResourceAttributesManager::UResourceAttributesManager()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+bool UResourceAttributesManager::TryAddAttribute(UResourceAttributeData* AttributeData, UResourceAttribute*& OutAttribute)
+{
+	if (!IsValid(AttributeData))
+	{
+		OutAttribute = nullptr;
+		return false;
+	}
+
+	UResourceAttribute* NewAttribute = UResourceAttributesFactory::CreateResourceAttribute(AttributeData, this);
+	if (!IsValid(NewAttribute))
+	{
+		OutAttribute = nullptr;
+		return false;
+	}
+
+	CurrentAttributes.Add(NewAttribute);
+	OutAttribute = NewAttribute;
+	return true;
+}
+
+bool UResourceAttributesManager::TryRemoveAttributeByTag(const FGameplayTag Tag)
+{
+	UResourceAttribute* Attribute = GetAttributeByTag(Tag);
+
+	if (!IsValid(Attribute))
+		return false;
+
+	CurrentAttributes.Remove(Attribute);
+	return true;
+}
+
 UResourceAttribute* UResourceAttributesManager::GetAttributeByTag(const FGameplayTag Tag) const
 {
 	for (UResourceAttribute* Attribute : CurrentAttributes)

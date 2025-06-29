@@ -16,28 +16,42 @@ class WEAPONSYSTEM_API UMeleeMontagesManager : public UWeaponMontagesManagerBase
 
 public:
 	// -- Montages --
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Defense", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float DefenseCooldown = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Defense")
+	FWeaponMontageData DefensiveMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks")
 	FAlphaBlendArgs StartBlendIn;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks")
 	FAlphaBlendArgs StopBlendOut;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks")
 	TArray<FWeaponMeleeAttackMontageData> AttackMontages;
-	
+
 private:
 	UPROPERTY()
 	AWeaponMelee* WeaponMelee;
 	int32 CurrentAttackIndex = 0;
 	bool bWantsToAttack = false;
+	bool bWantsToDefend = false;
+	bool bIsDefenseInCooldown = false;
 	bool bHasBufferedAttack = false;
 	bool bIsAttacking = false;
+	bool bIsDefending = false;
 	bool bEndAttack = false;
+	FTimerHandle DefenseCooldownTimer;
 	FWeaponMeleeAttackMontageData* CurrentAttackMontage = nullptr;
 
 public:
 	UMeleeMontagesManager();
 
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
 	UFUNCTION(BlueprintPure)
 	int32 GetAttackIndex() const;
+	
+	void SetWantsToDefend(const bool bWants);
+
+	bool IsMontageDefending() const;
 
 	bool IsMontageAttacking() const;
 
@@ -67,4 +81,15 @@ protected:
 	void PlayAttackMontage(FWeaponMeleeAttackMontageData& AttackMontage);
 
 	void EndAttackSequence();
+
+	void PlayDefensiveMontage();
+
+	void StopDefensiveMontage();
+
+	void ProcessDefense();
+
+	void StartDefenseCooldownTimer();
+
+	UFUNCTION()
+	void ResetDefenseCooldown();
 };

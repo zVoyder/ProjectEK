@@ -23,7 +23,7 @@ protected:
 	AWeaponBase* Weapon;
 
 private:
-	bool bIsWeaponReadyToUse = true;
+	bool bIsPlayingEquipMontage;
 
 public:
 	UWeaponMontagesManagerBase();
@@ -42,13 +42,9 @@ public:
 	
 	UFUNCTION(BlueprintPure)
 	bool IsPlayingWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
-
-	/**
-	 * Checks if the weapon is ready to use, meaning that it is not currently playing an equip or unequip montage.
-	 * @return True if the weapon is ready to use, false otherwise.
-	 */
+	
 	UFUNCTION(BlueprintPure)
-	bool IsWeaponReadyToUse() const;
+	bool IsEquipOrUnequipMontagePlaying() const;
 	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 

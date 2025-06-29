@@ -23,6 +23,12 @@ private:
 public:
 	UResourceAttributesManager();
 
+	UFUNCTION(BlueprintCallable)
+	bool TryAddAttribute(UResourceAttributeData* AttributeData, UResourceAttribute*& OutAttribute);
+
+	UFUNCTION(BlueprintCallable)
+	bool TryRemoveAttributeByTag(const FGameplayTag Tag);
+
 	UFUNCTION(BlueprintPure)
 	UResourceAttribute* GetAttributeByTag(const FGameplayTag Tag) const;
 

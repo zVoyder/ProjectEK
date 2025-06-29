@@ -46,6 +46,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 );
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnItemDropped,
+	UItemBase*, Item,
+	AItemDropActor*, ItemDropActor
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FOnItemQuantityChanged,
 	UItemBase*, Item,
 	int32, Quantity
@@ -76,6 +82,8 @@ public:
 	FOnItemEquipped OnItemEquipped;
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnItemUnequipped OnItemUnequipped;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnItemDropped OnItemDropped;
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnItemQuantityChanged OnItemQuantityChanged;
 	UPROPERTY(BlueprintAssignable, Category = Events)
@@ -224,6 +232,9 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnUnequip();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnDrop(AItemDropActor* ItemDropActor);
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void OnUse();

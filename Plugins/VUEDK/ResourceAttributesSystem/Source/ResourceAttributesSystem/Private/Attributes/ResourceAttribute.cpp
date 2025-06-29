@@ -23,7 +23,7 @@ void UResourceAttribute::Init(UResourceAttributeData* InResourceAttributeData, U
 	SetMinValue(ResourceAttributeData->DefaultMinValue);
 	SetMaxValue(ResourceAttributeData->DefaultMaxValue);
 	SetRegenerationRate(ResourceAttributeData->DefaultRegenerationRate);
-	
+
 	CurrentValue = FMath::Clamp(ResourceAttributeData->StartingValue, MinValue, MaxValue);
 	if (ResourceAttributeData->bHasRegeneration && ResourceAttributeData->bRegenOnInit)
 		StartRegen(ResourceAttributeData->RegenerationDelayOnInit);
@@ -47,19 +47,25 @@ TStatId UResourceAttribute::GetStatId() const
 	RETURN_QUICK_DECLARE_CYCLE_STAT(UResourceAttribute, STATGROUP_Tickables);
 }
 
-bool UResourceAttribute::IsAtMax() const
-{
-	return CurrentValue >= MaxValue;
-}
-
 bool UResourceAttribute::IsAtMin() const
 {
 	return CurrentValue <= MinValue;
 }
 
+bool UResourceAttribute::IsAtMax() const
+{
+	return CurrentValue >= MaxValue;
+}
+
 float UResourceAttribute::GetValue() const
 {
 	return CurrentValue;
+}
+
+float UResourceAttribute::GetValueAsPercent() const
+{
+	const float Percent = (CurrentValue - MinValue) / (MaxValue - MinValue);
+	return Percent;
 }
 
 float UResourceAttribute::GetMinValue() const
@@ -80,25 +86,23 @@ float UResourceAttribute::GetRegenerationRate() const
 void UResourceAttribute::SetValue(const float NewValue)
 {
 	const float OldValue = CurrentValue;
-	const float TargetValue = FMath::Clamp(NewValue, MinValue, MaxValue);
+	CurrentValue = FMath::Clamp(NewValue, MinValue, MaxValue);
 
-	if (TargetValue == OldValue)
+	if (OldValue == CurrentValue)
 		return;
 
-	OnResourceAttributeChanged.Broadcast(OldValue, TargetValue);
+	OnResourceAttributeChanged.Broadcast(OldValue, CurrentValue);
 
-	if (TargetValue > CurrentValue)
-		OnAttributeIncreased(OldValue, TargetValue);
+	if (CurrentValue > OldValue)
+		OnAttributeIncreased(OldValue);
 	else
-		OnAttributeDecreased(OldValue, TargetValue);
-
-	CurrentValue = TargetValue;
+		OnAttributeDecreased(OldValue);
 
 	if (IsAtMin())
-		OnResourceAttributeReachedMaxValue.Broadcast(MaxValue);
+		OnResourceAttributeReachedMinValue.Broadcast(CurrentValue);
 
 	if (IsAtMax())
-		OnResourceAttributeReachedMinValue.Broadcast(MinValue);
+		OnResourceAttributeReachedMaxValue.Broadcast(CurrentValue);
 }
 
 void UResourceAttribute::ModifyValue(const float Amount)
@@ -107,14 +111,34 @@ void UResourceAttribute::ModifyValue(const float Amount)
 	SetValue(NewValue);
 }
 
+void UResourceAttribute::DrainToMin()
+{
+	SetValue(MinValue);
+}
+
+void UResourceAttribute::FillToMax()
+{
+	SetValue(MaxValue);
+}
+
 void UResourceAttribute::SetMinValue(const float NewMinValue)
 {
+	const float OldValue = MinValue;
 	MinValue = FMath::Clamp(NewMinValue, FLT_MIN, MaxValue);
+	OnResourceAttributeMinValueChanged.Broadcast(OldValue, MinValue);
+
+	if (CurrentValue < MinValue)
+		SetValue(MinValue);
 }
 
 void UResourceAttribute::SetMaxValue(const float NewMaxValue)
 {
+	const float OldValue = MaxValue;
 	MaxValue = FMath::Clamp(NewMaxValue, MinValue, FLT_MAX);
+	OnResourceAttributeMaxValueChanged.Broadcast(OldValue, MaxValue);
+
+	if (CurrentValue > MaxValue)
+		SetValue(MaxValue);
 }
 
 void UResourceAttribute::SetRegenerationRate(const float NewRegenerationRate)
@@ -134,7 +158,7 @@ void UResourceAttribute::StartRegen(const float Delay)
 		return;
 
 	bIsRegenerating = false;
-	
+
 	const UWorld* World = ResourceAttributesManager->GetWorld();
 	if (!IsValid(World))
 	{
@@ -147,7 +171,7 @@ void UResourceAttribute::StartRegen(const float Delay)
 		OnRegenStarted();
 		return;
 	}
-	
+
 	FTimerManager& TimerManager = World->GetTimerManager();
 	TimerManager.ClearTimer(RegenTimerHandle);
 	TimerManager.SetTimer(
@@ -168,9 +192,9 @@ void UResourceAttribute::StopRegen()
 
 	if (!ResourceAttributeData->bHasRegeneration)
 		return;
-	
+
 	bIsRegenerating = false;
-	
+
 	const UWorld* World = ResourceAttributesManager->GetWorld();
 	if (!IsValid(World))
 	{
@@ -185,14 +209,18 @@ void UResourceAttribute::StopRegen()
 
 void UResourceAttribute::ProcessRegen(const float DeltaTime)
 {
+	const float OldValue = CurrentValue;
 	const float AddValue = RegenerationRate * DeltaTime;
 	CurrentValue = FMath::Clamp(CurrentValue + AddValue, MinValue, MaxValue);
+
+	OnResourceAttributeChanged.Broadcast(OldValue, CurrentValue);
+	OnResourceAttributeIncreased.Broadcast(CurrentValue - OldValue, OldValue, CurrentValue);
 
 	if (IsAtMax())
 		StopRegen();
 }
 
-void UResourceAttribute::OnAttributeIncreased(const float OldValue, const float TargetValue)
+void UResourceAttribute::OnAttributeIncreased(const float OldValue)
 {
 	if (!Check())
 		return;
@@ -200,10 +228,10 @@ void UResourceAttribute::OnAttributeIncreased(const float OldValue, const float 
 	if (ResourceAttributeData->bRegenAfterIncrement)
 		StartRegen(ResourceAttributeData->RegenerationDelayAfterIncrement);
 
-	OnResourceAttributeIncreased.Broadcast(TargetValue - CurrentValue, OldValue, TargetValue);
+	OnResourceAttributeIncreased.Broadcast(CurrentValue - OldValue, OldValue, CurrentValue);
 }
 
-void UResourceAttribute::OnAttributeDecreased(const float OldValue, const float TargetValue)
+void UResourceAttribute::OnAttributeDecreased(const float OldValue)
 {
 	if (!Check())
 		return;
@@ -211,7 +239,7 @@ void UResourceAttribute::OnAttributeDecreased(const float OldValue, const float 
 	if (ResourceAttributeData->bRegenAfterDecrement)
 		StartRegen(ResourceAttributeData->RegenerationDelayAfterDecrement);
 
-	OnResourceAttributeDecreased.Broadcast(CurrentValue - TargetValue, OldValue, TargetValue);
+	OnResourceAttributeDecreased.Broadcast(OldValue - CurrentValue, OldValue, CurrentValue);
 }
 
 void UResourceAttribute::OnRegenStarted()

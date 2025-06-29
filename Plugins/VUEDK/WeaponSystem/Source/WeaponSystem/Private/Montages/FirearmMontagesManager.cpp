@@ -94,6 +94,6 @@ void UFirearmMontagesManager::GetShootPlayRates(const FWeaponMontageData& Weapon
 	if (IsValid(WeaponMontageData.GetWeaponMontage()))
 		WeaponPlayRate = WeaponMontageData.GetWeaponMontage()->GetPlayLength() / SecondsPerShot;
 
-	if (IsValid(WeaponMontageData.CharacterMontage))
-		CharacterPlayRate = WeaponMontageData.CharacterMontage->GetPlayLength() / SecondsPerShot;
+	if (IsValid(WeaponMontageData.GetCharacterMontage()))
+		CharacterPlayRate = WeaponMontageData.GetCharacterMontage()->GetPlayLength() / SecondsPerShot;
 }

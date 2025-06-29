@@ -23,6 +23,22 @@ bool AWeaponMelee::IsWeaponAttacking() const
 	return MeleeMontagesManager->IsMontageAttacking();
 }
 
+bool AWeaponMelee::IsWeaponBlocking() const
+{
+	return MeleeMontagesManager->IsMontageDefending() && bIsBlockActive;
+}
+
+void AWeaponMelee::StartDefense() const
+{
+	MeleeMontagesManager->SetWantsToDefend(true);
+}
+
+void AWeaponMelee::StopDefense()
+{
+	MeleeMontagesManager->SetWantsToDefend(false);
+	bIsBlockActive = false;
+}
+
 void AWeaponMelee::EnableDamageHitbox()
 {
 	if (bIsHitboxEnabled)
@@ -40,9 +56,29 @@ void AWeaponMelee::DisableDamageHitbox()
 	bIsHitboxEnabled = false;
 }
 
-bool AWeaponMelee::DeployWeaponAttack_Implementation()
+void AWeaponMelee::SetBlockActive(const bool bActive)
 {
-	return MeleeMontagesManager->IsWeaponReadyToUse();
+	bIsBlockActive = bActive;
+}
+
+bool AWeaponMelee::NativeDeployWeaponAttack()
+{
+	if (!Super::NativeDeployWeaponAttack())
+		return false;
+	
+	if (!IsValid(MeleeMontagesManager))
+	{
+		UE_LOG(LogWeaponSystem, Warning, TEXT("AWeaponMelee::NativeDeployWeaponAttack: MeleeMontagesManager is not valid."));
+		return false;
+	}
+	
+	if (MeleeMontagesManager->IsMontageDefending())
+		return false;
+
+	if (MeleeMontagesManager->IsEquipOrUnequipMontagePlaying())
+		return false;
+	
+	return true;
 }
 
 void AWeaponMelee::TraceDamageHitbox()

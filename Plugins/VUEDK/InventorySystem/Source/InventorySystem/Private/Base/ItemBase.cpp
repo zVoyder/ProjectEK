@@ -114,6 +114,8 @@ bool UItemBase::TryDrop(const FVector Location, const FRotator Rotation, AItemDr
 	if (IsEquipped())
 		RelatedEquipment->TryUnequipItem(this);
 
+	OnDrop(OutItemDropActor);
+	OnItemDropped.Broadcast(this, OutItemDropActor);
 	return true;
 }
 
@@ -398,6 +400,10 @@ void UItemBase::OnEquip_Implementation()
 }
 
 void UItemBase::OnUnequip_Implementation()
+{
+}
+
+void UItemBase::OnDrop_Implementation(AItemDropActor* ItemDropActor)
 {
 }
 

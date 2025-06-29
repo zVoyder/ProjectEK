@@ -20,7 +20,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	FOnResourceAttributeIncreased,
 	float,
-	IncreaseValue,
+	IncreasedAmount,
 	float,
 	OldValue,
 	float,
@@ -30,11 +30,27 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	FOnResourceAttributeDecreased,
 	float,
-	DecreaseValue,
+	DecreasedAmount,
 	float,
 	OldValue,
 	float,
 	NewValue
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnResourceAttributeMinValueChanged,
+	float,
+	OldMinValue,
+	float,
+	NewMinValue
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnResourceAttributeMaxValueChanged,
+	float,
+	OldMaxValue,
+	float,
+	NewMaxValue
 );
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
@@ -67,19 +83,23 @@ class RESOURCEATTRIBUTESSYSTEM_API UResourceAttribute : public UObject, public F
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnResourceAttributeChanged OnResourceAttributeChanged;
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnResourceAttributeIncreased OnResourceAttributeIncreased;
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnResourceAttributeDecreased OnResourceAttributeDecreased;
-	UPROPERTY(BlueprintAssignable)
-	FOnResourceAttributeReachedMaxValue OnResourceAttributeReachedMaxValue;
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnResourceAttributeMinValueChanged OnResourceAttributeMinValueChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnResourceAttributeMaxValueChanged OnResourceAttributeMaxValueChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnResourceAttributeReachedMinValue OnResourceAttributeReachedMinValue;
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnResourceAttributeReachedMaxValue OnResourceAttributeReachedMaxValue;
+	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnResourceAttributeRegenerationStarted OnResourceAttributeRegenStarted;
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnResourceAttributeRegenerationStopped OnResourceAttributeRegenStopped;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Resource Attribute|Data")
@@ -104,15 +124,18 @@ public:
 	virtual bool IsTickable() const override;
 
 	virtual TStatId GetStatId() const override;
-
-	UFUNCTION(BlueprintPure)
-	bool IsAtMax() const;
-
+	
 	UFUNCTION(BlueprintPure)
 	bool IsAtMin() const;
 
 	UFUNCTION(BlueprintPure)
+	bool IsAtMax() const;
+	
+	UFUNCTION(BlueprintPure)
 	float GetValue() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetValueAsPercent() const;
 
 	UFUNCTION(BlueprintPure)
 	float GetMinValue() const;
@@ -128,7 +151,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ModifyValue(const float Amount);
+	
+	UFUNCTION(BlueprintCallable)
+	void DrainToMin();
 
+	UFUNCTION(BlueprintCallable)
+	void FillToMax();
+	
 	UFUNCTION(BlueprintCallable)
 	void SetMinValue(const float NewMinValue);
 
@@ -147,9 +176,9 @@ public:
 private:
 	void ProcessRegen(const float DeltaTime);
 
-	void OnAttributeIncreased(const float OldValue, const float TargetValue);
+	void OnAttributeIncreased(const float OldValue);
 
-	void OnAttributeDecreased(const float OldValue, const float TargetValue);
+	void OnAttributeDecreased(const float OldValue);
 
 	UFUNCTION()
 	void OnRegenStarted();

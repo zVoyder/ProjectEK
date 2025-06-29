@@ -193,8 +193,8 @@ void AWeaponFirearm::ReloadWithMontage(UAmmoTypeData* AmmoData, const int32 Ammo
 	if (IsValid(FirearmMontagesManager->ReloadMontage.GetWeaponMontage()))
 		WeaponPlayRate = FirearmMontagesManager->ReloadMontage.GetWeaponMontage()->GetPlayLength() / GetWeaponReloadTime();
 
-	if (IsValid(FirearmMontagesManager->ReloadMontage.CharacterMontage))
-		CharacterPlayRate = FirearmMontagesManager->ReloadMontage.CharacterMontage->GetPlayLength() / GetWeaponReloadTime();
+	if (IsValid(FirearmMontagesManager->ReloadMontage.GetCharacterMontage()))
+		CharacterPlayRate = FirearmMontagesManager->ReloadMontage.GetCharacterMontage()->GetPlayLength() / GetWeaponReloadTime();
 
 	OnReloadStarted.Broadcast(ReloadEventData);
 	StartWeaponMontage(
@@ -315,11 +315,18 @@ FReloadEventData AWeaponFirearm::GetReloadPayload() const
 	return ReloadPayload;
 }
 
-bool AWeaponFirearm::DeployWeaponAttack_Implementation()
+bool AWeaponFirearm::NativeDeployWeaponAttack()
 {
-	Super::DeployWeaponAttack_Implementation();
+	if (!Super::NativeDeployWeaponAttack())
+		return false;
 
-	if (!FirearmMontagesManager->IsWeaponReadyToUse())
+	if (!IsValid(FirearmMontagesManager))
+	{
+		UE_LOG(LogWeaponSystem, Warning, TEXT("AWeaponFirearm::NativeDeployWeaponAttack: FirearmMontagesManager is not valid."));
+		return false;
+	}
+	
+	if (!FirearmMontagesManager->IsEquipOrUnequipMontagePlaying())
 		return false;
 	
 	if (bCanDeployAttackIfReloading)

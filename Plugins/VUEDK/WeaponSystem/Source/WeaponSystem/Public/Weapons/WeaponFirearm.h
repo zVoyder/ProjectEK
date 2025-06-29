@@ -242,7 +242,7 @@ protected:
 	
 	FReloadEventData GetReloadPayload() const;
 
-	virtual bool DeployWeaponAttack_Implementation() override;
+	virtual bool NativeDeployWeaponAttack() override;
 
 	virtual void OnEndWeaponAttack_Implementation() override;
 

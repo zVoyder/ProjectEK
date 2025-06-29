@@ -31,7 +31,7 @@ struct WEAPONSYSTEM_API FWeaponMontageData
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
 	bool bWeaponMontageStopAllMontages = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
-	UAnimMontage* CharacterMontage;
+	TSoftObjectPtr<UAnimMontage> CharacterMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
 	bool bCharacterMontageStopAllMontages = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
@@ -52,5 +52,10 @@ struct WEAPONSYSTEM_API FWeaponMontageData
 	UAnimMontage* GetWeaponMontage() const
 	{
 		return WeaponMontage.LoadSynchronous();
+	}
+
+	UAnimMontage* GetCharacterMontage() const
+	{
+		return CharacterMontage.LoadSynchronous();
 	}
 };

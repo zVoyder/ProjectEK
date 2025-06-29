@@ -62,9 +62,9 @@ bool UWeaponMontagesManagerBase::IsPlayingWeaponMontage(const FWeaponMontageData
 	return Weapon->IsPlayingWeaponMontage(WeaponMontageData);
 }
 
-bool UWeaponMontagesManagerBase::IsWeaponReadyToUse() const
+bool UWeaponMontagesManagerBase::IsEquipOrUnequipMontagePlaying() const
 {
-	return bIsWeaponReadyToUse;
+	return bIsPlayingEquipMontage;
 }
 
 void UWeaponMontagesManagerBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -119,20 +119,20 @@ void UWeaponMontagesManagerBase::OnWeaponEndAttack()
 
 void UWeaponMontagesManagerBase::StartEquipMontage()
 {
-	if (EquipMontageData.CharacterMontage == nullptr && EquipMontageData.GetWeaponMontage() == nullptr)
+	if (EquipMontageData.GetCharacterMontage() == nullptr && EquipMontageData.GetWeaponMontage() == nullptr)
 		return;
 
-	bIsWeaponReadyToUse = false;
+	bIsPlayingEquipMontage = true;
 	EquipMontageData.OnMontageFinished.AddDynamic(this, &UWeaponMontagesManagerBase::OnWeaponReadyToUse);
 	StartWeaponMontage(EquipMontageData, 1.0f, 1.0f);
 }
 
 void UWeaponMontagesManagerBase::StartUnequipMontage()
 {
-	if (UnequipMontageData.CharacterMontage == nullptr && UnequipMontageData.GetWeaponMontage() == nullptr)
+	if (UnequipMontageData.GetCharacterMontage() == nullptr && UnequipMontageData.GetWeaponMontage() == nullptr)
 		return;
 
-	bIsWeaponReadyToUse = false;
+	bIsPlayingEquipMontage = true;
 	UnequipMontageData.OnMontageFinished.AddDynamic(this, &UWeaponMontagesManagerBase::OnWeaponReadyToUse);
 	StartWeaponMontage(UnequipMontageData, 1.0f, 1.0f);
 }
@@ -149,5 +149,5 @@ void UWeaponMontagesManagerBase::OnWeaponUnequipped()
 
 void UWeaponMontagesManagerBase::OnWeaponReadyToUse(bool bInterrupted)
 {
-	bIsWeaponReadyToUse = true;
+	bIsPlayingEquipMontage = false;
 }

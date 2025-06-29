@@ -8,9 +8,58 @@ UMeleeMontagesManager::UMeleeMontagesManager(): WeaponMelee(nullptr)
 {
 }
 
+void UMeleeMontagesManager::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	ProcessDefense();
+}
+
 int32 UMeleeMontagesManager::GetAttackIndex() const
 {
 	return CurrentAttackIndex;
+}
+
+void UMeleeMontagesManager::SetWantsToDefend(const bool bWants)
+{
+	bWantsToDefend = bWants;
+}
+
+bool UMeleeMontagesManager::IsMontageDefending() const
+{
+	return bIsDefending;
+}
+
+bool UMeleeMontagesManager::IsMontageAttacking() const
+{
+	return bIsAttacking;
+}
+
+void UMeleeMontagesManager::CheckBufferAttack()
+{
+	if (bWantsToAttack)
+		bHasBufferedAttack = true;
+}
+
+void UMeleeMontagesManager::ClearBufferedAttack()
+{
+	bHasBufferedAttack = false;
+}
+
+void UMeleeMontagesManager::OnAttackBeginNotify()
+{
+	ClearBufferedAttack();
+}
+
+void UMeleeMontagesManager::OnAttackFinishedNotify()
+{
+	if (bWantsToAttack || bHasBufferedAttack)
+	{
+		bEndAttack = false;
+		PlayNextAttackMontage();
+		return;
+	}
+
+	EndAttackSequence();
 }
 
 void UMeleeMontagesManager::BeginPlay()
@@ -52,42 +101,6 @@ void UMeleeMontagesManager::OnWeaponEndAttack()
 	bEndAttack = true;
 }
 
-bool UMeleeMontagesManager::IsMontageAttacking() const
-{
-	return bIsAttacking;
-}
-
-void UMeleeMontagesManager::CheckBufferAttack()
-{
-	if (bWantsToAttack)
-		bHasBufferedAttack = true;
-}
-
-void UMeleeMontagesManager::ClearBufferedAttack()
-{
-	bHasBufferedAttack = false;
-}
-
-void UMeleeMontagesManager::OnAttackBeginNotify()
-{
-	ClearBufferedAttack();
-}
-
-void UMeleeMontagesManager::OnAttackFinishedNotify()
-{
-	//print has buffered attack and wants to attack
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Buffered: %s, Wants: %s"), bHasBufferedAttack ? TEXT("True") : TEXT("False"), bWantsToAttack ? TEXT("True") : TEXT("False")));
-	
-	if (/*bWantsToAttack || */bHasBufferedAttack)
-	{
-		bEndAttack = false;
-		PlayNextAttackMontage();
-		return;
-	}
-
-	EndAttackSequence();
-}
-
 void UMeleeMontagesManager::StartComboAttack()
 {
 	if (AttackMontages.IsEmpty())
@@ -99,24 +112,32 @@ void UMeleeMontagesManager::StartComboAttack()
 	CurrentAttackIndex = 0;
 	FWeaponMeleeAttackMontageData& AttackMontage = AttackMontages[0];
 
+	FAlphaBlendArgs WeaponBlendArgs;
+	if (IsValid(DefensiveMontage.GetWeaponMontage()))
+		WeaponBlendArgs = DefensiveMontage.GetWeaponMontage()->BlendOut;
+
 	CurrentAttackMontage = &AttackMontage;
 	StartWeaponMontageWithBlends(
 		AttackMontage.AttackMontage,
 		1.0f, // Use the default play rate, since it can be set in the montage itself
 		1.0f,
-		FAlphaBlendArgs(), // No need to BlendIn the Weapon
+		WeaponBlendArgs,
 		StartBlendIn
 	);
 }
 
 void UMeleeMontagesManager::EndComboAttack() const
 {
-	if (CurrentAttackMontage == nullptr || !IsValid(CurrentAttackMontage->AttackMontage.CharacterMontage))
+	if (CurrentAttackMontage == nullptr || !IsValid(CurrentAttackMontage->AttackMontage.GetCharacterMontage()))
 		return;
+
+	FAlphaBlendArgs WeaponBlendArgs;
+	if (IsValid(DefensiveMontage.GetWeaponMontage()))
+		WeaponBlendArgs = DefensiveMontage.GetWeaponMontage()->BlendOut;
 
 	StopWeaponMontageWithBlends(
 		CurrentAttackMontage->AttackMontage,
-		FAlphaBlendArgs(),
+		WeaponBlendArgs,
 		StopBlendOut
 	);
 }
@@ -158,4 +179,82 @@ void UMeleeMontagesManager::EndAttackSequence()
 	bIsAttacking = false;
 	bEndAttack = false;
 	CurrentAttackMontage = nullptr;
+}
+
+void UMeleeMontagesManager::PlayDefensiveMontage()
+{
+	if (bIsDefenseInCooldown || bIsAttacking || bWantsToAttack)
+		return;
+
+	if (IsMontageDefending())
+		return;
+	
+	if (!IsValid(DefensiveMontage.GetCharacterMontage()))
+		return;
+	
+	bIsDefending = true;
+	StartWeaponMontage(
+		DefensiveMontage,
+		1.0f,
+		1.0f
+	);
+
+	StartDefenseCooldownTimer();
+}
+
+void UMeleeMontagesManager::StopDefensiveMontage()
+{
+	if (!IsMontageDefending())
+		return;
+
+	if (!IsValid(DefensiveMontage.GetCharacterMontage()))
+		return;
+
+	bIsDefending = false;
+	FAlphaBlendArgs WeaponBlendArgs;
+	if (IsValid(DefensiveMontage.GetWeaponMontage()))
+		WeaponBlendArgs = DefensiveMontage.GetWeaponMontage()->BlendOut;
+
+	StopWeaponMontageWithBlends(
+		DefensiveMontage,
+		WeaponBlendArgs,
+		DefensiveMontage.GetCharacterMontage()->BlendOut
+	);
+}
+
+void UMeleeMontagesManager::ProcessDefense()
+{
+	if (bWantsToDefend)
+		PlayDefensiveMontage();
+	else
+		StopDefensiveMontage();
+}
+
+void UMeleeMontagesManager::StartDefenseCooldownTimer()
+{
+	if  (DefenseCooldown <= 0.0f)
+		return;
+	
+	const UWorld* World = GetWorld();
+
+	if (!IsValid(World))
+	{
+		UE_LOG(LogWeaponSystem, Warning, TEXT("UMeleeMontagesManager::StartDefenseCooldownTimer: World is not valid."));
+		return;
+	}
+	
+	bIsDefenseInCooldown = true;
+	FTimerManager& TimerManager = World->GetTimerManager();
+	TimerManager.SetTimer(
+		DefenseCooldownTimer,
+		this,
+		&UMeleeMontagesManager::ResetDefenseCooldown,
+		DefenseCooldown,
+		false
+	);
+}
+
+void UMeleeMontagesManager::ResetDefenseCooldown()
+{
+	bIsDefenseInCooldown = false;
 }

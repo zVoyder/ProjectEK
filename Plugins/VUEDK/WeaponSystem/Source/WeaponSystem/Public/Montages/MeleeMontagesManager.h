@@ -38,6 +38,7 @@ private:
 	bool bIsAttacking = false;
 	bool bIsDefending = false;
 	bool bEndAttack = false;
+	bool bIsInterrupting = false;
 	FTimerHandle DefenseCooldownTimer;
 	FWeaponMeleeAttackMontageData* CurrentAttackMontage = nullptr;
 
@@ -45,15 +46,22 @@ public:
 	UMeleeMontagesManager();
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	virtual bool IsBusy_Implementation() const override;
 	
 	UFUNCTION(BlueprintPure)
 	int32 GetAttackIndex() const;
 	
-	void SetWantsToDefend(const bool bWants);
+	UFUNCTION(BlueprintPure)
+	bool IsMontageInterrupting() const;
 
+	UFUNCTION(BlueprintPure)
 	bool IsMontageDefending() const;
 
+	UFUNCTION(BlueprintPure)
 	bool IsMontageAttacking() const;
+
+	void SetWantsToDefend(const bool bWants);
 
 	void CheckBufferAttack();
 
@@ -69,10 +77,18 @@ protected:
 	virtual void OnWeaponAttackSuccess() override;
 
 	virtual void OnWeaponEndAttack() override;
+	
+	UFUNCTION()
+	void OnWeaponAttackInterrupted();
+
+	UFUNCTION()
+	void OnAttackInterruptFinished(bool bInterrupted);
 
 	void StartComboAttack();
 
 	void EndComboAttack() const;
+
+	void ResetComboAttack();
 
 	void PlayNextAttackMontage();
 

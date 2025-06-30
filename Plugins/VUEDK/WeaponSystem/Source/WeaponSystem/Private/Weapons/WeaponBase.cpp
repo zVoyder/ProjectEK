@@ -138,6 +138,34 @@ bool AWeaponBase::IsPlayingWeaponMontage(const FWeaponMontageData& WeaponMontage
 	return PlayingMontages.Contains(WeaponMontageData.GetWeaponMontage()) || PlayingMontages.Contains(WeaponMontageData.GetCharacterMontage());
 }
 
+void AWeaponBase::ResumeWeaponMontage(const FWeaponMontageData& WeaponMontageData) const
+{
+	if (!PlayingMontages.Contains(WeaponMontageData.GetWeaponMontage()) && !PlayingMontages.Contains(WeaponMontageData.GetCharacterMontage()))
+		return;
+
+	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
+	if (IsValid(AnimInstance) && IsValid(WeaponMontageData.GetCharacterMontage()))
+		AnimInstance->Montage_Resume(WeaponMontageData.GetCharacterMontage());
+
+	UAnimInstance* WeaponAnimInstance = GetWeaponAnimInstance();
+	if (IsValid(WeaponAnimInstance) && IsValid(WeaponMontageData.GetWeaponMontage()))
+		WeaponAnimInstance->Montage_Resume(WeaponMontageData.GetWeaponMontage());
+}
+
+void AWeaponBase::PauseWeaponMontage(const FWeaponMontageData& WeaponMontageData) const
+{
+	if (!PlayingMontages.Contains(WeaponMontageData.GetWeaponMontage()) && !PlayingMontages.Contains(WeaponMontageData.GetCharacterMontage()))
+		return;
+
+	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
+	if (IsValid(AnimInstance) && IsValid(WeaponMontageData.GetCharacterMontage()))
+		AnimInstance->Montage_Pause(WeaponMontageData.GetCharacterMontage());
+
+	UAnimInstance* WeaponAnimInstance = GetWeaponAnimInstance();
+	if (IsValid(WeaponAnimInstance) && IsValid(WeaponMontageData.GetWeaponMontage()))
+		WeaponAnimInstance->Montage_Pause(WeaponMontageData.GetWeaponMontage());
+}
+
 void AWeaponBase::StartWeaponMontage(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate)
 {
 	const bool bHasCharacterPriority = IsValid(WeaponMontageData.GetCharacterMontage()) && WeaponMontageData.MontageEndPriority == EMontageEndPriority::CharacterPriority;

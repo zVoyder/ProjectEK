@@ -190,6 +190,20 @@ public:
 	bool IsPlayingWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
 
 	/**
+	 * Resumes the specified weapon montage if it is currently paused.
+	 * @param WeaponMontageData - The montage data to resume.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void ResumeWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
+	
+	/**
+	 * Pauses the specified weapon montage if it is currently playing.
+	 * @param WeaponMontageData - The montage data to pause.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void PauseWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
+	
+	/**
 	 * Starts playing the specified weapon montage with given play rates.
 	 * @param WeaponMontageData - The montage data to play.
 	 * @param WeaponPlayRate - Play rate for the weapon montage.

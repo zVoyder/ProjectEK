@@ -96,12 +96,14 @@ int32 UStatsContainer::GetStatsLength() const
 	return Values.Num();
 }
 
+bool UStatsContainer::HasValue(const UStatDataBase* Stat) const
+{
+	return IsValid(Stat) && Values.Contains(Stat);
+}
+
 bool UStatsContainer::TrySetValue(UStatDataBase* Stat, const float Value, const bool bNotifyEvent)
 {
-	if (!IsValid(Stat))
-		return false;
-
-	if (!Values.Contains(Stat))
+	if (!HasValue(Stat))
 		return false;
 
 	Values[Stat] = ValidateStatValue(Value, Stat->StatValueRange);
@@ -114,16 +116,10 @@ bool UStatsContainer::TrySetValue(UStatDataBase* Stat, const float Value, const 
 
 bool UStatsContainer::TryModifyValue(UStatDataBase* Stat, const float SumValue, const bool bNotifyEvent)
 {
-	if (!IsValid(Stat))
-		return false;
-
-	if (!Values.Contains(Stat))
-		return false;
-
 	return TrySetValue(Stat, GetValueAsFloat(Stat) + SumValue, bNotifyEvent);
 }
 
-TMap<UStatDataBase*, float> const& UStatsContainer::GetValues() const
+TMap<UStatDataBase*, float> UStatsContainer::GetValues() const
 {
 	return Values;
 }

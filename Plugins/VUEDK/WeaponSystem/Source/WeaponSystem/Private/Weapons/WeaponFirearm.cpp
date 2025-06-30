@@ -326,7 +326,7 @@ bool AWeaponFirearm::NativeDeployWeaponAttack()
 		return false;
 	}
 	
-	if (!FirearmMontagesManager->IsEquipOrUnequipMontagePlaying())
+	if (FirearmMontagesManager->IsBusy())
 		return false;
 	
 	if (bCanDeployAttackIfReloading)

@@ -80,13 +80,14 @@ bool AWeaponMelee::NativeDeployWeaponAttack()
 		return false;
 	}
 	
-	if (MeleeMontagesManager->IsMontageDefending())
+	if (MeleeMontagesManager->IsBusy())
 		return false;
 
-	if (MeleeMontagesManager->IsEquipOrUnequipMontagePlaying())
-		return false;
-	
 	return true;
+}
+
+void AWeaponMelee::OnWeaponAttackInterrupted_Implementation()
+{
 }
 
 void AWeaponMelee::TraceDamageHitbox()
@@ -117,7 +118,7 @@ void AWeaponMelee::TraceDamageHitbox()
 		FCollisionShape::MakeCapsule(DamageHitboxPreview->GetScaledCapsuleRadius(), DamageHitboxPreview->GetScaledCapsuleHalfHeight()),
 		Params
 	);
-	
+
 	HandleHitActors(HitResults);
 
 #if WITH_EDITORONLY_DATA
@@ -146,6 +147,13 @@ void AWeaponMelee::HandleHitActors(TArray<FHitResult> HitResults)
 		AActor* HitActor = HitResult.GetActor();
 		if (!IsValid(HitActor) || NewActorsInHitbox.Contains(HitActor))
 			continue;
+
+		if (WeaponMeleeData.AttackInterruptors.Contains(HitResult.Component->GetCollisionObjectType()))
+		{
+			OnWeaponAttackInterrupt.Broadcast();
+			OnWeaponAttackInterrupted();
+			return;
+		}
 
 		NewActorsInHitbox.Add(HitActor);
 		if (!ActorsCurrentlyInHitbox.Contains(HitActor))

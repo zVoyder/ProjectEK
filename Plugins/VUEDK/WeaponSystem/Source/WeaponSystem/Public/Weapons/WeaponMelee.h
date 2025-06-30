@@ -9,12 +9,19 @@
 #include "Montages/MeleeMontagesManager.h"
 #include "WeaponMelee.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(
+	FOnWeaponAttackInterrupt
+);
+
 UCLASS()
 class WEAPONSYSTEM_API AWeaponMelee : public AWeaponBase
 {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnWeaponAttackInterrupt OnWeaponAttackInterrupt;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
 	FWeaponMeleeData WeaponMeleeData;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -23,7 +30,7 @@ public:
 	UCapsuleComponent* DamageHitboxPreview;
 
 #if WITH_EDITORONLY_DATA
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Debug")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Debug")
 	bool bDebug = false;
 #endif
 
@@ -45,13 +52,13 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	bool CanDefend() const;
-	
+
 	UFUNCTION(BlueprintCallable)
 	void StartDefense() const;
 
 	UFUNCTION(BlueprintCallable)
 	void StopDefense();
-	
+
 	UFUNCTION(BlueprintCallable)
 	void EnableDamageHitbox();
 
@@ -62,6 +69,9 @@ public:
 
 protected:
 	virtual bool NativeDeployWeaponAttack() override;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnWeaponAttackInterrupted();
 
 private:
 	void TraceDamageHitbox();

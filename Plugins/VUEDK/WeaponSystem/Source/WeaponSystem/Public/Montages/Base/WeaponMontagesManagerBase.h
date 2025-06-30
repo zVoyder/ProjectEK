@@ -27,21 +27,23 @@ private:
 
 public:
 	UWeaponMontagesManagerBase();
-	
-	UFUNCTION(BlueprintCallable)
-	void StartWeaponMontage(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate) const;
 
-	UFUNCTION(BlueprintCallable)
+	void ResumeWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
+	
+	void PauseWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
+	
+	void StartWeaponMontage(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate) const;
+	
 	void StartWeaponMontageWithBlends(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate, const FAlphaBlendArgs& WeaponBlendIn, const FAlphaBlendArgs& CharacterBlendIn) const;
 
-	UFUNCTION(BlueprintCallable)
 	void StopWeaponMontage(const FWeaponMontageData WeaponMontageData) const;
 	
-	UFUNCTION(BlueprintCallable)
 	void StopWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut) const;
 	
-	UFUNCTION(BlueprintPure)
 	bool IsPlayingWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure)
+	bool IsBusy() const;
 	
 	UFUNCTION(BlueprintPure)
 	bool IsEquipOrUnequipMontagePlaying() const;

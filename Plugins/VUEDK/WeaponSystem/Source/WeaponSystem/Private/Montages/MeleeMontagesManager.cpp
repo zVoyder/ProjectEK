@@ -14,14 +14,19 @@ void UMeleeMontagesManager::TickComponent(float DeltaTime, enum ELevelTick TickT
 	ProcessDefense();
 }
 
+bool UMeleeMontagesManager::IsBusy_Implementation() const
+{
+	return Super::IsBusy_Implementation() || IsMontageDefending() || IsMontageInterrupting();
+}
+
 int32 UMeleeMontagesManager::GetAttackIndex() const
 {
 	return CurrentAttackIndex;
 }
 
-void UMeleeMontagesManager::SetWantsToDefend(const bool bWants)
+bool UMeleeMontagesManager::IsMontageInterrupting() const
 {
-	bWantsToDefend = bWants;
+	return bIsInterrupting;
 }
 
 bool UMeleeMontagesManager::IsMontageDefending() const
@@ -32,6 +37,11 @@ bool UMeleeMontagesManager::IsMontageDefending() const
 bool UMeleeMontagesManager::IsMontageAttacking() const
 {
 	return bIsAttacking;
+}
+
+void UMeleeMontagesManager::SetWantsToDefend(const bool bWants)
+{
+	bWantsToDefend = bWants;
 }
 
 void UMeleeMontagesManager::CheckBufferAttack()
@@ -52,6 +62,9 @@ void UMeleeMontagesManager::OnAttackBeginNotify()
 
 void UMeleeMontagesManager::OnAttackFinishedNotify()
 {
+	if (bIsInterrupting)
+		return;
+
 	if (bWantsToAttack || bHasBufferedAttack)
 	{
 		bEndAttack = false;
@@ -79,7 +92,10 @@ void UMeleeMontagesManager::BeginPlay()
 	{
 		UE_LOG(LogWeaponSystem, Error, TEXT("UMeleeMontagesManager::BeginPlay: %s in %s is not in a WeaponMelee."), *GetName(), *GetOwner()->GetName());
 		UActorComponent::SetActive(false);
+		return;
 	}
+
+	WeaponMelee->OnWeaponAttackInterrupt.AddDynamic(this, &UMeleeMontagesManager::OnWeaponAttackInterrupted);
 }
 
 void UMeleeMontagesManager::OnWeaponAttackSuccess()
@@ -101,6 +117,27 @@ void UMeleeMontagesManager::OnWeaponEndAttack()
 	bEndAttack = true;
 }
 
+void UMeleeMontagesManager::OnWeaponAttackInterrupted()
+{
+	if (!IsValid(CurrentAttackMontage->AttackInterruptMontage.GetCharacterMontage()))
+		return;
+
+	FWeaponMeleeAttackMontageData* WeaponMontage = CurrentAttackMontage;
+	bIsInterrupting = true;
+	EndAttackSequence();
+	WeaponMontage->AttackInterruptMontage.OnMontageFinished.AddUniqueDynamic(this, &UMeleeMontagesManager::OnAttackInterruptFinished);
+	StartWeaponMontage(
+		WeaponMontage->AttackInterruptMontage,
+		1.0f,
+		1.0f
+	);
+}
+
+void UMeleeMontagesManager::OnAttackInterruptFinished(bool bInterrupted)
+{
+	bIsInterrupting = false;
+}
+
 void UMeleeMontagesManager::StartComboAttack()
 {
 	if (AttackMontages.IsEmpty())
@@ -109,7 +146,7 @@ void UMeleeMontagesManager::StartComboAttack()
 		return;
 	}
 
-	CurrentAttackIndex = 0;
+	ResetComboAttack();
 	FWeaponMeleeAttackMontageData& AttackMontage = AttackMontages[0];
 
 	FAlphaBlendArgs WeaponBlendArgs;
@@ -140,6 +177,13 @@ void UMeleeMontagesManager::EndComboAttack() const
 		WeaponBlendArgs,
 		StopBlendOut
 	);
+}
+
+void UMeleeMontagesManager::ResetComboAttack()
+{
+	CurrentAttackIndex = 0;
+	bIsAttacking = false;
+	bEndAttack = false;
 }
 
 void UMeleeMontagesManager::PlayNextAttackMontage()
@@ -175,9 +219,7 @@ void UMeleeMontagesManager::PlayAttackMontage(FWeaponMeleeAttackMontageData& Att
 void UMeleeMontagesManager::EndAttackSequence()
 {
 	EndComboAttack();
-	CurrentAttackIndex = 0;
-	bIsAttacking = false;
-	bEndAttack = false;
+	ResetComboAttack();
 	CurrentAttackMontage = nullptr;
 }
 
@@ -188,10 +230,10 @@ void UMeleeMontagesManager::PlayDefensiveMontage()
 
 	if (IsMontageDefending())
 		return;
-	
+
 	if (!IsValid(DefensiveMontage.GetCharacterMontage()))
 		return;
-	
+
 	bIsDefending = true;
 	StartWeaponMontage(
 		DefensiveMontage,
@@ -232,9 +274,9 @@ void UMeleeMontagesManager::ProcessDefense()
 
 void UMeleeMontagesManager::StartDefenseCooldownTimer()
 {
-	if  (DefenseCooldown <= 0.0f)
+	if (DefenseCooldown <= 0.0f)
 		return;
-	
+
 	const UWorld* World = GetWorld();
 
 	if (!IsValid(World))
@@ -242,7 +284,7 @@ void UMeleeMontagesManager::StartDefenseCooldownTimer()
 		UE_LOG(LogWeaponSystem, Warning, TEXT("UMeleeMontagesManager::StartDefenseCooldownTimer: World is not valid."));
 		return;
 	}
-	
+
 	bIsDefenseInCooldown = true;
 	FTimerManager& TimerManager = World->GetTimerManager();
 	TimerManager.SetTimer(

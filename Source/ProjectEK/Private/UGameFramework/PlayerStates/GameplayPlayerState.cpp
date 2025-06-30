@@ -8,6 +8,7 @@ AGameplayPlayerState::AGameplayPlayerState()
 	Inventory = CreateDefaultSubobject<URPGInventory>(TEXT("Inventory"));
 	Equipment = CreateDefaultSubobject<UEquipment>(TEXT("Equipment"));
 	ResourceAttributesManager = CreateDefaultSubobject<UResourceAttributesManager>(TEXT("ResourceAttributesManager"));
+	LevelsManager = CreateDefaultSubobject<ULevelsManager>(TEXT("LevelsManager"));
 }
 
 void AGameplayPlayerState::BeginPlay()

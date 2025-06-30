@@ -55,6 +55,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	int32 GetStatsLength() const;
 
+	UFUNCTION(BlueprintPure)
+	bool HasValue(const UStatDataBase* Stat) const;
+
 	UFUNCTION(BlueprintCallable, meta = (HidePin = "bNotifyEvent"))
 	bool TrySetValue(UStatDataBase* Stat, const float Value, const bool bNotifyEvent = true);
 	
@@ -62,7 +65,7 @@ public:
 	bool TryModifyValue(UStatDataBase* Stat, const float SumValue, const bool bNotifyEvent = true);
 	
 	UFUNCTION(BlueprintPure)
-	TMap<UStatDataBase*, float> const& GetValues() const;
+	TMap<UStatDataBase*, float> GetValues() const;
 
 protected:
 	virtual float ValidateStatValue(const float Value, const FFloatRange& Range);

@@ -3,9 +3,26 @@
 #include "Montages/Base/WeaponMontagesManagerBase.h"
 #include "WeaponSystem.h"
 
-UWeaponMontagesManagerBase::UWeaponMontagesManagerBase(): Weapon(nullptr)
+UWeaponMontagesManagerBase::UWeaponMontagesManagerBase(): Weapon(nullptr),
+                                                          bIsPlayingEquipMontage(false)
 {
 	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UWeaponMontagesManagerBase::ResumeWeaponMontage(const FWeaponMontageData& WeaponMontageData) const
+{
+	if (!Check())
+		return;
+
+	Weapon->ResumeWeaponMontage(WeaponMontageData);
+}
+
+void UWeaponMontagesManagerBase::PauseWeaponMontage(const FWeaponMontageData& WeaponMontageData) const
+{
+	if (!Check())
+		return;
+
+	Weapon->PauseWeaponMontage(WeaponMontageData);
 }
 
 void UWeaponMontagesManagerBase::StartWeaponMontage(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate) const
@@ -60,6 +77,11 @@ bool UWeaponMontagesManagerBase::IsPlayingWeaponMontage(const FWeaponMontageData
 		return false;
 
 	return Weapon->IsPlayingWeaponMontage(WeaponMontageData);
+}
+
+bool UWeaponMontagesManagerBase::IsBusy_Implementation() const
+{
+	return IsEquipOrUnequipMontagePlaying();
 }
 
 bool UWeaponMontagesManagerBase::IsEquipOrUnequipMontagePlaying() const

@@ -20,9 +20,9 @@ struct WEAPONSYSTEM_API FWeaponMontageData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnMontageBegin OnMontageBegin;
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnMontageFinished OnMontageFinished;
 	FOnMontageEnded OnMontageEndedDelegate;
 

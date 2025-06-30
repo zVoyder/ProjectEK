@@ -106,8 +106,11 @@ bool UStatsContainer::TrySetValue(UStatDataBase* Stat, const float Value, const 
 	if (!HasValue(Stat))
 		return false;
 
+	const float OldValue = Values[Stat];
 	Values[Stat] = ValidateStatValue(Value, Stat->StatValueRange);
-
+	if (OldValue == Values[Stat])
+		return false;
+	
 	if (bNotifyEvent)
 		OnStatsValuesChanged.Broadcast();
 

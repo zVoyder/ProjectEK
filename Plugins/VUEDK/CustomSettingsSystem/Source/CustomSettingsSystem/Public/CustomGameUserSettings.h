@@ -61,10 +61,14 @@ public:
 	TMap<FGameplayTag, float> CurrentSettingsMap;
 
 private:
+	UPROPERTY(Config)
+	bool bIsInitialized = false;
 	UPROPERTY()
 	UCSSSettings* CSSSettings;
 
 public:
+	virtual void LoadSettings(bool bForceReload = false) override;
+	
 	UFUNCTION(BlueprintCallable, Category = Settings)
 	void SetCustomOption(const FGameplayTag Tag, float Value);
 

@@ -52,7 +52,7 @@ public:
 	void NativeClose();
 
 	UFUNCTION(BlueprintCallable)
-	void Close() const;
+	void Close();
 
 	UFUNCTION(BlueprintPure)
 	bool IsOpen() const;

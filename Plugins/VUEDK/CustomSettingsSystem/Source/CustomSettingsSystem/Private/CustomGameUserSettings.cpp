@@ -4,11 +4,29 @@
 #include "CSSSettings.h"
 #include "CustomSettingsSystem.h"
 
+void UCustomGameUserSettings::LoadSettings(bool bForceReload)
+{
+	Super::LoadSettings(bForceReload);
+
+	if (!bIsInitialized)
+	{
+		bIsInitialized = true;
+		SetAllToDefaults();
+		ApplyAllSettings(false, true);
+	}
+}
+
 void UCustomGameUserSettings::SetCustomOption(const FGameplayTag Tag, float Value)
 {
 	const UCSSSettings* Settings = GetSettings();
 
-	if (!IsValid(Settings) || !Settings->CustomSettingsMap.Contains(Tag))
+	if (!IsValid(Settings))
+	{
+		UE_LOG(LogCustomSettingsSystem, Error, TEXT("UCustomGameUserSettings::SetCustomOption: No settings found."));
+		return;
+	}
+
+	if (!Settings->CustomSettingsMap.Contains(Tag))
 		return;
 
 	Value = ClampValue(Value, Tag, Settings);
@@ -36,13 +54,16 @@ void UCustomGameUserSettings::SetAllToDefaults()
 void UCustomGameUserSettings::SetToDefaults()
 {
 	Super::SetToDefaults();
-
 	const UCSSSettings* Settings = GetSettings();
 	if (!IsValid(Settings))
+	{
+		UE_LOG(LogCustomSettingsSystem, Error, TEXT("UCustomGameUserSettings::SetToDefaults: No settings found."));
 		return;
-	
+	}
+
 	bUseVSync = Settings->DefaultVSync;
 	FrameRateLimit = Settings->DefaultFrameRateLimit;
+	SetScreenResolution(Settings->DefaultResolution);
 	OnCustomSettingsUINeedsUpdate.Broadcast();
 	OnResetVideoToDefaults.Broadcast();
 }
@@ -51,7 +72,10 @@ void UCustomGameUserSettings::SetAllCustomOptionsToDefaults()
 {
 	const UCSSSettings* Settings = GetSettings();
 	if (!IsValid(Settings))
+	{
+		UE_LOG(LogCustomSettingsSystem, Error, TEXT("UCustomGameUserSettings::SetAllCustomOptionsToDefaults: No settings found."));
 		return;
+	}
 
 	for (const auto Option : Settings->CustomSettingsMap)
 	{
@@ -65,13 +89,16 @@ void UCustomGameUserSettings::SetAllCustomOptionsToDefaults()
 
 void UCustomGameUserSettings::SetCustomOptionsToDefaults(TArray<FGameplayTag> Tags)
 {
+	const UCSSSettings* Settings = GetSettings();
+	if (!IsValid(Settings))
+	{
+		UE_LOG(LogCustomSettingsSystem, Error, TEXT("UCustomGameUserSettings::SetCustomOptionsToDefaults: No settings found."));
+		return;
+	}
+
 	for (const auto Tag : Tags)
 	{
 		if (!CurrentSettingsMap.Contains(Tag))
-			return;
-		
-		const UCSSSettings* Settings = GetSettings();
-		if (!IsValid(Settings))
 			continue;
 
 		const float Value = ClampValue(Settings->CustomSettingsMap[Tag].DefaultValue, Tag, Settings);

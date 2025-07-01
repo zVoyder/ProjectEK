@@ -53,12 +53,12 @@ void UMenuWidget::NativeClose()
 	OnMenuClosed.Broadcast();
 }
 
-void UMenuWidget::Close() const
+void UMenuWidget::Close()
 {
 	if (!Check())
 		return;
-
-	MenuManager->CloseCurrentMenu();
+	
+	MenuManager->CloseMenuByMenuWidget(this);
 }
 
 bool UMenuWidget::IsOpen() const

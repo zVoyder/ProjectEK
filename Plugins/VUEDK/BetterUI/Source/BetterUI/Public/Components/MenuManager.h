@@ -65,6 +65,8 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsAnyMenuOpen() const;
 
+	void CloseMenuByMenuWidget(UMenuWidget* Menu);
+
 private:
 	void SetOpenMenu(UMenuWidget* Menu, FGameplayTag Tag);
 

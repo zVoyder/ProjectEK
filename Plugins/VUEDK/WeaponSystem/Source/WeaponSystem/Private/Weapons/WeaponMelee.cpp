@@ -30,21 +30,26 @@ bool AWeaponMelee::IsWeaponBlocking() const
 
 bool AWeaponMelee::CanDefend_Implementation() const
 {
+	return IsValid(MeleeMontagesManager->DefensiveMontage.GetCharacterMontage());
+}
+
+bool AWeaponMelee::StartDefense() const
+{
+	if (!CanDefend())
+        return false;
+	
+	MeleeMontagesManager->SetWantsToDefend(true);
 	return true;
 }
 
-void AWeaponMelee::StartDefense() const
+bool AWeaponMelee::StopDefense()
 {
 	if (!CanDefend())
-        return;
+		return false;
 	
-	MeleeMontagesManager->SetWantsToDefend(true);
-}
-
-void AWeaponMelee::StopDefense()
-{
 	MeleeMontagesManager->SetWantsToDefend(false);
 	bIsBlockActive = false;
+	return true;
 }
 
 void AWeaponMelee::EnableDamageHitbox()

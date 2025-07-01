@@ -86,7 +86,7 @@ void UMenuManager::CloseCurrentMenu()
 		UE_LOG(LogBetterUI, Warning, TEXT("UMenuManager::CloseCurrentMenu: Menu not found in MenuMap."));
 		return;
 	}
-
+	
 	SetCloseMenu(CurrentOpenMenu, *Tag);
 }
 
@@ -120,6 +120,18 @@ bool UMenuManager::IsMenuOpen(const FGameplayTag Tag) const
 bool UMenuManager::IsAnyMenuOpen() const
 {
 	return IsValid(CurrentOpenMenu);
+}
+
+void UMenuManager::CloseMenuByMenuWidget(UMenuWidget* Menu)
+{
+	if (!Check())
+	{
+		UE_LOG(LogBetterUI, Error, TEXT("UMenuManager::CloseMenuByMenuWidget: MenuManager check failed."));
+		return;
+	}
+
+	if (CurrentOpenMenu == Menu)
+		SetCloseMenu(Menu, FGameplayTag::EmptyTag);
 }
 
 void UMenuManager::SetOpenMenu(UMenuWidget* Menu, const FGameplayTag Tag)

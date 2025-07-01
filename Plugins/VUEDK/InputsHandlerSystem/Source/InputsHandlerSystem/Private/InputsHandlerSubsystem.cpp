@@ -100,7 +100,7 @@ void UInputsHandlerSubsystem::AddCommonMappingContext(UInputMappingContext* Mapp
 	}
 
 	CommonMappingContexts.AddUnique(MappingContext);
-	EnhancedInputSubsystem->AddMappingContext(MappingContext, 0);
+	EnhancedInputSubsystem->AddMappingContext(MappingContext, InputsHandlerSystemSettings->CommonContextsPriority);
 }
 
 void UInputsHandlerSubsystem::RemoveCommonMappingContext(UInputMappingContext* MappingContext)
@@ -137,7 +137,7 @@ void UInputsHandlerSubsystem::AddGameplayMappingContext(UInputMappingContext* Ma
 
 	GameplayMappingContexts.AddUnique(MappingContext);
 	if (IsInputModeGameplay())
-		EnhancedInputSubsystem->AddMappingContext(MappingContext, 0);
+		EnhancedInputSubsystem->AddMappingContext(MappingContext, InputsHandlerSystemSettings->GameplayContextsPriority);
 }
 
 void UInputsHandlerSubsystem::RemoveGameplayMappingContext(UInputMappingContext* MappingContext)

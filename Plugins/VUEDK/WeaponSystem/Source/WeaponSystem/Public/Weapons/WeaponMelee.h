@@ -53,11 +53,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	bool CanDefend() const;
 
-	UFUNCTION(BlueprintCallable)
-	void StartDefense() const;
+	UFUNCTION(BlueprintCallable, BlueprintPure = false)
+	bool StartDefense() const;
 
-	UFUNCTION(BlueprintCallable)
-	void StopDefense();
+	UFUNCTION(BlueprintCallable, BlueprintPure = false)
+	bool StopDefense();
 
 	UFUNCTION(BlueprintCallable)
 	void EnableDamageHitbox();

@@ -6,6 +6,8 @@
 #include "GameplayTagContainer.h"
 #include "Attributes/ResourceAttribute.h"
 #include "Components/ActorComponent.h"
+#include "Features/Gameplay/CurrencySystem/CurrenciesManager.h"
+#include "Features/Gameplay/CurrencySystem/Data/CurrencyData.h"
 #include "StatsSystem/CharacterStats/CharacterStats.h"
 #include "LevelsManager.generated.h"
 
@@ -30,9 +32,9 @@ public:
 	FOnLevelUpgrade OnLevelUpgrade;
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnLevelRollback OnLevelRollback;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Levels|Upgrade")
-	FGameplayTag ResourceAttributePointsTag;
+	UCurrencyData* CurrencyData;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Levels|Upgrade")
 	int32 LevelsPerUpgrade = 1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Levels|Upgrade")
@@ -44,14 +46,14 @@ private:
 	UPROPERTY()
 	USpecialStatsContainer* Stats;
 	UPROPERTY()
-	UResourceAttribute* PointsAttribute;
+	UCurrenciesManager* CurrencyManager;
 
 public:
 	ULevelsManager();
 
 	UFUNCTION(BlueprintCallable)
 	void Init();
-	
+
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
 	bool TryUpgradeStat(USpecialStatData* Stat) const;
 
@@ -60,21 +62,21 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	int32 GetPlayerLevel() const;
-	
+
 	UFUNCTION(BlueprintPure)
 	bool HasEnoughPointsForUpgrade(float& OutCost) const;
 
 	UFUNCTION(BlueprintPure)
-	float GetCostOfNextLevel() const;
+	int32 GetCostOfNextLevel() const;
 
 	UFUNCTION(BlueprintPure)
-	float GetCostOfPreviousLevel() const;
+	int32 GetCostOfPreviousLevel() const;
 
 	UFUNCTION(BlueprintPure)
-	float GetCostOfCurrentLevel() const;
+	int32 GetCostOfCurrentLevel() const;
 
 	UFUNCTION(BlueprintPure)
-	float GetCostForLevel(int32 Level) const;
+	int32 GetCostForLevel(int32 Level) const;
 
 private:
 	bool Check() const;

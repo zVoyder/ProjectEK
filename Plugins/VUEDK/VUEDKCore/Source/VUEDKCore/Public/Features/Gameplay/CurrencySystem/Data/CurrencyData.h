@@ -21,6 +21,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FSlateBrush CurrencyIcon;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 StartingAmount = 0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FInt32Range CurrencyRange;
 
 	UCurrencyData(): CurrencyID(FGuid::NewGuid())

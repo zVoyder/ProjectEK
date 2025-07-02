@@ -8,6 +8,7 @@ AGameplayPlayerState::AGameplayPlayerState()
 	Inventory = CreateDefaultSubobject<URPGInventory>(TEXT("Inventory"));
 	Equipment = CreateDefaultSubobject<UEquipment>(TEXT("Equipment"));
 	ResourceAttributesManager = CreateDefaultSubobject<UResourceAttributesManager>(TEXT("ResourceAttributesManager"));
+	CurrencyManager = CreateDefaultSubobject<UCurrenciesManager>(TEXT("CurrencyManager"));
 	LevelsManager = CreateDefaultSubobject<ULevelsManager>(TEXT("LevelsManager"));
 }
 

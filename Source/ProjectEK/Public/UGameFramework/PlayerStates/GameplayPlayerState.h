@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ResourceAttributesManager.h"
+#include "Features/Gameplay/CurrencySystem/CurrenciesManager.h"
 #include "Features/Gameplay/LevelsSystem/LevelsManager.h"
 #include "RPGInventory/RPGInventory.h"
 #include "StatsSystem/CharacterStats/CharacterStats.h"
@@ -22,6 +23,8 @@ public:
 	UEquipment* Equipment;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player|Resource Attributes")
 	UResourceAttributesManager* ResourceAttributesManager;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player|Currency")
+	UCurrenciesManager* CurrencyManager;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player|Levels")
 	ULevelsManager* LevelsManager;
 	

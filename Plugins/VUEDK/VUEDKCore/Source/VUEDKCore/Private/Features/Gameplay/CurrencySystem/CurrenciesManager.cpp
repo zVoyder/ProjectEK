@@ -11,7 +11,19 @@ UCurrenciesManager::UCurrenciesManager()
 USaveData* UCurrenciesManager::CreateSaveData()
 {
 	UCurrenciesSaveData* SaveData = NewObject<UCurrenciesSaveData>();
-	SaveData->CurrenciesSaveMap = CurrenciesMap;
+
+	for (const TPair<UCurrencyData*, UCurrency*>& Pair : CurrenciesMap)
+	{
+		if (!IsValid(Pair.Key) || !IsValid(Pair.Value))
+		{
+			UE_LOG(LogCurrencySystem, Warning, TEXT("UCurrenciesManager::CreateSaveData: Invalid Currency or CurrencyData."));
+			continue;
+		}
+		
+		const FGuid CurrencyGuid = Pair.Key->CurrencyID;
+		SaveData->CurrenciesSaveMap.Add(CurrencyGuid, Pair.Value->GetValue());
+	}
+	
 	return SaveData;
 }
 
@@ -22,21 +34,31 @@ bool UCurrenciesManager::LoadSaveData(USaveData* SavedData)
 	if (!IsValid(CurrenciesSaveData))
 		return false;
 
-	CurrenciesMap = CurrenciesSaveData->CurrenciesSaveMap;
+	for (const TPair<FGuid, int32>& Pair : CurrenciesSaveData->CurrenciesSaveMap)
+	{
+		UCurrency* Currency = FindCurrencyByID(Pair.Key);
+		if (!IsValid(Currency))
+		{
+			UE_LOG(LogCurrencySystem, Warning, TEXT("UCurrenciesManager::LoadSaveData: Currency with ID %s not found."), *Pair.Key.ToString());
+			continue;
+		}
 
-	UpdateCurrencies();
-	
+		Currency->CurrentValue = Pair.Value;
+	}
+
+	OnCurrencyUINeedsUpdate.Broadcast();
 	return true;
 }
 
-UCurrenciesSaveData* UCurrenciesManager::CreateCurrenciesSaveData()
+UCurrency* UCurrenciesManager::GetCurrency(const UCurrencyData* Currency) const
 {
-	return Cast<UCurrenciesSaveData>(CreateSaveData());
-}
+	if (!HasCurrency(Currency))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UCurrenciesManager::GetCurrency: Currency %s is not valid."), *Currency->GetName());
+		return nullptr;
+	}
 
-void UCurrenciesManager::LoadCurrenciesSaveData(UCurrenciesSaveData* CurrenciesSaveData)
-{
-	LoadSaveData(CurrenciesSaveData);
+	return CurrenciesMap[Currency];
 }
 
 int32 UCurrenciesManager::GetCurrencyAmount(const UCurrencyData* Currency) const
@@ -44,53 +66,72 @@ int32 UCurrenciesManager::GetCurrencyAmount(const UCurrencyData* Currency) const
 	if (!HasCurrency(Currency))
 		return 0;
 
-	return CurrenciesMap[Currency->CurrencyID];
+	return CurrenciesMap[Currency]->GetValue();
 }
 
 bool UCurrenciesManager::HasCurrency(const UCurrencyData* Currency) const
 {
-	return IsValid(Currency) && CurrenciesMap.Contains(Currency->CurrencyID);
+	return IsValid(Currency) && CurrenciesMap.Contains(Currency);
 }
 
 bool UCurrenciesManager::HasEnoughCurrencyAmount(const UCurrencyData* Currency, const int32 AmountToCheck) const
 {
 	if (!HasCurrency(Currency))
 		return false;
-	
+
 	const int32 MinAmount = Currency->GetMinAmount();
-	const int32 Amount = CurrenciesMap[Currency->CurrencyID];
+	const int32 Amount = GetCurrencyAmount(Currency);
 	return Amount - AmountToCheck >= MinAmount;
 }
 
-void UCurrenciesManager::AddCurrency(UCurrencyData* Currency, int32 AmountToAdd, int32& OutRemaining)
+void UCurrenciesManager::AddCurrency(UCurrencyData* Currency, int32 AmountToAdd, int32& OutRemaining) const
 {
-	OutRemaining = AmountToAdd;
+	UCurrency* CurrentCurrency = GetCurrency(Currency);
 
-	if (!HasCurrency(Currency))
+	if (!IsValid(CurrentCurrency))
+	{
+		UE_LOG(LogCurrencySystem, Warning, TEXT("UCurrenciesManager::AddCurrency: Currency %s is not valid."), *Currency->GetName());
+		OutRemaining = 0;
 		return;
+	}
 
+	OutRemaining = AmountToAdd;
 	AmountToAdd = FMath::Abs(AmountToAdd);
 	const int32 MaxAmount = Currency->GetMaxAmount();
-	const int32& Amount = CurrenciesMap[Currency->CurrencyID];
+	const int32& Amount = CurrentCurrency->GetValue();
 	OutRemaining = Amount + AmountToAdd > MaxAmount ? AmountToAdd - (MaxAmount - Amount) : 0;
-	SetCurrencyAmount(Currency, Amount + AmountToAdd);
+	CurrentCurrency->ModifyValue(AmountToAdd);
 }
 
-void UCurrenciesManager::ConsumeCurrency(UCurrencyData* Currency, int32 AmountToConsume, int32& OutConsumedAmount)
+void UCurrenciesManager::ConsumeCurrency(UCurrencyData* Currency, const int32 AmountToConsume, int32& OutConsumedAmount) const
 {
-	AmountToConsume = FMath::Abs(AmountToConsume);
+	UCurrency* CurrentCurrency = GetCurrency(Currency);
+
+	if (!IsValid(CurrentCurrency))
+	{
+		UE_LOG(LogCurrencySystem, Warning, TEXT("UCurrenciesManager::AddCurrency: Currency %s is not valid."), *Currency->GetName());
+		OutConsumedAmount = 0;
+		return;
+	}
+
+	OutConsumedAmount = FMath::Abs(AmountToConsume);
 	const int32 MinAmount = Currency->GetMinAmount();
-	const int32 Amount = CurrenciesMap[Currency->CurrencyID];
+	const int32 Amount = CurrentCurrency->GetValue();
 	OutConsumedAmount = Amount - AmountToConsume < MinAmount ? Amount - MinAmount : AmountToConsume;
-	SetCurrencyAmount(Currency, Amount - AmountToConsume);
+	CurrentCurrency->ModifyValue(-OutConsumedAmount);
 }
 
-bool UCurrenciesManager::IsCurrencyMaxed(const UCurrencyData* Currency) const
+void UCurrenciesManager::SetCurrencyAmount(UCurrencyData* Currency, const int32 Amount) const
 {
-	if (!HasCurrency(Currency))
-		return false;
+	UCurrency* CurrentCurrency = GetCurrency(Currency);
 
-	return CurrenciesMap[Currency->CurrencyID] >= Currency->GetMaxAmount();
+	if (!IsValid(CurrentCurrency))
+	{
+		UE_LOG(LogCurrencySystem, Warning, TEXT("UCurrenciesManager::SetCurrencyAmount: Currency %s is not valid."), *Currency->GetName());
+		return;
+	}
+
+	CurrentCurrency->SetValue(Amount);
 }
 
 void UCurrenciesManager::BeginPlay()
@@ -101,19 +142,34 @@ void UCurrenciesManager::BeginPlay()
 
 void UCurrenciesManager::Init()
 {
-	for (const UCurrencyData* Currency : Currencies)
-		CurrenciesMap.Add(Currency->CurrencyID, Currency->GetMinAmount());
+	for (UCurrencyData* CurrencyData : Currencies)
+	{
+		if (!IsValid(CurrencyData))
+		{
+			UE_LOG(LogCurrencySystem, Warning, TEXT("UCurrenciesManager::Init: Currency %s is not valid."), *CurrencyData->GetName());
+			continue;
+		}
+
+		UCurrency* NewCurrency = NewObject<UCurrency>();
+		NewCurrency->Init(CurrencyData, this);
+		CurrenciesMap.Add(CurrencyData, NewCurrency);
+	}
 }
 
-void UCurrenciesManager::SetCurrencyAmount(UCurrencyData* Currency, const int32 Amount)
+UCurrency* UCurrenciesManager::FindCurrencyByID(const FGuid& CurrencyID) const
 {
-	CurrenciesMap[Currency->CurrencyID] = Amount;
-	CurrenciesMap[Currency->CurrencyID] = FMath::Clamp(CurrenciesMap[Currency->CurrencyID], Currency->GetMinAmount(), Currency->GetMaxAmount());
-	OnAnyCurrencyAmountChanged.Broadcast(Currency, CurrenciesMap[Currency->CurrencyID]);
-}
+	const UCurrencyData* FoundCurrencyData = nullptr;
+	for (const UCurrencyData* CurrencyData : Currencies)
+	{
+		if (CurrencyData->CurrencyID == CurrencyID)
+		{
+			FoundCurrencyData = CurrencyData;
+			break;
+		}
+	}
 
-void UCurrenciesManager::UpdateCurrencies()
-{
-	for (UCurrencyData* Currency : Currencies)
-		OnAnyCurrencyAmountChanged.Broadcast(Currency, CurrenciesMap[Currency->CurrencyID]);
+	if (IsValid(FoundCurrencyData))
+		return GetCurrency(FoundCurrencyData);
+	
+	return nullptr;
 }

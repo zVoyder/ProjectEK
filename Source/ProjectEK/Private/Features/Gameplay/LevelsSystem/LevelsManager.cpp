@@ -3,9 +3,10 @@
 #include "Features/Gameplay/LevelsSystem/LevelsManager.h"
 #include "UGameFramework/GameCastingSystem/GameCastingHelper.h"
 
-ULevelsManager::ULevelsManager(): CostCurve(nullptr),
+ULevelsManager::ULevelsManager(): CurrencyData(nullptr),
+                                  CostCurve(nullptr),
                                   Stats(nullptr),
-                                  PointsAttribute(nullptr)
+                                  CurrencyManager(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
@@ -21,7 +22,7 @@ void ULevelsManager::Init()
 	}
 
 	Stats = GameplayPlayerState->GetCharacterStats()->SpecialStatsContainer;
-	PointsAttribute = GameplayPlayerState->ResourceAttributesManager->GetAttributeByTag(ResourceAttributePointsTag);
+	CurrencyManager = GameplayPlayerState->CurrencyManager;
 }
 
 bool ULevelsManager::TryUpgradeStat(USpecialStatData* Stat) const
@@ -38,7 +39,8 @@ bool ULevelsManager::TryUpgradeStat(USpecialStatData* Stat) const
 
 	if (Stats->TryModifyValue(Stat, LevelsPerUpgrade))
 	{
-		PointsAttribute->ModifyValue(-UpgradeCost);
+		int32 ConsumedAmount = 0.0f;
+		CurrencyManager->ConsumeCurrency(CurrencyData, UpgradeCost, ConsumedAmount);
 		OnLevelUpgrade.Broadcast();
 		return true;
 	}
@@ -66,7 +68,8 @@ bool ULevelsManager::TryRollbackStat(USpecialStatData* Stat) const
 	const float RefundCost = GetCostOfCurrentLevel();
 	if (Stats->TryModifyValue(Stat, -LevelsPerUpgrade))
 	{
-		PointsAttribute->ModifyValue(RefundCost);
+		int32 Remaining = 0.0f;
+		CurrencyManager->AddCurrency(CurrencyData, RefundCost, Remaining);
 		OnLevelRollback.Broadcast();
 		return true;
 	}
@@ -101,32 +104,26 @@ bool ULevelsManager::HasEnoughPointsForUpgrade(float& OutCost) const
 		return false;
 	}
 
-	if (!IsValid(PointsAttribute))
-	{
-		UE_LOG(LogTemp, Error, TEXT("ULevelsManager::HasEnoughPointsForUpgrade: PointsAttribute is not valid in ULevelsManager::HasEnoughPointsForUpgrade()"));
-		return false;
-	}
-
 	OutCost = GetCostOfNextLevel();
-	return PointsAttribute->GetValue() >= OutCost;
+	return CurrencyManager->HasEnoughCurrencyAmount(CurrencyData, OutCost);
 }
 
-float ULevelsManager::GetCostOfNextLevel() const
+int32 ULevelsManager::GetCostOfNextLevel() const
 {
 	return GetCostForLevel(GetPlayerLevel() + 1);
 }
 
-float ULevelsManager::GetCostOfPreviousLevel() const
+int32 ULevelsManager::GetCostOfPreviousLevel() const
 {
 	return GetCostForLevel(GetPlayerLevel() - 1);
 }
 
-float ULevelsManager::GetCostOfCurrentLevel() const
+int32 ULevelsManager::GetCostOfCurrentLevel() const
 {
 	return GetCostForLevel(GetPlayerLevel());
 }
 
-float ULevelsManager::GetCostForLevel(const int32 Level) const
+int32 ULevelsManager::GetCostForLevel(const int32 Level) const
 {
 	if (!Check())
 	{
@@ -143,5 +140,5 @@ float ULevelsManager::GetCostForLevel(const int32 Level) const
 
 bool ULevelsManager::Check() const
 {
-	return IsValid(Stats) && IsValid(PointsAttribute);
+	return IsValid(Stats) && IsValid(CurrencyManager);
 }

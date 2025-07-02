@@ -31,7 +31,8 @@ public class ProjectEK : ModuleRules
 			"SaveSystem",
 			"BetterUI",
 			"WeaponSystem",
-			"ResourceAttributesSystem"
+			"ResourceAttributesSystem",
+			"VUEDKCore"
 		});
 
 		PublicIncludePaths.AddRange(new string[]

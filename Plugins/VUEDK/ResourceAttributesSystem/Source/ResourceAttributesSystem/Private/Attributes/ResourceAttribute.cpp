@@ -228,7 +228,7 @@ void UResourceAttribute::OnAttributeIncreased(const float OldValue)
 	if (ResourceAttributeData->bRegenAfterIncrement)
 		StartRegen(ResourceAttributeData->RegenerationDelayAfterIncrement);
 
-	OnResourceAttributeIncreased.Broadcast(CurrentValue - OldValue, OldValue, CurrentValue);
+	 
 }
 
 void UResourceAttribute::OnAttributeDecreased(const float OldValue)

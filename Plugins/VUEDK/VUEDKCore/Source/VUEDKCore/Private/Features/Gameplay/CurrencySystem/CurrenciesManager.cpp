@@ -19,11 +19,11 @@ USaveData* UCurrenciesManager::CreateSaveData()
 			UE_LOG(LogCurrencySystem, Warning, TEXT("UCurrenciesManager::CreateSaveData: Invalid Currency or CurrencyData."));
 			continue;
 		}
-		
+
 		const FGuid CurrencyGuid = Pair.Key->CurrencyID;
 		SaveData->CurrenciesSaveMap.Add(CurrencyGuid, Pair.Value->GetValue());
 	}
-	
+
 	return SaveData;
 }
 
@@ -52,9 +52,15 @@ bool UCurrenciesManager::LoadSaveData(USaveData* SavedData)
 
 UCurrency* UCurrenciesManager::GetCurrency(const UCurrencyData* Currency) const
 {
+	if (!IsValid(Currency))
+	{
+		UE_LOG(LogCurrencySystem, Warning, TEXT("UCurrenciesManager::GetCurrency: Currency is not valid."));
+		return nullptr;
+	}
+
 	if (!HasCurrency(Currency))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UCurrenciesManager::GetCurrency: Currency %s is not valid."), *Currency->GetName());
+		UE_LOG(LogCurrencySystem, Warning, TEXT("UCurrenciesManager::GetCurrency: Currency %s is not managed by this manager."), *Currency->GetName());
 		return nullptr;
 	}
 
@@ -71,7 +77,7 @@ int32 UCurrenciesManager::GetCurrencyAmount(const UCurrencyData* Currency) const
 
 bool UCurrenciesManager::HasCurrency(const UCurrencyData* Currency) const
 {
-	return IsValid(Currency) && CurrenciesMap.Contains(Currency);
+	return CurrenciesMap.Contains(Currency);
 }
 
 bool UCurrenciesManager::HasEnoughCurrencyAmount(const UCurrencyData* Currency, const int32 AmountToCheck) const
@@ -170,6 +176,6 @@ UCurrency* UCurrenciesManager::FindCurrencyByID(const FGuid& CurrencyID) const
 
 	if (IsValid(FoundCurrencyData))
 		return GetCurrency(FoundCurrencyData);
-	
+
 	return nullptr;
 }

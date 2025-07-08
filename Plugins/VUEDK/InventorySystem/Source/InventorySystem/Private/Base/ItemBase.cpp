@@ -95,7 +95,7 @@ bool UItemBase::IsEquipped() const
 	return IsValid(RelatedEquipment) && EquipSlotIndex > -1;
 }
 
-bool UItemBase::TryDrop(const FVector Location, const FRotator Rotation, AItemDropActor*& OutItemDropActor)
+bool UItemBase::TryDrop(const FVector Location, const FRotator Rotation, AItemDropActor*& OutItemDropActor, const bool bNotify)
 {
 	if (!CanDrop())
 		return false;
@@ -116,6 +116,13 @@ bool UItemBase::TryDrop(const FVector Location, const FRotator Rotation, AItemDr
 
 	OnDrop(OutItemDropActor);
 	OnItemDropped.Broadcast(this, OutItemDropActor);
+
+	if (bNotify)
+	{
+		OnDropNotify(OutItemDropActor);
+		OnItemDroppedNotify.Broadcast(this, OutItemDropActor);
+	}
+	
 	return true;
 }
 
@@ -404,6 +411,10 @@ void UItemBase::OnUnequip_Implementation()
 }
 
 void UItemBase::OnDrop_Implementation(AItemDropActor* ItemDropActor)
+{
+}
+
+void UItemBase::OnDropNotify_Implementation(AItemDropActor* ItemDropActor)
 {
 }
 

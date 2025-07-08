@@ -90,7 +90,7 @@ void UCrosshairSubsystem::SetCrosshairInViewport(const TSubclassOf<UCrosshairWid
 
 void UCrosshairSubsystem::OpenCrosshairInViewport() const
 {
-	if (!IsValid(CurrentCrosshairWidget))
+	if (!IsValid(CurrentCrosshairWidget) || CurrentCrosshairWidget->IsOpen())
 		return;
 
 	CurrentCrosshairWidget->StartOpening();
@@ -98,7 +98,7 @@ void UCrosshairSubsystem::OpenCrosshairInViewport() const
 
 void UCrosshairSubsystem::CloseCrosshairInViewport(const bool bRemoveFromViewport)
 {
-	if (!IsValid(CurrentCrosshairWidget))
+	if (!IsValid(CurrentCrosshairWidget) || !CurrentCrosshairWidget->IsOpen())
 		return;
 
 	if (bRemoveFromViewport)

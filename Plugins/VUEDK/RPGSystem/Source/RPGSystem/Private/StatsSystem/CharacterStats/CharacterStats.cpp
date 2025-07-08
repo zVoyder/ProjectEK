@@ -33,22 +33,10 @@ void UCharacterStats::Init(UEquipment* InEquipment)
 	Equipment->OnItemsSwitchedSlots.AddDynamic(this, &UCharacterStats::OnItemsSwitchedSlots);
 }
 
-void UCharacterStats::OnCalculateFullStatsValues_Implementation()
+void UCharacterStats::NativeOnCalculateFullStatsValues()
 {
-	if (!Check())
-		return;
-	
-	for (UItemBase* Item : Equipment->GetEquippedItems())
-	{
-		if (const URPGGearItem* RPGItem = Cast<URPGGearItem>(Item); RPGItem != nullptr)
-		{
-			for (const auto& Values : GetFullStatsValues())
-			{
-				UStatDataBase* Stat = Values.Key;
-				ModifyFullStatValue(Stat, RPGItem->GearStatsContainer->GetValueAsFloat(Stat));
-			}
-		}
-	}
+	Super::NativeOnCalculateFullStatsValues();
+	AddEquippedItemsStats();
 }
 
 void UCharacterStats::OnItemEquippedOrUnequipped(UEquipSlotKey* EquipSlotKey, int32 SlotIndex, UItemBase* ItemBase)
@@ -64,6 +52,39 @@ void UCharacterStats::OnItemSwappedWithInventoryItem(UEquipSlotKey* EquipSlotKey
 void UCharacterStats::OnItemsSwitchedSlots(UEquipSlotKey* EquipSlotKey, UItemBase* ItemBaseA, UItemBase* ItemBaseB, int OldSlotIndexItemA, int OldSlotIndexItemB, int NewSlotIndexItemA, int NewSlotIndexItemB)
 {
 	CalculateFullStatsValues();
+}
+
+void UCharacterStats::AddEquippedItemsStats() const
+{
+	if (!Check())
+		return;
+	
+	//  print all full stats values before adding equipped items stats
+	for (auto& Pair : GetFullStatsValues())
+	{
+		UE_LOG(LogStatsSystem, Log, TEXT("UCharacterStats::AddEquippedItemsStats: %s = %f"), *Pair.Key->GetName(), Pair.Value);
+	}
+		
+	
+	for (UItemBase* Item : Equipment->GetEquippedItems())
+	{
+		const URPGGearItem* RPGGearItem = Cast<URPGGearItem>(Item);
+		if (!IsValid(RPGGearItem))
+		{
+			UE_LOG(LogStatsSystem, Warning, TEXT("UCharacterStats::OnCalculateFullStatsValues_Implementation: Item %s is not a valid RPGGearItem."), *Item->GetFullName());
+			continue;
+		}
+
+		const URPGGearItemStatsContainer* GearStatsContainer = RPGGearItem->GearStatsContainer;
+		if (!IsValid(GearStatsContainer))
+		{
+			UE_LOG(LogStatsSystem, Warning, TEXT("UCharacterStats::OnCalculateFullStatsValues_Implementation: Item %s has no valid GearStatsContainer."), *Item->GetFullName());
+			continue;
+		}
+		
+		for (const auto ItemStats : GearStatsContainer->GetValues())
+			ModifyFullStatValue(ItemStats.Key, ItemStats.Value);
+	}
 }
 
 bool UCharacterStats::Check() const

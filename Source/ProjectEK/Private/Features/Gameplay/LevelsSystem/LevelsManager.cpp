@@ -21,7 +21,14 @@ void ULevelsManager::Init()
 		return;
 	}
 
-	Stats = GameplayPlayerState->GetCharacterStats()->SpecialStatsContainer;
+	const UCharacterStats* CharacterStats = GameplayPlayerState->GetCharacterStats();
+	if (!IsValid(CharacterStats))
+	{
+		UE_LOG(LogTemp, Error, TEXT("ULevelsManager::Init: CharacterStats is not valid in ULevelsManager::Init()"));
+		return;
+	}
+	
+	Stats = CharacterStats->SpecialStatsContainer;
 	CurrencyManager = GameplayPlayerState->CurrencyManager;
 }
 

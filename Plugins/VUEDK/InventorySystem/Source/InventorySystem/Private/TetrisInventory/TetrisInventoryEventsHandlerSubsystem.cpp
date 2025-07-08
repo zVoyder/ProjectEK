@@ -3,9 +3,9 @@
 #include "TetrisInventory/TetrisInventoryEventsHandlerSubsystem.h"
 #include "Utility/TetrisInventoriesUtility.h"
 
-void UTetrisInventoryEventsHandlerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+void UTetrisInventoryEventsHandlerSubsystem::PlayerControllerChanged(APlayerController* NewPlayerController)
 {
-	Super::Initialize(Collection);
+	Super::PlayerControllerChanged(NewPlayerController);
 	UTetrisInventoriesUtility::Init(this);
 }
 

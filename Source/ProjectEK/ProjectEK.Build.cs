@@ -39,13 +39,5 @@ public class ProjectEK : ModuleRules
 		{
 			"ProjectEK"
 		});
-
-		// Templates
-		PrivateIncludePaths.AddRange(new string[]
-		{
-			"ProjectEK/Templates/Variant_Horror",
-			"ProjectEK/Templates/Variant_Shooter",
-			"ProjectEK/Templates/Variant_Shooter/AI",
-		});
 	}
 }

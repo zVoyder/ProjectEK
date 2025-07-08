@@ -12,7 +12,9 @@ UWorld* UEquipPrecondition::GetWorld() const
 	return GEngine->GetWorld();
 }
 
+#if WITH_EDITOR
 bool UEquipPrecondition::ImplementsGetWorld() const
 {
 	return true;
 }
+#endif

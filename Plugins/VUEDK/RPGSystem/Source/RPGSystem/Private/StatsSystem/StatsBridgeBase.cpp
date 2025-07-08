@@ -172,6 +172,7 @@ void UStatsBridgeBase::ModifyFullStatValue(UStatDataBase* Stat, const float Valu
 
 void UStatsBridgeBase::CalculateCoreStatsValues()
 {
+	NativeOnCalculateCoreStatsValues();
 	OnCalculateCoreStatsValues();
 	OnCalculatedCoreStatsValues.Broadcast(this);
 }
@@ -179,11 +180,20 @@ void UStatsBridgeBase::CalculateCoreStatsValues()
 void UStatsBridgeBase::CalculateFullStatsValues()
 {
 	FullStatsContainer->CopyStats(CoreStatsContainer); // By default, full values are equal to core values
+	NativeOnCalculateFullStatsValues();
 	OnCalculateFullStatsValues();
 	OnCalculatedFullStatsValues.Broadcast(this);
 }
 
+void UStatsBridgeBase::NativeOnCalculateCoreStatsValues()
+{
+}
+
 void UStatsBridgeBase::OnCalculateCoreStatsValues_Implementation()
+{
+}
+
+void UStatsBridgeBase::NativeOnCalculateFullStatsValues()
 {
 }
 

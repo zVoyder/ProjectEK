@@ -1,6 +1,7 @@
 // Copyright VUEDK, Inc. All Rights Reserved.
 
 #include "StatsSystem/Containers/StatsContainer.h"
+#include "StatsSystem/StatsBridgeBase.h"
 
 class UStatsSaveData;
 
@@ -104,8 +105,11 @@ bool UStatsContainer::HasValue(const UStatDataBase* Stat) const
 bool UStatsContainer::TrySetValue(UStatDataBase* Stat, const float Value, const bool bNotifyEvent)
 {
 	if (!HasValue(Stat))
+	{
+		UE_LOG(LogStatsSystem, Warning, TEXT("UStatsContainer::TrySetValue: Stat %s is not found in the container."), *Stat->GetName());
 		return false;
-
+	}
+		
 	const float OldValue = Values[Stat];
 	Values[Stat] = ValidateStatValue(Value, Stat->StatValueRange);
 	if (OldValue == Values[Stat])

@@ -19,11 +19,11 @@ void URPGItem::Init(UObject* WorldContextObject, UItemDataBase* Data)
 
 	const URPGInventoriesManager* InventoriesManager = URPGInventoriesUtility::GetRPGInventoriesManager();
 	if (!IsValid(InventoriesManager))
-    {
-        UE_LOG(LogInventorySystem, Error, TEXT("URPGItem::Init: RPGInventoriesManager not found. Item %s cannot be initialized."), *GetItemFullName().ToString());
-        return;
-    }
-	
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("URPGItem::Init: RPGInventoriesManager not found. Item %s cannot be initialized."), *GetItemFullName().ToString());
+		return;
+	}
+
 	const URPGItemsRaritiesData* RaritiesData = InventoriesManager->ItemsRarities;
 
 	if (!IsValid(RaritiesData))
@@ -33,10 +33,7 @@ void URPGItem::Init(UObject* WorldContextObject, UItemDataBase* Data)
 	}
 
 	if (RaritiesData->RarityLevels.IsEmpty())
-	{
-		UE_LOG(LogInventorySystem, Error, TEXT("URPGItem::Init: Rarity levelsis is not valid for item %s."), *GetItemFullName().ToString());
 		return;
-	}
 
 	const URPGItemData* RPGItemData = GetRPGItemData();
 	if (RPGItemData->bUseRarity)
@@ -62,12 +59,15 @@ FRPGItemSaveData URPGItem::CreateRPGItemSaveData() const
 	FRPGItemSaveData RPGItemSaveData;
 	RPGItemSaveData.TetrisItemSaveData = CreateTetrisSaveData();
 	RPGItemSaveData.VisualDetails = VisualDetails;
-	
-	if (IsValid(RarityLevel))
-		RPGItemSaveData.RarityID = RarityLevel->RarityID;
-	else
-		UE_LOG(LogInventorySystem, Error, TEXT("CreateRPGItemSaveData(), Rarity level is not set for item %s"), *GetItemFullName().ToString());
-		
+
+	if (GetRPGItemData()->bUseRarity)
+	{
+		if (IsValid(RarityLevel))
+			RPGItemSaveData.RarityID = RarityLevel->RarityID;
+		else
+			UE_LOG(LogInventorySystem, Error, TEXT("URPGItem::CreateRPGItemSaveData: Trying to save an innvalid Rarity level for item %s."), *GetItemFullName().ToString());
+	}
+
 	return RPGItemSaveData;
 }
 
@@ -84,7 +84,7 @@ FText URPGItem::GetItemFullName() const
 
 	if (RarityLevel == nullptr)
 		return ItemName;
-	
+
 	return FText::Format(FText::FromString("{0} {1}"), RarityLevel->RarityName, ItemName);
 }
 
@@ -107,7 +107,7 @@ bool URPGItem::CanStackItem_Implementation(UItemBase* OtherItem) const
 {
 	if (!Super::CanStackItem_Implementation(OtherItem))
 		return false;
-	
+
 	const URPGItem* OtherRPGItem = Cast<URPGItem>(OtherItem);
 
 	if (OtherRPGItem == nullptr)
@@ -115,7 +115,7 @@ bool URPGItem::CanStackItem_Implementation(UItemBase* OtherItem) const
 
 	const bool bHasSameRarity = OtherRPGItem->RarityLevel == RarityLevel;
 	const bool bHasSameVisualDetails = OtherRPGItem->VisualDetails == VisualDetails;
-	
+
 	return bHasSameRarity && bHasSameVisualDetails;
 }
 
@@ -126,6 +126,6 @@ void URPGItem::SetItemMeshToLoad()
 		Super::SetItemMeshToLoad();
 		return;
 	}
-	
+
 	ItemMesh = VisualDetails.ItemMesh;
 }

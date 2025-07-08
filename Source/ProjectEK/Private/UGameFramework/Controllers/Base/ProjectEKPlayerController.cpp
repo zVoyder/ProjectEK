@@ -4,6 +4,7 @@
 #include "EnhancedInputComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "InputMappingContext.h"
+#include "Kismet/GameplayStatics.h"
 #include "Utility/InputsHandlerUtility.h"
 
 AProjectEKPlayerController::AProjectEKPlayerController()
@@ -51,12 +52,7 @@ UBetterUIEventsHandlerSubsystem* AProjectEKPlayerController::GetUIEventsHandlerS
 	if (IsValid(UIEventsHandlerSubsystem))
 		return UIEventsHandlerSubsystem;
 
-	const UGameInstance* GameInstance = GetGameInstance();
-
-	if (!IsValid(GameInstance))
-		return nullptr;
-
-	return GameInstance->GetSubsystem<UBetterUIEventsHandlerSubsystem>();
+	return GetLocalPlayer()->GetSubsystem<UBetterUIEventsHandlerSubsystem>();
 }
 
 void AProjectEKPlayerController::OnMenuOpened_Implementation(UMenuWidget* MenuWidget, FGameplayTag MenuTag)

@@ -39,6 +39,11 @@ void AWeaponBase::Init(APawn* InOwner, UObject* InPayload)
 	SetOwnerAnimInstance();
 }
 
+USkeletalMeshComponent* AWeaponBase::GetWeaponMesh() const
+{
+	return WeaponMesh;
+}
+
 void AWeaponBase::Equip()
 {
 	if (bIsEquipped)

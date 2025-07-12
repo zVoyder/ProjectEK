@@ -93,6 +93,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void Init(APawn* InOwner, UObject* InPayload = nullptr);
 
+	UFUNCTION(BlueprintPure)
+	USkeletalMeshComponent* GetWeaponMesh() const;
+	
 	/**
 	 * @brief Sets the weapon in the equipped state.
 	 */

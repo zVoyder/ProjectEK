@@ -86,6 +86,8 @@ private:
 public:
 	UInventoryBase();
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
 	/**
 	 * Creates and returns a new save data object for this inventory.
 	 * @return Pointer to the created USaveData object.
@@ -100,7 +102,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	bool LoadSaveData(USaveData* SavedData) override;
-
+	
 	/**
 	 * Links this inventory to the specified equipment.
 	 * @param Equipment The equipment to link.
@@ -348,4 +350,7 @@ private:
 	 * @param Weight The weight to remove.
 	 */
 	void RemoveWeight(const float Weight);
+
+	UFUNCTION()
+	void OnEquipmentChanged();
 };

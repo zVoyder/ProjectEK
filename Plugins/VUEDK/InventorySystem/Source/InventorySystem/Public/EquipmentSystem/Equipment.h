@@ -205,9 +205,6 @@ public:
 	UItemBase* FindEquippedItemAtIndex(const UEquipSlotKey* TargetSlotKey, const int32 SlotIndex) const;
 
 protected:
-	/**
-	 * Called when the game starts or when spawned.
-	 */
 	virtual void BeginPlay() override;
 
 	/**

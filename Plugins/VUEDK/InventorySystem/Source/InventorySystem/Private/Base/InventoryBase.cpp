@@ -14,6 +14,14 @@ UInventoryBase::UInventoryBase(): bUseWeight(false),
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+void UInventoryBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
+	if (IsValid(RelatedEquipment))
+		UnlinkEquipment();
+}
+
 USaveData* UInventoryBase::CreateSaveData()
 {
 	UE_LOG(LogInventorySystem, Display, TEXT("Creating Save Data for inventory %s."), *GetName());
@@ -42,10 +50,21 @@ bool UInventoryBase::LoadSaveData(USaveData* SavedData)
 void UInventoryBase::LinkEquipment(UEquipment* Equipment)
 {
 	RelatedEquipment = Equipment;
+
+	if (!IsValid(RelatedEquipment))
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("UInventoryBase::LinkEquipment: Cannot link Equipment, Equipment is null."));
+		return;
+	}
+
+	RelatedEquipment->OnEquipChanged.AddDynamic(this, &UInventoryBase::OnEquipmentChanged);
 }
 
 void UInventoryBase::UnlinkEquipment()
 {
+	if (IsValid(RelatedEquipment))
+		RelatedEquipment->OnEquipChanged.RemoveDynamic(this, &UInventoryBase::OnEquipmentChanged);
+	
 	RelatedEquipment = nullptr;
 }
 
@@ -458,4 +477,22 @@ void UInventoryBase::RemoveWeight(const float Weight)
 
 	CurrentWeight -= Weight;
 	CurrentWeight = FMath::Clamp(CurrentWeight, 0, WeightMaxCapacity);
+}
+
+void UInventoryBase::OnEquipmentChanged()
+{
+	for (UItemBase* Item : RelatedEquipment->GetEquippedItems())
+	{
+		if (Item->IsEquipped())
+		{
+			if (!Item->CanEquip())
+			{
+				if (!TryAddItem(Item))
+				{
+					if (!UISInventoriesUtility::DropItemWithOperation(Item))
+						UE_LOG(LogInventorySystem, Error, TEXT("UInventoryBase::OnEquipmentChanged: Failed to drop item %s."), *Item->GetName());
+				}
+			}
+		}
+	}
 }

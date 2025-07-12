@@ -276,11 +276,11 @@ public:
 	bool CanStackItem(UItemBase* OtherItem) const;
 
 	/**
-	 * Checks if the item is equippable.
-	 * @return True if the item is equippable, false otherwise.
+	 * Checks if the item can be equipped now.
+	 * @return True if the item can be equipped, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure)
-	bool IsEquippable();
+	bool CanEquip();
 
 	/**
 	 * Checks if the item has permission to be equipped.

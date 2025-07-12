@@ -46,7 +46,7 @@ bool UEquipment::TryEquipItem(UItemBase* Item, UEquipSlotKey* TargetSlotKey, con
 		return false;
 	}
 
-	if (!Item->IsEquippable())
+	if (!Item->CanEquip())
 	{
 		UE_LOG(LogEquipmentSystem, Display, TEXT("UEquipment::TryEquipItem: Item %s is currently not equippable."), *Item->GetItemData()->ItemTypeID);
 		return false;

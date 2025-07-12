@@ -112,21 +112,33 @@ UCoreStatsContainer* UStatsBridgeBase::GetFullStatsContainer() const
 
 float UStatsBridgeBase::GetFullStatValueAsFloat(const UStatDataBase* Stat) const
 {
+	if (!IsValid(FullStatsContainer))
+		return 0.0f;
+		
 	return FullStatsContainer->GetValueAsFloat(Stat);
 }
 
 int32 UStatsBridgeBase::GetFullStatValueAsInt(const UStatDataBase* Stat) const
 {
+	if (!IsValid(FullStatsContainer))
+		return 0;
+	
 	return FullStatsContainer->GetValueAsInt(Stat);
 }
 
 FString UStatsBridgeBase::GetFullStatValueAsString(const UStatDataBase* Stat) const
 {
+	if (!IsValid(FullStatsContainer))
+		return "";
+	
 	return FullStatsContainer->GetValueAsString(Stat);
 }
 
 int32 UStatsBridgeBase::GetFullStatsLength() const
 {
+	if (!IsValid(FullStatsContainer))
+		return 0;
+	
 	return FullStatsContainer->GetStatsLength();
 }
 

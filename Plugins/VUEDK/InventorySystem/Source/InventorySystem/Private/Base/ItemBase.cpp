@@ -226,7 +226,7 @@ bool UItemBase::CanStack() const
 	return IsStackable() && !IsMaxStacked();
 }
 
-bool UItemBase::IsEquippable()
+bool UItemBase::CanEquip()
 {
 	return HasEquipPermission() && AreEquipPreconditionsMet();
 }

@@ -119,6 +119,9 @@ void UMeleeMontagesManager::OnWeaponEndAttack()
 
 void UMeleeMontagesManager::OnWeaponAttackInterrupted()
 {
+	if (CurrentAttackMontage == nullptr)
+		return;
+	
 	if (!IsValid(CurrentAttackMontage->AttackInterruptMontage.GetCharacterMontage()))
 		return;
 

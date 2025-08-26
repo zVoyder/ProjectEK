@@ -58,6 +58,8 @@ public:
 	UHitBoxBonesData* HitBoxBonesData;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = 0, UIMin = 0), Category = "HitBox")
 	float ReceiveDamageCooldown = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced, Category = "HitBox")
+	TArray<UDamageProcessor*> GenericDamageProcessors;
 
 private:
 	UPROPERTY()
@@ -78,9 +80,9 @@ public:
 	bool HasHitBoxPerBones() const;
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
+
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -89,26 +91,26 @@ protected:
 	 * @return True if it can receive damage, false otherwise.
 	 */
 	bool CanReceiveDamage() const;
-	
+
 private:
-	/**
-	 * Calculates the damage after applying the bone multiplier.
-	 * @param BoneName The name of the bone hit.
-	 * @param BaseDamage The base damage value.
-	 * @return The multiplied damage value.
-	 */
-	float CalculateMultipliedDamage(const FName& BoneName, const float& BaseDamage) const;
-	
+	float ProcessGenericPointDamage(AActor* DamagedActor, float& Damage, class AController* InstigatedBy, FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType, AActor* DamageCauser) const;
+
+	float ProcessGenericRadialDamage(AActor* DamagedActor, float& Damage, const class UDamageType* DamageType, FVector Origin, const FHitResult& HitInfo, class AController* InstigatedBy, AActor* DamageCauser) const;
+
+	float ProcessPointDamage(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType, AActor* DamageCauser) const;
+
+	float ProcessRadialDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, FVector Origin, const FHitResult& HitInfo, class AController* InstigatedBy, AActor* DamageCauser) const;
+
 	/**
 	 * Registers all hit zones for this manager.
 	 */
 	void RegisterHitZones();
-	
+
 	/**
 	 * Starts the cooldown period for receiving damage.
 	 */
 	void StartReceiveDamageCooldown();
-	
+
 	/**
 	 * Ends the cooldown period for receiving damage.
 	 */
@@ -116,7 +118,7 @@ private:
 
 	UFUNCTION()
 	void OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
-	
+
 	UFUNCTION()
 	void OnTakePointDamage(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType, AActor* DamageCauser);
 

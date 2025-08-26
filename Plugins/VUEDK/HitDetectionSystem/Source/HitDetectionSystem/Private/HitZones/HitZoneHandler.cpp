@@ -27,8 +27,8 @@ void UHitZoneHandler::OnTakePointDamage(AActor* DamagedActor, float Damage, clas
 {
 	if (FHitComponent != HitBox)
 		return;
-
-	const float TotalDamage = Damage * Multiplier;
+	
+	const float TotalDamage = ProcessPointDamage(DamagedActor, Damage, InstigatedBy, HitLocation, FHitComponent, BoneName, ShotFromDirection, DamageType, DamageCauser);
 	OnZoneHitAnyDamage.Broadcast(Damage, TotalDamage, DamageType, InstigatedBy, DamageCauser);
 	OnZoneHitPointDamage.Broadcast(Damage, TotalDamage, HitLocation, ShotFromDirection, GetBoneName(), DamageType, InstigatedBy, DamageCauser);
 }
@@ -37,8 +37,8 @@ void UHitZoneHandler::OnTakeRadialDamage(AActor* DamagedActor, float Damage, con
 {
 	if (!bReceiveRadialDamage)
 		return;
-	
-	const float TotalDamage = Damage * Multiplier;
+
+	const float TotalDamage = ProcessRadialDamage(DamagedActor, Damage, DamageType, Origin, HitInfo, InstigatedBy, DamageCauser);
 	OnZoneHitAnyDamage.Broadcast(Damage, TotalDamage, DamageType, InstigatedBy, DamageCauser);
 	OnZoneHitRadialDamage.Broadcast(Damage, TotalDamage, DamageType, Origin, HitInfo, InstigatedBy, DamageCauser);
 }
@@ -61,4 +61,32 @@ FName UHitZoneHandler::GetBoneName() const
 	}
 
 	return NAME_None;
+}
+
+float UHitZoneHandler::ProcessPointDamage(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType, AActor* DamageCauser)
+{
+	for (UDamageProcessor* Processor : DamageProcessors)
+	{
+		if (!IsValid(Processor))
+			continue;
+		
+		Damage = Processor->ProcessAnyDamage(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
+		Damage = Processor->ProcessPointDamage(DamagedActor, Damage, InstigatedBy, HitLocation, FHitComponent, BoneName, ShotFromDirection, DamageType, DamageCauser);
+	}
+
+	return Damage * Multiplier;
+}
+
+float UHitZoneHandler::ProcessRadialDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, FVector Origin, const FHitResult& HitInfo, class AController* InstigatedBy, AActor* DamageCauser)
+{
+	for (UDamageProcessor* Processor : DamageProcessors)
+	{
+		if (!IsValid(Processor))
+			continue;
+
+		Damage = Processor->ProcessAnyDamage(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
+		Damage = Processor->ProcessRadialDamage(DamagedActor, Damage, DamageType, Origin, HitInfo, InstigatedBy, DamageCauser);
+	}
+
+	return Damage * Multiplier;
 }

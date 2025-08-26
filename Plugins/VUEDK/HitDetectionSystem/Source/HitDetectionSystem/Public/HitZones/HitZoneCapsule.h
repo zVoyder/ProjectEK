@@ -14,7 +14,7 @@ class HITDETECTIONSYSTEM_API UHitZoneCapsule : public UCapsuleComponent, public 
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced)
 	UHitZoneHandler* HitZoneHandler;
 
 public:

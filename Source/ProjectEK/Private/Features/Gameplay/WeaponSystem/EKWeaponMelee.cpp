@@ -18,7 +18,7 @@ void AEKWeaponMelee::Init(APawn* InOwner, UObject* InPayload)
 		return;
 	}
 
-	const int32 Damage = GetWeaponMeleeItem()->GetWeaponDamage();
+	const float Damage = GetWeaponMeleeItem()->GetWeaponDamage();
 	SetWeaponDamage(Damage);
 }
 

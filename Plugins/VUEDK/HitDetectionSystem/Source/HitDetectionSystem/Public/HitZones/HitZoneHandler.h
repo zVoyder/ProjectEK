@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DamageProcessor.h"
 #include "Data/HitZoneRedirectorMode.h"
 #include "UObject/Object.h"
 #include "HitZoneHandler.generated.h"
@@ -54,7 +55,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitZone")
 	bool bReceiveRadialDamage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitZone")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "HitZone")
+	TArray<UDamageProcessor*> DamageProcessors;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Multiplier applied after all damage processors have been applied."), Category = "HitZone")
 	float Multiplier = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HitZone")
 	EHitZoneRedirectorMode BoneRedirectorMode;
@@ -81,7 +84,7 @@ private:
 	 * @return True if valid, false otherwise.
 	 */
 	bool Check() const;
-	
+
 	UFUNCTION()
 	void OnTakePointDamage(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType, AActor* DamageCauser);
 
@@ -93,4 +96,8 @@ private:
 	 * @return The bone name as FName.
 	 */
 	FName GetBoneName() const;
+
+	float ProcessPointDamage(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType, AActor* DamageCauser);
+
+	float ProcessRadialDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, FVector Origin, const FHitResult& HitInfo, class AController* InstigatedBy, AActor* DamageCauser);
 };

@@ -18,13 +18,13 @@ void UHitBoxBonesData::PostEditChangeProperty(struct FPropertyChangedEvent& Prop
 	if (ChangedPropertyName != GET_MEMBER_NAME_CHECKED(UHitBoxBonesData, PhysicsAsset))
 		return;
 
-	BonesDamageMultipliers.Empty();
+	DamageProcessorsPerBone.Empty();
 	for (const USkeletalBodySetup* BodySetup : PhysicsAsset->SkeletalBodySetups)
 	{
 		if (BodySetup)
 		{
 			const FName BoneName = BodySetup->BoneName;
-			BonesDamageMultipliers.Add(BoneName, 1.0f);
+			DamageProcessorsPerBone.Add(BoneName, FBoneDamageProcessorData());
 		}
 	}
 }

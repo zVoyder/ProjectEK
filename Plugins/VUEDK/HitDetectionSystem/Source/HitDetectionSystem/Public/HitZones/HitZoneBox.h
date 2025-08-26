@@ -14,7 +14,7 @@ class HITDETECTIONSYSTEM_API UHitZoneBox : public UBoxComponent, public IHitZone
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced)
 	UHitZoneHandler* HitZoneHandler;
 
 public:

@@ -65,15 +65,90 @@ bool UHitBoxManager::CanReceiveDamage() const
 	return !bHasRecentlyReceivedDamage;
 }
 
-float UHitBoxManager::CalculateMultipliedDamage(const FName& BoneName, const float& BaseDamage) const
+float UHitBoxManager::ProcessGenericPointDamage(AActor* DamagedActor, float& Damage, class AController* InstigatedBy, FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType, AActor* DamageCauser) const
 {
-	const TMap<FName, float>& MultipliersMap = HitBoxBonesData->BonesDamageMultipliers;
+	for (UDamageProcessor* Processor : GenericDamageProcessors)
+	{
+		if (!IsValid(Processor))
+			continue;
 
-	if (!MultipliersMap.Contains(BoneName))
-		return BaseDamage;
+		Damage = Processor->ProcessAnyDamage(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
+		Damage = Processor->ProcessPointDamage(DamagedActor, Damage, InstigatedBy, HitLocation, FHitComponent, BoneName, ShotFromDirection, DamageType, DamageCauser);
+	}
 
-	const float Multiplier = HitBoxBonesData->BonesDamageMultipliers[BoneName];
-	return BaseDamage * Multiplier;
+	return Damage;
+}
+
+float UHitBoxManager::ProcessGenericRadialDamage(AActor* DamagedActor, float& Damage, const class UDamageType* DamageType, FVector Origin, const FHitResult& HitInfo, class AController* InstigatedBy, AActor* DamageCauser) const
+{
+	for (UDamageProcessor* Processor : GenericDamageProcessors)
+	{
+		if (!IsValid(Processor))
+			continue;
+
+		Damage = Processor->ProcessAnyDamage(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
+		Damage = Processor->ProcessRadialDamage(DamagedActor, Damage, DamageType, Origin, HitInfo, InstigatedBy, DamageCauser);
+	}
+
+	return Damage;
+}
+
+float UHitBoxManager::ProcessPointDamage(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType, AActor* DamageCauser) const
+{
+	if (!HitBoxBonesData->DamageProcessorsPerBone.Contains(BoneName))
+		return Damage;
+
+	const FBoneDamageProcessorData& ProcessorData = HitBoxBonesData->DamageProcessorsPerBone[BoneName];
+
+	if (ProcessorData.DamageProcessors.IsEmpty())
+		return Damage;
+
+	for (const TSoftClassPtr<class UDamageProcessor> ProcessorClassPtr : ProcessorData.DamageProcessors)
+	{
+		TSubclassOf<UDamageProcessor> ProcessorClass = ProcessorClassPtr.Get();
+
+		if (!IsValid(ProcessorClass))
+			continue;
+
+		UDamageProcessor* Processor = NewObject<UDamageProcessor>(GetOwner(), ProcessorClass);
+
+		if (!IsValid(Processor))
+			continue;
+
+		Damage = Processor->ProcessAnyDamage(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
+		Damage = Processor->ProcessPointDamage(DamagedActor, Damage, InstigatedBy, HitLocation, FHitComponent, BoneName, ShotFromDirection, DamageType, DamageCauser);
+	}
+
+	return Damage * ProcessorData.DamageMultiplier;
+}
+
+float UHitBoxManager::ProcessRadialDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, FVector Origin, const FHitResult& HitInfo, class AController* InstigatedBy, AActor* DamageCauser) const
+{
+	if (!HitBoxBonesData->DamageProcessorsPerBone.Contains(HitInfo.BoneName))
+		return Damage;
+
+	const FBoneDamageProcessorData& ProcessorData = HitBoxBonesData->DamageProcessorsPerBone[HitInfo.BoneName];
+
+	if (ProcessorData.DamageProcessors.IsEmpty())
+		return Damage;
+
+	for (const TSoftClassPtr<class UDamageProcessor> ProcessorClassPtr : ProcessorData.DamageProcessors)
+	{
+		TSubclassOf<UDamageProcessor> ProcessorClass = ProcessorClassPtr.Get();
+
+		if (!IsValid(ProcessorClass))
+			continue;
+
+		UDamageProcessor* Processor = NewObject<UDamageProcessor>(GetOwner(), ProcessorClass);
+
+		if (!IsValid(Processor))
+			continue;
+
+		Damage = Processor->ProcessAnyDamage(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
+		Damage = Processor->ProcessRadialDamage(DamagedActor, Damage, DamageType, Origin, HitInfo, InstigatedBy, DamageCauser);
+	}
+
+	return Damage * ProcessorData.DamageMultiplier;
 }
 
 void UHitBoxManager::RegisterHitZones()
@@ -118,7 +193,8 @@ void UHitBoxManager::OnTakePointDamage(AActor* DamagedActor, float Damage, class
 	if (!CanReceiveDamage() || !HasHitBoxPerBones())
 		return;
 
-	const float TotalDamage = CalculateMultipliedDamage(BoneName, Damage);
+	float TotalDamage = ProcessPointDamage(DamagedActor, Damage, InstigatedBy, HitLocation, FHitComponent, BoneName, ShotFromDirection, DamageType, DamageCauser);
+	TotalDamage = ProcessGenericPointDamage(DamagedActor, TotalDamage, InstigatedBy, HitLocation, FHitComponent, BoneName, ShotFromDirection, DamageType, DamageCauser);
 	OnHitBoxAnyDamage.Broadcast(Damage, TotalDamage, DamageType, InstigatedBy, DamageCauser);
 	OnHitBoxPointDamage.Broadcast(Damage, TotalDamage, HitLocation, ShotFromDirection, BoneName, DamageType, InstigatedBy, DamageCauser);
 
@@ -141,7 +217,8 @@ void UHitBoxManager::OnTakeRadialDamage(AActor* DamagedActor, float Damage, cons
 	if (!CanReceiveDamage() || !HasHitBoxPerBones())
 		return;
 
-	const float TotalDamage = CalculateMultipliedDamage(HitInfo.BoneName, Damage);
+	float TotalDamage = ProcessRadialDamage(DamagedActor, Damage, DamageType, Origin, HitInfo, InstigatedBy, DamageCauser);
+	TotalDamage = ProcessGenericRadialDamage(DamagedActor, TotalDamage, DamageType, Origin, HitInfo, InstigatedBy, DamageCauser);
 	OnHitBoxAnyDamage.Broadcast(Damage, TotalDamage, DamageType, InstigatedBy, DamageCauser);
 	OnHitBoxRadialDamage.Broadcast(Damage, TotalDamage, DamageType, Origin, HitInfo, InstigatedBy);
 
@@ -164,6 +241,7 @@ void UHitBoxManager::OnZoneHitPointDamage(float BaseDamage, float TotalDamage, F
 	if (!CanReceiveDamage())
 		return;
 
+	TotalDamage = ProcessGenericPointDamage(GetOwner(), TotalDamage, InstigatedBy, HitLocation, nullptr, BoneName, ShotFromDirection, DamageType, DamageCauser);
 	OnHitBoxAnyDamage.Broadcast(BaseDamage, TotalDamage, DamageType, InstigatedBy, DamageCauser);
 	OnHitBoxPointDamage.Broadcast(BaseDamage, TotalDamage, HitLocation, ShotFromDirection, BoneName, DamageType, InstigatedBy, DamageCauser);
 
@@ -185,7 +263,8 @@ void UHitBoxManager::OnZoneHitRadialDamage(float BaseDamage, float TotalDamage, 
 {
 	if (!CanReceiveDamage())
 		return;
-	
+
+	TotalDamage = ProcessGenericRadialDamage(GetOwner(), TotalDamage, DamageType, Origin, HitInfo, InstigatedBy, DamageCauser);
 	OnHitBoxAnyDamage.Broadcast(BaseDamage, TotalDamage, DamageType, InstigatedBy, DamageCauser);
 	OnHitBoxRadialDamage.Broadcast(BaseDamage, TotalDamage, DamageType, Origin, HitInfo, InstigatedBy);
 

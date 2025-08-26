@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BoneDamageProcessorData.h"
 #include "PhysicsEngine/PhysicsAsset.h"
 #include "Engine/DataAsset.h"
 #include "HitBoxBonesData.generated.h"
@@ -17,9 +18,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Physics asset used to fill the bones damage multipliers map (Editor only)"), Category = "HitBox|Editor")
 	UPhysicsAsset* PhysicsAsset;
 #endif
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HitBox")
-	TMap<FName, float> BonesDamageMultipliers;
+	TMap<FName, FBoneDamageProcessorData> DamageProcessorsPerBone;
 
 public:
 #if WITH_EDITOR

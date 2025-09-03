@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Data/CustomOptionData.h"
+#include "Data/PresetOptionsData.h"
 #include "Engine/DeveloperSettings.h"
 #include "CSSSettings.generated.h"
 
@@ -21,4 +23,10 @@ public:
 	bool DefaultVSync = true;
 	UPROPERTY(Config, EditAnywhere, Category = "Custom Settings")
 	TMap<FGameplayTag, FCustomOptionData> CustomSettingsMap;
+	UPROPERTY(Config, EditAnywhere, Category = "Presets")
+	bool bUsePresets = true;
+	UPROPERTY(Config, EditAnywhere, meta = (EditCondition = "bUsePresets"), Category = "Presets")
+	FGameplayTag DefaultPreset;
+	UPROPERTY(Config, EditAnywhere, meta = (EditCondition = "bUsePresets"), Category = "Presets")
+	TMap<FGameplayTag, FPresetOptionsData> PresetSettingsMap;
 };

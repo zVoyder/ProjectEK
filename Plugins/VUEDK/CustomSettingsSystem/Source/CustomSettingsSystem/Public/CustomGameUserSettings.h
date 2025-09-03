@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "CSSSettings.h"
+#include "Data/PresetOptionsData.h"
 #include "GameplayTagContainer.h"
+#include "Data/QualityType.h"
 #include "GameFramework/GameUserSettings.h"
 #include "CustomGameUserSettings.generated.h"
 
@@ -12,6 +14,22 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FOnCustomOptionChanged,
 	const FGameplayTag&, Tag,
 	float, Value
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnQualityLevelChanged,
+	EQualityType, QualityType,
+	EQualityLevel, QualityLevel
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnPresetChanged,
+	const FGameplayTag&, PresetTag,
+	int32, PresetIndex
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(
+	FOnDisablePreset
 );
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(
@@ -43,6 +61,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnCustomOptionChanged OnCustomOptionChanged;
 	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnQualityLevelChanged OnQualityLevelChanged;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnPresetChanged OnPresetChanged;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnDisablePreset OnDisablePreset;
+	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnCustomSettingsApplied OnCustomSettingsApplied;
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnCustomSettingsResetToDefaults OnResetAllToDefaults;
@@ -59,12 +83,15 @@ public:
 
 	UPROPERTY(Config)
 	TMap<FGameplayTag, float> CurrentSettingsMap;
+	UPROPERTY(Config)
+	FGameplayTag CurrentPreset;
 
 private:
 	UPROPERTY(Config)
 	bool bIsInitialized = false;
 	UPROPERTY()
 	UCSSSettings* CSSSettings;
+	TArray<FGameplayTag> PresetsKeys;
 
 public:
 	/**
@@ -72,7 +99,7 @@ public:
 	 * @param bForceReload If true, forces a reload from file even if already loaded.
 	 */
 	virtual void LoadSettings(bool bForceReload = false) override;
-	
+
 	/**
 	 * @brief Sets a custom option value associated with the specified tag.
 	 * @param Tag The gameplay tag identifying the custom option.
@@ -89,6 +116,26 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = Settings)
 	bool TryGetCustomOption(const FGameplayTag Tag, float& OutValue) const;
+
+	/**
+	 * @brief Disables the use of any preset.
+	 */
+	UFUNCTION(BlueprintCallable, Category = Settings)
+	void DisablePreset();
+
+	/**
+	 * @brief Sets all user settings and custom options based on the specified preset tag.
+	 * @param PresetTag The gameplay tag identifying the preset to apply.
+	 */
+	UFUNCTION(BlueprintCallable, Category = Settings)
+	void SetSettingsWithPreset(const FGameplayTag PresetTag);
+
+	/**
+	 * @brief Sets all user settings and custom options based on the preset at the specified index.
+	 * @param PresetIndex The index of the preset to apply.
+	 */
+	UFUNCTION(BlueprintCallable, Category = Settings)
+	void SetSettingsWithPresetByIndex(const int32 PresetIndex);
 
 	/**
 	 * @brief Sets all user settings and custom options to their default values.
@@ -113,7 +160,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = Settings)
 	void SetCustomOptionsToDefaults(TArray<FGameplayTag> Tags);
-	
+
 	/**
 	 * @brief Resets all settings to the current in-memory values.
 	 */
@@ -124,6 +171,30 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = Settings)
 	void ResetToFileSettings();
+
+	/**
+	 * @brief Checks if a preset is currently being used.
+	 * @return True if a preset is active, false otherwise.
+	 */
+	UFUNCTION(BlueprintPure, Category = Settings)
+	bool IsUsingPreset() const;
+
+	/**
+	 * @brief Gets the currently active preset tag.
+	 * @return The gameplay tag of the current preset, or an empty tag if no preset is active.
+	 */
+	UFUNCTION(BlueprintPure, Category = Settings)
+	bool TryGetCurrentPresetTag(FGameplayTag& OutPresetTag, int32& OutPresetIndex);
+
+	/**
+	 * @brief Tries to get the preset options associated with the specified preset tag.
+	 * @param PresetTag The gameplay tag identifying the preset.
+	 * @param OutPreset The output preset options if found.
+	 * @param OutPresetIndex The index of the preset in the settings map if found.
+	 * @return True if the preset was found, false otherwise.
+	 */
+	UFUNCTION(BlueprintPure, Category = Settings)
+	bool TryGetPreset(const FGameplayTag PresetTag, FPresetOptionsData& OutPreset, int32& OutPresetIndex);
 
 	/**
 	 * @brief Gets the maximum allowed value for a custom option by tag.
@@ -149,6 +220,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Settings)
 	void ApplyAllSettings(const bool bCheckForCommandLineOverrides, const bool bApplyResolutionSettings);
 
+	UFUNCTION(BlueprintCallable, Category = Settings)
+	void SetQualityLevel(EQualityType QualityType, EQualityLevel QualityLevel, bool bNotify = true);
+
+	UFUNCTION(BlueprintPure, Category = Settings)
+	EQualityLevel GetQualityLevel(const EQualityType QualityType) const;
+
 private:
 	/**
 	 * @brief Returns the settings object associated with this user settings instance.
@@ -164,4 +241,8 @@ private:
 	 * @return The clamped value.
 	 */
 	static float ClampValue(const float Value, const FGameplayTag Tag, const UCSSSettings* Settings);
+
+	void DisablePresetIfQualityOptionChanged(const EQualityType QualityType);
+
+	void CachePresetsKeys();
 };

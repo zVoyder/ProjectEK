@@ -25,7 +25,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 );
 
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class RPGSYSTEM_API UStatsBridgeBase : public UActorComponent, public ISaveable
+class RPGSYSTEM_API UStatsBridgeBase : public UActorComponent//, public ISaveable
 {
 	GENERATED_BODY()
 
@@ -54,10 +54,10 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UFUNCTION(BlueprintPure)
-	virtual USaveData* CreateSaveData() override;
+	virtual USaveData* CreateSaveDataInstance();
 
 	UFUNCTION(BlueprintCallable)
-	virtual bool LoadSaveData(USaveData* SavedData) override;
+	virtual bool Load(USaveData* SavedData);
 
 	/**
 	 * Gets the special stat data by its unique identifier.

@@ -34,7 +34,7 @@ USaveData* UClassicInventory::CreateInventorySaveData_Implementation(USaveData* 
 	return ClassicInventorySaveData;
 }
 
-void UClassicInventory::LoadInventorySaveData_Implementation(UInventoryBaseSaveData* InventorySaveData)
+void UClassicInventory::LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData)
 {
 	const UClassicInventorySaveData* ClassicInventorySaveData = Cast<UClassicInventorySaveData>(InventorySaveData);
 	

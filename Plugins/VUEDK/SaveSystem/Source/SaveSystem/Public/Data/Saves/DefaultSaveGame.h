@@ -6,7 +6,16 @@
 #include "GameFramework/SaveGame.h"
 #include "DefaultSaveGame.generated.h"
 
-UCLASS(BlueprintType, Blueprintable)
+USTRUCT()
+struct FSerializedObject
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(SaveGame)
+	TArray<uint8> Bytes;
+};
+
+UCLASS(Abstract, BlueprintType, Blueprintable)
 class SAVESYSTEM_API UDefaultSaveGame : public USaveGame
 {
 	GENERATED_BODY()
@@ -14,11 +23,10 @@ class SAVESYSTEM_API UDefaultSaveGame : public USaveGame
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FName SlotNameKey;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TMap<FName, FTransform> ActorTransforms;
-
-	UDefaultSaveGame(): SlotNameKey(""),
-	                    ActorTransforms(TMap<FName, FTransform>())
+	UPROPERTY()
+	TMap<FName, FSerializedObject> SavedObjects;
+	
+	UDefaultSaveGame(): SlotNameKey("")
 	{
 	}
 

@@ -155,6 +155,8 @@ public:
 	 */
 	void SetEquipSlot(UEquipment* InEquipment, const int32 SlotIndex);
 
+	void SetEquipSlotIndex(const int32 SlotIndex);
+
 	/**
 	 * Clears the equip slot for this item.
 	 */

@@ -23,7 +23,7 @@ USaveData* URPGInventory::CreateInventorySaveData_Implementation(USaveData* Save
 	return SaveData;
 }
 
-void URPGInventory::LoadInventorySaveData_Implementation(UInventoryBaseSaveData* InventorySaveData)
+void URPGInventory::LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData)
 {
 	Super::Super::LoadInventorySaveData_Implementation(InventorySaveData);
 	URPGInventorySaveData* RPGInventorySaveData = Cast<URPGInventorySaveData>(InventorySaveData);

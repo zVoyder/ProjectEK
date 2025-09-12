@@ -7,28 +7,28 @@
 #include "Utility/SSSlotsUtility.h"
 #include "Utility/SSUtility.h"
 
-USaveManager::USaveManager(): SaveGameClass(UDefaultSaveGame::StaticClass()),
-                              SharedSaveGameClass(UDefaultSaveGame::StaticClass()),
-                              SlotInfoItemClass(USlotInfoItem::StaticClass()),
-                              SharedSlotInfoItemClass(USlotInfoItem::StaticClass()),
-                              ElapsedTimePlayed(0),
-                              SlotSaveGameInstance(nullptr),
-                              SharedSaveGameInstance(nullptr),
-                              CurrentSlotInfos(nullptr),
-                              CurrentSlotInfoItem(nullptr),
-                              CurrentSharedSlotInfoItem(nullptr),
-                              CurrentInstigator(nullptr),
-                              bIsSharedSaving(false),
-                              bIsSharedLoading(false),
-                              bIsLoading(false),
-                              bIsSaving(false),
-                              bHasEverLoaded(false),
-                              bHasEverSaved(false),
-                              bHasEverSharedSaved(false),
-                              bHasEverSharedLoaded(false),
-                              PreviousSlotNameKey(NAME_None),
-                              bSaveAsNewGame(false),
-                              SaveMasterID(DEFAULT_MASTER_SAVE_ID)
+USaveManager::USaveManager() : SaveGameClass(UDefaultSaveGame::StaticClass()),
+                               SharedSaveGameClass(UDefaultSaveGame::StaticClass()),
+                               SlotInfoItemClass(USlotInfoItem::StaticClass()),
+                               SharedSlotInfoItemClass(USlotInfoItem::StaticClass()),
+                               ElapsedTimePlayed(0),
+                               SlotSaveGameInstance(nullptr),
+                               SharedSaveGameInstance(nullptr),
+                               CurrentSlotInfos(nullptr),
+                               CurrentSlotInfoItem(nullptr),
+                               CurrentSharedSlotInfoItem(nullptr),
+                               CurrentInstigator(nullptr),
+                               bIsSharedSaving(false),
+                               bIsSharedLoading(false),
+                               bIsLoading(false),
+                               bIsSaving(false),
+                               bHasEverLoaded(false),
+                               bHasEverSaved(false),
+                               bHasEverSharedSaved(false),
+                               bHasEverSharedLoaded(false),
+                               PreviousSlotNameKey(NAME_None),
+                               bSaveAsNewGame(false),
+                               SaveMasterID(DEFAULT_MASTER_SAVE_ID)
 {
 }
 
@@ -140,23 +140,27 @@ void USaveManager::LoadSelectedSlotAndSharedSlot(UObject* Instigator)
 {
 	if (!USSSlotsUtility::IsSelectedSlotValid())
 	{
-		USSUtility::LoadSharedSlot(Instigator);
+		LoadSharedSlot(Instigator);
 		return;
 	}
 
 	OnPendingSharedLoad.AddDynamic(this, &USaveManager::OnPendingSharedLoadEvent);
-	USSUtility::LoadSelectedSlot(Instigator);
+	LoadSelectedSlot(Instigator);
 }
 
 void USaveManager::LoadSelectedSlot(UObject* Instigator)
 {
-	if (!USSSlotsUtility::IsSelectedSlotValid()) return;
+	if (!USSSlotsUtility::IsSelectedSlotValid())
+		return;
 
 	Load(USSSlotsUtility::GetSelectedSlotName(), Instigator);
 }
 
 void USaveManager::LoadSharedSlot(UObject* Instigator)
 {
+	if (!USSSlotsUtility::DoesSharedSlotFileExist())
+		return;
+
 	Load(SHARED_SAVE_FILE_NAME, Instigator, true);
 }
 

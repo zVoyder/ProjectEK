@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Data/SaveData/InventoryBaseSaveData.h"
+#include "Data/SaveData/InventoryBaseSaveDataDEPRECATED.h"
 #include "EquipmentSystem/Equipment.h"
 #include "Interfaces/Saveable.h"
 #include "InventoryBase.generated.h"
@@ -45,7 +45,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(
 );
 
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(Custom))
-class INVENTORYSYSTEM_API UInventoryBase : public UActorComponent, public ISaveable
+class INVENTORYSYSTEM_API UInventoryBase : public UActorComponent//, public ISaveable
 {
 	GENERATED_BODY()
 
@@ -88,20 +88,11 @@ public:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
-	/**
-	 * Creates and returns a new save data object for this inventory.
-	 * @return Pointer to the created USaveData object.
-	 */
 	UFUNCTION(BlueprintPure)
-	virtual USaveData* CreateSaveData() override;
-
-	/**
-	 * Loads the inventory state from the provided save data.
-	 * @param SavedData The save data to load from.
-	 * @return True if loading was successful, false otherwise.
-	 */
+	virtual USaveData* CreateSaveDataInstance();
+	
 	UFUNCTION(BlueprintCallable)
-	bool LoadSaveData(USaveData* SavedData) override;
+	virtual bool Load(USaveData* SavedData);
 	
 	/**
 	 * Links this inventory to the specified equipment.
@@ -273,7 +264,7 @@ protected:
 	USaveData* CreateInventorySaveData(USaveData* SaveData, TArray<UItemBase*>& ItemsToSave);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void LoadInventorySaveData(UInventoryBaseSaveData* InventorySaveData);
+	void LoadInventorySaveData(UInventoryBaseSaveDataDEPRECATED* InventorySaveData);
 
 	/**
 	 * Adds an item to the inventory list.

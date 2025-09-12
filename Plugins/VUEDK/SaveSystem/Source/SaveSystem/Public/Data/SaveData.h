@@ -6,7 +6,7 @@
 #include "UObject/Object.h"
 #include "SaveData.generated.h"
 
-UCLASS(BlueprintType)
+UCLASS(Blueprintable, BlueprintType)
 class SAVESYSTEM_API USaveData : public UObject
 {
 	GENERATED_BODY()

@@ -77,9 +77,14 @@ void UItemBase::DeassignInventory()
 void UItemBase::SetEquipSlot(UEquipment* InEquipment, const int32 SlotIndex)
 {
 	RelatedEquipment = InEquipment;
-	EquipSlotIndex = SlotIndex;
+	SetEquipSlotIndex(SlotIndex);
 	OnItemEquipped.Broadcast(this);
 	OnEquip();
+}
+
+void UItemBase::SetEquipSlotIndex(const int32 SlotIndex)
+{
+	EquipSlotIndex = SlotIndex;
 }
 
 void UItemBase::ClearEquipSlot()

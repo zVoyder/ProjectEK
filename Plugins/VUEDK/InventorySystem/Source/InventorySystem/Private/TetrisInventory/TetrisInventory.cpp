@@ -196,7 +196,7 @@ USaveData* UTetrisInventory::CreateInventorySaveData_Implementation(USaveData* S
 	return TetrisInventorySaveData;
 }
 
-void UTetrisInventory::LoadInventorySaveData_Implementation(UInventoryBaseSaveData* InventorySaveData)
+void UTetrisInventory::LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData)
 {
 	Super::LoadInventorySaveData_Implementation(InventorySaveData);
 	UTetrisInventorySaveData* TetrisInventorySaveData = Cast<UTetrisInventorySaveData>(InventorySaveData);

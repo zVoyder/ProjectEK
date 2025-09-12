@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "Data/Saves/DefaultSaveGame.h"
 #include "SaveManager.h"
+#include "Behaviours/SaveBehaviourBase.h"
+#include "Data/SaveData.h"
 #include "Saver.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
@@ -52,6 +54,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnBeginWithNewSharedSaveGame OnBeginWithNewSharedSaveGame;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced)
+	TSet<USaveBehaviourBase*> SaveBehaviours;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, AdvancedDisplay,
+		meta = (ToolTip = "If true, OnPrepSave will attempt to serialize the owner actor, and OnLoadGame will attempt to deserialize it. Keep in mind this is not optimal; it is recommended to package your data in a SaveData object instead."))
+	bool bSerializeOwner = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, AdvancedDisplay,
 		meta = (ToolTip = "Useful when you want to delay the BeginWithLoad Events for the next tick in case you want to do some initialization before the events are called."))
 	bool bDelayBeginWithLoadForNextTick = true;
@@ -59,29 +67,58 @@ public:
 protected:
 	UPROPERTY()
 	USaveManager* SaveManager;
-	
+
+private:
+	FName UniqueSaveID;
+
 public:
 	USaver();
-	
+
 	/**
 	 * Returns the unique save ID for this saver instance.
 	 * @return The unique FName identifier for the save.
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	FName GetUniqueSaveID() const;
-	
+
+	/**
+	 * Combines the provided SaveDataID with the unique save ID of this saver instance.
+	 * @param SaveDataID - The sub-identifier for the SaveData.
+	 * @return A composite FName that uniquely identifies the SaveData in the context of this saver.
+	 */
+	UFUNCTION(BlueprintPure)
+	FName MakeCompositeSaveID(const FName SaveDataID) const;
+
+	/**
+	 * Pushes some SaveData to the SaveGame instance (calling function TrySerializeSaveDataObjectInSaveGame internally).
+	 * @param SaveData - The SaveData object to push data to.
+	 * @param SaveDataID - An identifier to locate the SaveData object, it will be combined with the unique ID of the saver.
+	 * @return True if the operation was successful, False otherwise.
+	 */
+	UFUNCTION(BlueprintCallable)
+	bool PushDataToSaveGame(USaveData* SaveData, const FName SaveDataID = "Default");
+
+	/**
+	 * Pulls some SaveData from the SaveGame instance (calling function TryDeserializeSaveDataObjectFromSaveGame internally).
+	 * @param SaveData - The SaveData object to populate with data from the save.
+	 * @param SaveDataID - An identifier to locate the SaveData object, it will be combined with the unique ID of the saver.
+	 * @return True if the operation was successful and data was found, False otherwise.
+	 */
+	UFUNCTION(BlueprintCallable)
+	bool PullDataFromSaveGame(USaveData* SaveData, const FName SaveDataID = "Default");
+
 protected:
 	/**
 	 * Called when the component begins play. Used for initialization logic.
 	 */
 	virtual void BeginPlay() override;
-	
+
 	/**
 	 * Called when the component ends play. Used for cleanup logic.
 	 * @param EndPlayReason - The reason the component is ending play.
 	 */
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
+
 	/**
 	 * Prepares the save operation with the given save game, slot info, and instigator.
 	 * @param SaveGame - The save game object to prepare.
@@ -90,7 +127,7 @@ protected:
 	 */
 	UFUNCTION()
 	void PrepareSave(UDefaultSaveGame* SaveGame, USlotInfoItem* SlotInfoItem, UObject* Instigator);
-	
+
 	/**
 	 * Prepares the load operation with the given save game and instigator.
 	 * @param SaveGame - The save game object to prepare.
@@ -214,6 +251,12 @@ protected:
 	void OnBeginWithNewSharedSaveGameEvent(UDefaultSaveGame* SaveGame);
 
 private:
+	void MakeUniqueSaveID();
+	
+	void SerializeOwner() const;
+
+	void DeserializeOwner() const;
+
 	/**
 	 * Checks if the saver should begin with a loaded save game and triggers the appropriate logic.
 	 */
@@ -239,6 +282,16 @@ private:
 	 */
 	void BeginWithNewSharedSaveGame();
 
+	void SaveAllBehaviours();
+
+	void LoadAllBehaviours();
+	
+	void CallSaveBehavioursBeginPlay();
+
+	void CallSaveBehavioursEndPlay(const EEndPlayReason::Type EndPlayReason);
+
+	void CheckBehavioursDuplicates();
+	
 	/**
 	 * Checks if the saver is in a valid state for operations.
 	 * @return true if valid, false otherwise.

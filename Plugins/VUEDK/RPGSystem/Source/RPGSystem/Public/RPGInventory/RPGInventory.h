@@ -20,7 +20,7 @@ protected:
 
 	virtual USaveData* CreateInventorySaveData_Implementation(USaveData* SaveData, TArray<UItemBase*>& ItemsToSave) override;
 
-	virtual void LoadInventorySaveData_Implementation(UInventoryBaseSaveData* InventorySaveData) override;
+	virtual void LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData) override;
 
 	void CreateRPGInventorySaveData(FRPGInventoryItemsSaveData& RPGItemsSaveData, TArray<UItemBase*>& ItemsToSave);
 

@@ -17,7 +17,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(
 );
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class VUEDKCORE_API UCurrenciesManager : public UActorComponent, public ISaveable
+class VUEDKCORE_API UCurrenciesManager : public UActorComponent //, public ISaveable
 {
 	GENERATED_BODY()
 
@@ -34,21 +34,12 @@ private:
 
 public:
 	UCurrenciesManager();
-
-	/**
-	 * Creates and returns a save data object representing the current state of currencies.
-	 * @return Pointer to the created USaveData instance.
-	 */
+	
 	UFUNCTION(BlueprintPure)
-	virtual USaveData* CreateSaveData() override;
+	virtual USaveData* CreateSaveDataInstance();
 
-	/**
-	 * Loads the state of currencies from the provided save data.
-	 * @param SavedData - The save data to load from.
-	 * @return true if the data was loaded successfully, false otherwise.
-	 */
 	UFUNCTION(BlueprintCallable)
-	virtual bool LoadSaveData(USaveData* SavedData) override;
+	virtual bool Load(USaveData* SavedData);
 
 	/**
 	 * Gets the currency instance for the specified currency data.

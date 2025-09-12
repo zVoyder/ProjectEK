@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Data/SaveData.h"
-#include "InventoryBaseSaveData.generated.h"
+#include "InventoryBaseSaveDataDEPRECATED.generated.h"
 
 UCLASS(BlueprintType)
-class INVENTORYSYSTEM_API UInventoryBaseSaveData : public USaveData
+class INVENTORYSYSTEM_API UInventoryBaseSaveDataDEPRECATED : public USaveData
 {
 	GENERATED_BODY()
 

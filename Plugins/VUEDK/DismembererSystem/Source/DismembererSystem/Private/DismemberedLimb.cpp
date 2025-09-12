@@ -27,10 +27,18 @@ ADismemberedLimb::ADismemberedLimb()
 
 void ADismemberedLimb::Init(const FDismemberableLimbData& InLimbData, UDismemberer* InDismemberer, const FVector& Impulse, float LifeSpan)
 {
+	Dismemberer = InDismemberer;
+
+	if (!IsValid(Dismemberer))
+	{
+		UE_LOG(LogDismembermentSystem, Error, TEXT("DismemberedLimb::Init: Invalid Dismemberer."));
+		Destroy();
+		return;
+	}
+
 	LimbData = InLimbData;
 	TargetBoneName = LimbData.BoneName;
-	Dismemberer = InDismemberer;
-	PoseableMesh->SetReceivesDecals(Dismemberer->bLimbReceiveDecals);
+	TargetSkelatalMeshComponent = Dismemberer->GetSkeletalMeshComponent();
 	SetLifeSpan(LifeSpan);
 
 	if (!Check())
@@ -40,9 +48,8 @@ void ADismemberedLimb::Init(const FDismemberableLimbData& InLimbData, UDismember
 		return;
 	}
 
-	TargetSkelatalMeshComponent = Dismemberer->GetSkeletalMeshComponent();
+	PoseableMesh->SetReceivesDecals(Dismemberer->bLimbReceiveDecals);
 	bApplyImpulseOnDamage = Dismemberer->bLimbApplyImpulseOnDamage;
-
 	PoseableMesh->SetSkinnedAssetAndUpdate(TargetSkelatalMeshComponent->GetSkeletalMeshAsset());
 	PhysicRootComponent->SetAllMassScale(LimbData.LimbMass);
 	IsolateLimb();
@@ -131,7 +138,7 @@ void ADismemberedLimb::CopyPoseFromSkeletalMesh()
 		const FName CurrentBoneName = TargetSkelatalMeshComponent->GetBoneName(i);
 		const FRotator CurrentBoneRot = TargetSkelatalMeshComponent->GetBoneQuaternion(CurrentBoneName, EBoneSpaces::ComponentSpace).Rotator();
 		PoseableMesh->SetBoneRotationByName(CurrentBoneName, CurrentBoneRot, EBoneSpaces::ComponentSpace);
-
+		
 		if (PoseableMesh->BoneIsChildOf(CurrentBoneName, TargetBoneName))
 			LimbBoneNames.Add(CurrentBoneName);
 		else
@@ -253,5 +260,5 @@ void ADismemberedLimb::SpawnLimbExplosionFX() const
 
 bool ADismemberedLimb::Check() const
 {
-	return IsValid(Dismemberer) && IsValid(GetWorld());
+	return IsValid(Dismemberer) && IsValid(GetWorld()) && IsValid(PoseableMesh) && IsValid(TargetSkelatalMeshComponent);
 }

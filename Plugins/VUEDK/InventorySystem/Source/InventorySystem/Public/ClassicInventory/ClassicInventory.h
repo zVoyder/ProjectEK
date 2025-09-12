@@ -19,7 +19,7 @@ public:
 
 	virtual USaveData* CreateInventorySaveData_Implementation(USaveData* SaveData, TArray<UItemBase*>& ItemsToSave) override;
 	
-	virtual void LoadInventorySaveData_Implementation(UInventoryBaseSaveData* InventorySaveData) override;
+	virtual void LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData) override;
 
 	virtual void OnItemAdded_Implementation(UItemBase* Item) override;
 

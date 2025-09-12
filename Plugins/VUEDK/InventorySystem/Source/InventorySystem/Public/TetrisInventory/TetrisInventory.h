@@ -155,7 +155,7 @@ protected:
 	 * Loads the inventory state from the provided save data.
 	 * @param InventorySaveData The save data to load from.
 	 */
-	virtual void LoadInventorySaveData_Implementation(UInventoryBaseSaveData* InventorySaveData) override;
+	virtual void LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData) override;
 
 	/**
 	 * Called when an item is added to the inventory.

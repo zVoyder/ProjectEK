@@ -2,7 +2,7 @@
 
 #include "Base/InventoryBase.h"
 #include "Base/ItemBase.h"
-#include "Base/Data/SaveData/InventoryBaseSaveData.h"
+#include "Base/Data/SaveData/InventoryBaseSaveDataDEPRECATED.h"
 #include "Factories/ISFactory.h"
 #include "Utility/ISInventoriesUtility.h"
 
@@ -22,7 +22,7 @@ void UInventoryBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		UnlinkEquipment();
 }
 
-USaveData* UInventoryBase::CreateSaveData()
+USaveData* UInventoryBase::CreateSaveDataInstance()
 {
 	UE_LOG(LogInventorySystem, Display, TEXT("Creating Save Data for inventory %s."), *GetName());
 	USaveData* SaveData = CreateSaveDataObject();
@@ -30,9 +30,9 @@ USaveData* UInventoryBase::CreateSaveData()
 	return CreateInventorySaveData_Implementation(SaveData, ItemsToSave);
 }
 
-bool UInventoryBase::LoadSaveData(USaveData* SavedData)
+bool UInventoryBase::Load(USaveData* SavedData)
 {
-	if (UInventoryBaseSaveData* InventorySaveData = Cast<UInventoryBaseSaveData>(SavedData))
+	if (UInventoryBaseSaveDataDEPRECATED* InventorySaveData = Cast<UInventoryBaseSaveDataDEPRECATED>(SavedData))
 	{
 		// Clear the inventory before loading the save data
 		if (IsValid(RelatedEquipment))
@@ -348,17 +348,17 @@ void UInventoryBase::BeginPlay()
 
 USaveData* UInventoryBase::CreateSaveDataObject_Implementation()
 {
-	return NewObject<UInventoryBaseSaveData>();
+	return NewObject<UInventoryBaseSaveDataDEPRECATED>();
 }
 
 USaveData* UInventoryBase::CreateInventorySaveData_Implementation(USaveData* SaveData, TArray<UItemBase*>& ItemsToSave)
 {
-	UInventoryBaseSaveData* InventorySaveData = Cast<UInventoryBaseSaveData>(SaveData);
+	UInventoryBaseSaveDataDEPRECATED* InventorySaveData = Cast<UInventoryBaseSaveDataDEPRECATED>(SaveData);
 	InventorySaveData->MaxWeight = WeightMaxCapacity;
 	return SaveData;
 }
 
-void UInventoryBase::LoadInventorySaveData_Implementation(UInventoryBaseSaveData* InventorySaveData)
+void UInventoryBase::LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData)
 {
 	CurrentWeight = InventorySaveData->MaxWeight;
 }

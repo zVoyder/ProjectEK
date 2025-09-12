@@ -77,14 +77,16 @@ void USSUtility::SelectAndSaveOnSlot(const FString& SlotName, UObject* Instigato
 
 void USSUtility::LoadSelectedSlot(UObject* Instigator)
 {
-	if (!Check()) return;
+	if (!Check())
+		return;
 
 	CurrentSaveManager->LoadSelectedSlot(Instigator);
 }
 
 void USSUtility::LoadSharedSlot(UObject* Instigator)
 {
-	if (!Check()) return;
+	if (!Check())
+		return;
 
 	CurrentSaveManager->LoadSharedSlot(Instigator);
 }

@@ -8,7 +8,7 @@
 #include "RPGInventorySaveData.generated.h"
 
 UCLASS()
-class RPGSYSTEM_API URPGInventorySaveData : public UInventoryBaseSaveData
+class RPGSYSTEM_API URPGInventorySaveData : public UInventoryBaseSaveDataDEPRECATED
 {
 	GENERATED_BODY()
 

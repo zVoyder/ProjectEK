@@ -54,10 +54,10 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UFUNCTION(BlueprintPure)
-	virtual USaveData* CreateSaveDataInstance();
+	virtual USaveDataBase* CreateSaveDataInstance();
 
 	UFUNCTION(BlueprintCallable)
-	virtual bool Load(USaveData* SavedData);
+	virtual bool Load(USaveDataBase* SavedData);
 
 	/**
 	 * Gets the special stat data by its unique identifier.

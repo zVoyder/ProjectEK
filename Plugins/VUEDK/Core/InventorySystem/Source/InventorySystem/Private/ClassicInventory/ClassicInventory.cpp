@@ -14,12 +14,12 @@ UClassicInventory::UClassicInventory()
 {
 }
 
-USaveData* UClassicInventory::CreateSaveDataObject_Implementation()
+USaveDataBase* UClassicInventory::CreateSaveDataObject_Implementation()
 {
 	return NewObject<UClassicInventorySaveData>();
 }
 
-USaveData* UClassicInventory::CreateInventorySaveData_Implementation(USaveData* SaveData, TArray<UItemBase*>& ItemsToSave)
+USaveDataBase* UClassicInventory::CreateInventorySaveData_Implementation(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave)
 {
 	UClassicInventorySaveData* ClassicInventorySaveData = Cast<UClassicInventorySaveData>(SaveData);
 	

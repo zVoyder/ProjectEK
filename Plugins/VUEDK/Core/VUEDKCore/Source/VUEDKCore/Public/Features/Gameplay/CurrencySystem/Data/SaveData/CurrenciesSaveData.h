@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/SaveData.h"
+#include "Data/SaveData/SaveDataBase.h"
 #include "CurrenciesSaveData.generated.h"
 
 UCLASS()
-class VUEDKCORE_API UCurrenciesSaveData : public USaveData
+class VUEDKCORE_API UCurrenciesSaveData : public USaveDataBase
 {
 	GENERATED_BODY()
 

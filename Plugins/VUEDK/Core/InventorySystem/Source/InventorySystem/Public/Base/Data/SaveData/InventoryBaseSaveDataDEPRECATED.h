@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/SaveData.h"
+#include "Data/SaveData/SaveDataBase.h"
 #include "InventoryBaseSaveDataDEPRECATED.generated.h"
 
 UCLASS(BlueprintType)
-class INVENTORYSYSTEM_API UInventoryBaseSaveDataDEPRECATED : public USaveData
+class INVENTORYSYSTEM_API UInventoryBaseSaveDataDEPRECATED : public USaveDataBase
 {
 	GENERATED_BODY()
 

@@ -22,15 +22,15 @@ void UInventoryBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		UnlinkEquipment();
 }
 
-USaveData* UInventoryBase::CreateSaveDataInstance()
+USaveDataBase* UInventoryBase::CreateSaveDataInstance()
 {
 	UE_LOG(LogInventorySystem, Display, TEXT("Creating Save Data for inventory %s."), *GetName());
-	USaveData* SaveData = CreateSaveDataObject();
+	USaveDataBase* SaveData = CreateSaveDataObject();
 	TArray<UItemBase*> ItemsToSave = GetItems();
 	return CreateInventorySaveData_Implementation(SaveData, ItemsToSave);
 }
 
-bool UInventoryBase::Load(USaveData* SavedData)
+bool UInventoryBase::Load(USaveDataBase* SavedData)
 {
 	if (UInventoryBaseSaveDataDEPRECATED* InventorySaveData = Cast<UInventoryBaseSaveDataDEPRECATED>(SavedData))
 	{
@@ -346,12 +346,12 @@ void UInventoryBase::BeginPlay()
 		UISInventoriesUtility::SetMainInventory(this);
 }
 
-USaveData* UInventoryBase::CreateSaveDataObject_Implementation()
+USaveDataBase* UInventoryBase::CreateSaveDataObject_Implementation()
 {
 	return NewObject<UInventoryBaseSaveDataDEPRECATED>();
 }
 
-USaveData* UInventoryBase::CreateInventorySaveData_Implementation(USaveData* SaveData, TArray<UItemBase*>& ItemsToSave)
+USaveDataBase* UInventoryBase::CreateInventorySaveData_Implementation(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave)
 {
 	UInventoryBaseSaveDataDEPRECATED* InventorySaveData = Cast<UInventoryBaseSaveDataDEPRECATED>(SaveData);
 	InventorySaveData->MaxWeight = WeightMaxCapacity;

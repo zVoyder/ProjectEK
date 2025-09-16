@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/Saves/DefaultSaveGame.h"
-#include "Data/Saves/SlotInfoItem.h"
-#include "Data/Saves/SlotInfos.h"
+#include "Data/SaveGame/DefaultSaveGame.h"
+#include "Data/SaveGame/SlotInfoItem.h"
+#include "Data/SaveGame/SlotInfos.h"
 #include "Data/Structs/SaveManagerData.h"
 #include "GameFramework/SaveGame.h"
 #include "UObject/Object.h"

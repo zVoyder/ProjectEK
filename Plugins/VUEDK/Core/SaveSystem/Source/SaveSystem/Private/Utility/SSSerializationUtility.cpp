@@ -1,18 +1,30 @@
 ﻿// Copyright VUEDK, Inc. All Rights Reserved.
 
 #include "Utility/SSSerializationUtility.h"
-#include "Data/SaveData.h"
+#include "Data/SaveData/SaveDataBase.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "Utility/SSUtility.h"
 
-bool USSSerializationUtility::TrySerializeSaveDataObjectInSaveGame(USaveData* SaveDataToSerialize, const FName SaveDataID)
+bool USSSerializationUtility::TrySerializeSaveDataObjectInSaveGame(USaveDataBase* SaveDataToSerialize)
 {
-	return TrySerializeObjectInSaveGame(SaveDataToSerialize, SaveDataID);
+	if (!IsValid(SaveDataToSerialize))
+	{
+		UE_LOG(LogSaveSystem, Warning, TEXT("USSSerializationUtility::TrySerializeSaveDataObjectInSaveGame: Failed Serialization: SaveDataToSerialize is not valid."));
+		return false;
+	}
+
+	return TrySerializeObjectInSaveGame(SaveDataToSerialize, SaveDataToSerialize->GetSaveDataID());
 }
 
-bool USSSerializationUtility::TryDeserializeSaveDataObjectFromSaveGame(USaveData* SaveDataToDeserialize, const FName SaveDataID)
+bool USSSerializationUtility::TryDeserializeSaveDataObjectFromSaveGame(USaveDataBase* SaveDataToDeserialize)
 {
-	return TryDeserializeObjectFromSaveGame(SaveDataToDeserialize, SaveDataID);
+	if (!IsValid(SaveDataToDeserialize))
+	{
+		UE_LOG(LogSaveSystem, Warning, TEXT("USSSerializationUtility::TryDeserializeSaveDataObjectFromSaveGame: Failed Deserialization: SaveDataToDeserialize is not valid."));
+		return false;
+	}
+
+	return TryDeserializeObjectFromSaveGame(SaveDataToDeserialize, SaveDataToDeserialize->GetSaveDataID());
 }
 
 bool USSSerializationUtility::TrySerializeObjectInSaveGame(UObject* ObjectToSerialize, const FName ObjectID)
@@ -25,7 +37,10 @@ bool USSSerializationUtility::TrySerializeObjectInSaveGame(UObject* ObjectToSeri
 
 	UDefaultSaveGame* SaveGame = USSUtility::GetSaveGame();
 	if (!IsValid(SaveGame))
+	{
+		UE_LOG(LogSaveSystem, Warning, TEXT("USSSerializationUtility::TrySerializeObjectInSaveGame: Failed Serialization: SaveGame instance is not valid."));
 		return false;
+	}
 
 	FSerializedObject SerializedObject;
 	FMemoryWriter MemoryWriter(SerializedObject.Bytes, true);
@@ -44,8 +59,17 @@ bool USSSerializationUtility::TryDeserializeObjectFromSaveGame(UObject* ObjectTo
 	}
 
 	const UDefaultSaveGame* SaveGame = USSUtility::GetSaveGame();
-	if (!IsValid(SaveGame) || !SaveGame->SavedObjects.Contains(ObjectID))
+	if (!IsValid(SaveGame))
+	{
+		UE_LOG(LogSaveSystem, Warning, TEXT("USSSerializationUtility::TryDeserializeObjectFromSaveGame: Failed Deserialization: SaveGame instance is not valid."));
 		return false;
+	}
+	
+	if (!SaveGame->SavedObjects.Contains(ObjectID))
+	{
+		UE_LOG(LogSaveSystem, Warning, TEXT("USSSerializationUtility::TryDeserializeObjectFromSaveGame: Failed Deserialization: No saved data found for ObjectID %s."), *ObjectID.ToString());
+		return false;
+	}
 
 	const FSerializedObject& SerializedObject = SaveGame->SavedObjects[ObjectID];
 	FMemoryReader MemoryReader(SerializedObject.Bytes, true);

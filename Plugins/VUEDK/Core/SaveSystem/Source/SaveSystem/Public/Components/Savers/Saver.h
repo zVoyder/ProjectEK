@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Data/Saves/DefaultSaveGame.h"
+#include "Data/SaveGame/DefaultSaveGame.h"
 #include "SaveManager.h"
 #include "Behaviours/SaveBehaviourBase.h"
-#include "Data/SaveData.h"
+#include "Data/SaveData/SaveDataBase.h"
 #include "Saver.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
@@ -92,20 +92,18 @@ public:
 	/**
 	 * Pushes some SaveData to the SaveGame instance (calling function TrySerializeSaveDataObjectInSaveGame internally).
 	 * @param SaveData - The SaveData object to push data to.
-	 * @param SaveDataID - An identifier to locate the SaveData object, it will be combined with the unique ID of the saver.
 	 * @return True if the operation was successful, False otherwise.
 	 */
-	UFUNCTION(BlueprintCallable)
-	bool PushDataToSaveGame(USaveData* SaveData, const FName SaveDataID = "Default");
+	UFUNCTION(BlueprintCallable, BlueprintPure = false)
+	bool PushDataToSaveGame(USaveDataBase* SaveData) const;
 
 	/**
 	 * Pulls some SaveData from the SaveGame instance (calling function TryDeserializeSaveDataObjectFromSaveGame internally).
 	 * @param SaveData - The SaveData object to populate with data from the save.
-	 * @param SaveDataID - An identifier to locate the SaveData object, it will be combined with the unique ID of the saver.
 	 * @return True if the operation was successful and data was found, False otherwise.
 	 */
-	UFUNCTION(BlueprintCallable)
-	bool PullDataFromSaveGame(USaveData* SaveData, const FName SaveDataID = "Default");
+	UFUNCTION(BlueprintCallable, BlueprintPure = false)
+	bool PullDataFromSaveGame(USaveDataBase* SaveData) const;
 
 protected:
 	/**

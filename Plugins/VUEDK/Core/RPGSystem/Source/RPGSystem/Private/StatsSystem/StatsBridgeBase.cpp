@@ -18,7 +18,7 @@ void UStatsBridgeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	CoreStatsContainer->OnStatsValuesChanged.RemoveDynamic(this, &UStatsBridgeBase::CalculateFullStatsValues);
 }
 
-USaveData* UStatsBridgeBase::CreateSaveDataInstance()
+USaveDataBase* UStatsBridgeBase::CreateSaveDataInstance()
 {
 	UStatsBridgeSaveData* BridgeSaveData = NewObject<UStatsBridgeSaveData>();
 
@@ -31,7 +31,7 @@ USaveData* UStatsBridgeBase::CreateSaveDataInstance()
 	return BridgeSaveData;
 }
 
-bool UStatsBridgeBase::Load(USaveData* SavedData)
+bool UStatsBridgeBase::Load(USaveDataBase* SavedData)
 {
 	if (!SavedData)
 		return false;

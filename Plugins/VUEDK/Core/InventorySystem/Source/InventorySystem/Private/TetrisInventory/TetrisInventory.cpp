@@ -170,12 +170,12 @@ void UTetrisInventory::BeginPlay()
 	ConstructGrid();
 }
 
-USaveData* UTetrisInventory::CreateSaveDataObject_Implementation()
+USaveDataBase* UTetrisInventory::CreateSaveDataObject_Implementation()
 {
 	return NewObject<UTetrisInventorySaveDataDEPRECATED>();
 }
 
-USaveData* UTetrisInventory::CreateInventorySaveData_Implementation(USaveData* SaveData, TArray<UItemBase*>& ItemsToSave)
+USaveDataBase* UTetrisInventory::CreateInventorySaveData_Implementation(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave)
 {
 	Super::CreateInventorySaveData_Implementation(SaveData, ItemsToSave);
 	UTetrisInventorySaveDataDEPRECATED* TetrisInventorySaveData = Cast<UTetrisInventorySaveDataDEPRECATED>(SaveData);

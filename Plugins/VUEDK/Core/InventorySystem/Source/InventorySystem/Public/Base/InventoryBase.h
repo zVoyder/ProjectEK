@@ -89,10 +89,10 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
 	UFUNCTION(BlueprintPure)
-	virtual USaveData* CreateSaveDataInstance();
+	virtual USaveDataBase* CreateSaveDataInstance();
 	
 	UFUNCTION(BlueprintCallable)
-	virtual bool Load(USaveData* SavedData);
+	virtual bool Load(USaveDataBase* SavedData);
 	
 	/**
 	 * Links this inventory to the specified equipment.
@@ -258,10 +258,10 @@ protected:
 	virtual void BeginPlay() override;
 	
 	UFUNCTION(BlueprintNativeEvent)
-	USaveData* CreateSaveDataObject();
+	USaveDataBase* CreateSaveDataObject();
 
 	UFUNCTION(BlueprintNativeEvent)
-	USaveData* CreateInventorySaveData(USaveData* SaveData, TArray<UItemBase*>& ItemsToSave);
+	USaveDataBase* CreateInventorySaveData(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void LoadInventorySaveData(UInventoryBaseSaveDataDEPRECATED* InventorySaveData);

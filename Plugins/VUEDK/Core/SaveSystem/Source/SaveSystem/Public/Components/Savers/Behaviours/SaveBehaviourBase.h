@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Data/SaveData/SaveDataBase.h"
 #include "Interfaces/Saveable.h"
 #include "UObject/Object.h"
 #include "SaveBehaviourBase.generated.h"
@@ -20,9 +21,10 @@ public:
 
 private:
 	UPROPERTY()
-	USaveData* CachedSaveData = nullptr;
+	USaveDataBase* CachedSaveData = nullptr;
 	UPROPERTY()
 	USaver* CachedOwnerSaver = nullptr;
+	FName SaveBehaviourID;
 
 public:
 	virtual void BeginPlay();
@@ -34,15 +36,31 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "EndPlay"))
 	void ReceiveEndPlay(const EEndPlayReason::Type EndPlayReason);
+
+	virtual USaveDataBase* CreateSaveDataInstanceNative();
 	
-	virtual USaveData* CreateSaveDataInstance_Implementation() override;
+	virtual USaveDataBase* CreateSaveDataInstance_Implementation() override;
 
-	virtual bool Save_Implementation(USaveData* SaveData) override;
+	virtual void PrepareForSerializationNative(USaveDataBase* SaveData);
 
-	virtual bool Load_Implementation(USaveData* SaveData) override;
+	virtual void PrepareForSerialization_Implementation(USaveDataBase* SaveData) override;
+
+	virtual void PrepareForDeserializationNative(USaveDataBase* SaveData);
+	
+	virtual void PrepareForDeserialization_Implementation(USaveDataBase* SaveData) override;
+
+	virtual bool Save_Implementation(USaveDataBase* SaveData) override;
+
+	virtual bool Load_Implementation(USaveDataBase* SaveData) override;
 
 	UFUNCTION(BlueprintPure)
-	USaveData* GetSaveDataInstance();
+	USaveDataBase* GetSaveDataInstance();
+
+	UFUNCTION(BlueprintCallable)
+	void SetSaveBehaviourID(const FName NewID);
+	
+	UFUNCTION(BlueprintPure)
+	FName GetSaveBehaviourID() const;
 
 #if WITH_ENGINE
 	virtual UWorld* GetWorld() const override;
@@ -60,7 +78,5 @@ protected:
 	AActor* GetOwnerActor();
 
 private:
-	FName GetSaveBehaviourID() const;
-	
 	void CacheSaveDataInstanceIfNeeded();
 };

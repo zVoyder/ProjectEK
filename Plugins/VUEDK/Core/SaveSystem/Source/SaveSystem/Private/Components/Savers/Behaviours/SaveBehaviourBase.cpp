@@ -14,32 +14,70 @@ void USaveBehaviourBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	ReceiveEndPlay(EndPlayReason);
 }
 
-USaveData* USaveBehaviourBase::CreateSaveDataInstance_Implementation()
+USaveDataBase* USaveBehaviourBase::CreateSaveDataInstanceNative()
+{
+	USaveDataBase* SaveData = Execute_CreateSaveDataInstance(this);
+	if (IsValid(SaveData))
+		SaveData->SetSaveDataID(GetSaveBehaviourID());
+
+	return SaveData;
+}
+
+USaveDataBase* USaveBehaviourBase::CreateSaveDataInstance_Implementation()
 {
 	return nullptr;
 }
 
-bool USaveBehaviourBase::Save_Implementation(USaveData* SaveData)
+void USaveBehaviourBase::PrepareForSerializationNative(USaveDataBase* SaveData)
 {
-	return false;
+	Execute_PrepareForSerialization(this, SaveData);
 }
 
-bool USaveBehaviourBase::Load_Implementation(USaveData* SaveData)
+void USaveBehaviourBase::PrepareForSerialization_Implementation(USaveDataBase* SaveData)
 {
-	return false;
 }
 
-USaveData* USaveBehaviourBase::GetSaveDataInstance()
+void USaveBehaviourBase::PrepareForDeserializationNative(USaveDataBase* SaveData)
+{
+	Execute_PrepareForDeserialization(this, SaveData);
+}
+
+void USaveBehaviourBase::PrepareForDeserialization_Implementation(USaveDataBase* SaveData)
+{
+}
+
+bool USaveBehaviourBase::Save_Implementation(USaveDataBase* SaveData)
+{
+	return true;
+}
+
+bool USaveBehaviourBase::Load_Implementation(USaveDataBase* SaveData)
+{
+	return true;
+}
+
+USaveDataBase* USaveBehaviourBase::GetSaveDataInstance()
 {
 	if (bPreserveSaveDataInstance)
 	{
 		if (!IsValid(CachedSaveData))
-			CachedSaveData = Execute_CreateSaveDataInstance(this);
+			CachedSaveData = CreateSaveDataInstanceNative();
 
 		return CachedSaveData;
 	}
 
-	return Execute_CreateSaveDataInstance(this);
+	return CreateSaveDataInstanceNative();
+}
+
+void USaveBehaviourBase::SetSaveBehaviourID(const FName NewID)
+{
+	SaveBehaviourID = NewID;
+}
+
+FName USaveBehaviourBase::GetSaveBehaviourID() const
+{
+	const FName ClassName = GetClass()->GetFName();
+	return FName(*FString::Printf(TEXT("%s_%s"), *SaveBehaviourID.ToString(), *ClassName.ToString()));
 }
 
 #if WITH_ENGINE
@@ -66,23 +104,18 @@ USaver* USaveBehaviourBase::GetOwnerSaver()
 		CachedOwnerSaver = OwnerSaver;
 		return CachedOwnerSaver;
 	}
-	
+
 	return nullptr;
 }
 
 AActor* USaveBehaviourBase::GetOwnerActor()
 {
 	const USaver* OwnerSaver = GetOwnerSaver();
-	
+
 	if (!IsValid(OwnerSaver))
 		return nullptr;
-	
-	return OwnerSaver->GetOwner();
-}
 
-FName USaveBehaviourBase::GetSaveBehaviourID() const
-{
-	return FName(*GetClass()->GetName());
+	return OwnerSaver->GetOwner();
 }
 
 void USaveBehaviourBase::CacheSaveDataInstanceIfNeeded()
@@ -90,6 +123,6 @@ void USaveBehaviourBase::CacheSaveDataInstanceIfNeeded()
 	if (bPreserveSaveDataInstance)
 	{
 		if (!IsValid(CachedSaveData))
-			CachedSaveData = Execute_CreateSaveDataInstance(this);
+			CachedSaveData = CreateSaveDataInstanceNative();
 	}
 }

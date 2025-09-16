@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SaveData.h"
+#include "SaveDataBase.h"
 #include "ActorStateSaveData.generated.h"
 
 namespace ActorSaveKeys
@@ -17,7 +17,7 @@ namespace ActorSaveKeys
 }
 
 UCLASS()
-class SAVESYSTEM_API UActorStateSaveData : public USaveData
+class SAVESYSTEM_API UActorStateSaveData : public USaveDataBase
 {
 	GENERATED_BODY()
 

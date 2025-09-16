@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "ItemBaseSaveData.h"
-#include "Data/SaveData.h"
+#include "Data/SaveData/SaveDataBase.h"
 #include "InventoryBaseSaveData.generated.h"
 
+class UInventorySaveBehaviour;
 class UItemBase;
 
 UCLASS()
-class INVENTORYSAVEBRIDGE_API UInventoryBaseSaveData : public USaveData
+class INVENTORYSAVEBRIDGE_API UInventoryBaseSaveData : public USaveDataBase
 {
 	GENERATED_BODY()
 
@@ -19,10 +20,14 @@ public:
 	TArray<UItemBaseSaveData*> SavedItemsData;
 	UPROPERTY(SaveGame, BlueprintReadOnly)
 	double SavedMaxWeight;
+	UPROPERTY(SaveGame, BlueprintReadOnly)
+	int32 ItemsCount;
 
 public:
-	UFUNCTION(BlueprintNativeEvent, BlueprintPure)
-	UItemBaseSaveData* CreateItemSaveData();
+	UItemBaseSaveData* CreateItemSaveData(const UInventorySaveBehaviour* InventorySaveBehaviour);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UItemBaseSaveData* CreateItemSaveDataInstance();
 	
 	void SaveItem(UItemBase* Item, UItemBaseSaveData* ItemSaveData);
 

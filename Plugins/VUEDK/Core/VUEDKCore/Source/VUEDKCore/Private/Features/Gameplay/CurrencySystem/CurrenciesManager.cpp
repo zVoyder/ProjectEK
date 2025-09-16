@@ -8,7 +8,7 @@ UCurrenciesManager::UCurrenciesManager()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-USaveData* UCurrenciesManager::CreateSaveDataInstance()
+USaveDataBase* UCurrenciesManager::CreateSaveDataInstance()
 {
 	UCurrenciesSaveData* SaveData = NewObject<UCurrenciesSaveData>();
 
@@ -27,7 +27,7 @@ USaveData* UCurrenciesManager::CreateSaveDataInstance()
 	return SaveData;
 }
 
-bool UCurrenciesManager::Load(USaveData* SavedData)
+bool UCurrenciesManager::Load(USaveDataBase* SavedData)
 {
 	const UCurrenciesSaveData* CurrenciesSaveData = Cast<UCurrenciesSaveData>(SavedData);
 

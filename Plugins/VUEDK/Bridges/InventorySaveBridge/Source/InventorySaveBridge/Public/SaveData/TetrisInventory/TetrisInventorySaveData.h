@@ -12,7 +12,7 @@ class INVENTORYSAVEBRIDGE_API UTetrisInventorySaveData : public UInventoryBaseSa
 	GENERATED_BODY()
 
 public:
-	virtual UItemBaseSaveData* CreateItemSaveData_Implementation() override;
+	virtual UItemBaseSaveData* CreateItemSaveDataInstance_Implementation() override;
 	
 protected:
 	virtual void SaveItemNative(UItemBase* Item, UItemBaseSaveData* ItemSaveData) override;

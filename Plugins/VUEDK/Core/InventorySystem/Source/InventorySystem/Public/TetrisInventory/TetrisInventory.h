@@ -141,7 +141,7 @@ protected:
 	 * Creates the save data object for this inventory.
 	 * @return Pointer to the created USaveData object.
 	 */
-	virtual USaveData* CreateSaveDataObject_Implementation() override;
+	virtual USaveDataBase* CreateSaveDataObject_Implementation() override;
 
 	/**
 	 * Creates the inventory save data for this inventory.
@@ -149,7 +149,7 @@ protected:
 	 * @param ItemsToSave The items to include in the save data.
 	 * @return Pointer to the created USaveData object.
 	 */
-	virtual USaveData* CreateInventorySaveData_Implementation(USaveData* SaveData, TArray<UItemBase*>& ItemsToSave) override;
+	virtual USaveDataBase* CreateInventorySaveData_Implementation(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave) override;
 
 	/**
 	 * Loads the inventory state from the provided save data.

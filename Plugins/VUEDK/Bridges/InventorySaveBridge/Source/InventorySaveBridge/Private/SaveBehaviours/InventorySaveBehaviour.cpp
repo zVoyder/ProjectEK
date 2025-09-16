@@ -2,6 +2,8 @@
 
 #include "SaveBehaviours/InventorySaveBehaviour.h"
 #include "InventorySaveBridge.h"
+#include "Factories/ISFactory.h"
+#include "Utility/ISInventoriesUtility.h"
 
 void UInventorySaveBehaviour::BeginPlay()
 {
@@ -13,29 +15,37 @@ void UInventorySaveBehaviour::BeginPlay()
 	Super::BeginPlay();
 }
 
-USaveData* UInventorySaveBehaviour::CreateSaveDataInstance_Implementation()
+USaveDataBase* UInventorySaveBehaviour::CreateSaveDataInstance_Implementation()
 {
 	if (!Check())
 		return nullptr;
 
-	UInventoryBaseSaveData* InventoryBaseSaveData = NewObject<UInventoryBaseSaveData>(this, InventorySaveDataClass);
-
-	for (const UItemBase* Item : Inventory->GetItems())
-	{
-		if (!IsValid(Item))
-			continue;
-
-		UItemBaseSaveData* ItemSaveData = InventoryBaseSaveData->CreateItemSaveData();
-		if (!IsValid(ItemSaveData))
-			continue;
-
-		InventoryBaseSaveData->SavedItemsData.Add(ItemSaveData);
-	}
-
-	return InventoryBaseSaveData;
+	UInventoryBaseSaveData* InventorySaveData = NewObject<UInventoryBaseSaveData>(this, InventorySaveDataClass);
+	return InventorySaveData;
 }
 
-bool UInventorySaveBehaviour::Save_Implementation(USaveData* SaveData)
+void UInventorySaveBehaviour::PrepareForDeserialization_Implementation(USaveDataBase* SaveData)
+{
+	if (!Check())
+		return;
+
+	UInventoryBaseSaveData* InventorySaveData = Cast<UInventoryBaseSaveData>(SaveData);
+	if (!IsValid(InventorySaveData))
+	{
+		UE_LOG(LogInventorySaveBridge, Warning, TEXT("UInventorySaveBehaviour::PrepareForDeserialization_Implementation: SaveData is not of type UInventoryBaseSaveData."));
+		return;
+	}
+	
+	InventorySaveData->SavedItemsData.Empty();
+	for (int i = 0; i < InventorySaveData->ItemsCount; i++)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Preparing Item Save Data %d"), i));
+		UItemBaseSaveData* ItemSaveData = InventorySaveData->CreateItemSaveData(this);
+		InventorySaveData->SavedItemsData.Add(ItemSaveData);
+	}
+}
+
+bool UInventorySaveBehaviour::Save_Implementation(USaveDataBase* SaveData)
 {
 	if (!Check())
 		return false;
@@ -47,27 +57,29 @@ bool UInventorySaveBehaviour::Save_Implementation(USaveData* SaveData)
 		return false;
 	}
 
+	InventorySaveData->SavedItemsData.Empty();
 	for (UItemBase* Item : Inventory->GetItems())
 	{
 		if (!IsValid(Item))
 			continue;
 
-		UItemBaseSaveData* ItemSaveData = InventorySaveData->CreateItemSaveData();
-		if (!IsValid(ItemSaveData))
-			continue;
-
+		UItemBaseSaveData* ItemSaveData = InventorySaveData->CreateItemSaveData(this);
 		InventorySaveData->SaveItem(Item, ItemSaveData);
 		InventorySaveData->PostSaveItem(Item, ItemSaveData);
+		InventorySaveData->SavedItemsData.Add(ItemSaveData);
 	}
-
-	return Super::Save_Implementation(SaveData);
+	
+	InventorySaveData->SavedMaxWeight = Inventory->WeightMaxCapacity;
+	InventorySaveData->ItemsCount = Inventory->GetItems().Num();
+	return true;
 }
 
-bool UInventorySaveBehaviour::Load_Implementation(USaveData* SaveData)
+bool UInventorySaveBehaviour::Load_Implementation(USaveDataBase* SaveData)
 {
 	if (!Check())
 		return false;
 
+	Inventory->ClearInventory();
 	UInventoryBaseSaveData* InventorySaveData = Cast<UInventoryBaseSaveData>(SaveData);
 	if (!IsValid(InventorySaveData))
 	{
@@ -75,12 +87,23 @@ bool UInventorySaveBehaviour::Load_Implementation(USaveData* SaveData)
 		return false;
 	}
 
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Loading %d Items"), InventorySaveData->SavedItemsData.Num()));
+
 	for (UItemBaseSaveData* ItemSaveData : InventorySaveData->SavedItemsData)
 	{
 		if (!IsValid(ItemSaveData))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Invalid Item Save Data"));
 			continue;
+		}
+		
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Loading Item with DataID: %s"), *ItemSaveData->SavedItemDataID.ToString()));
 
-		UItemBase* Item = NewObject<UItemBase>(this);
+		UItemDataBase* ItemData = UISInventoriesUtility::GetItemDataFromRegistry(ItemSaveData->SavedItemDataID);
+		if (!IsValid(ItemData))
+			continue;
+		
+		UItemBase* Item = UISFactory::CreateItem(this, ItemData);
 		if (!IsValid(Item))
 			continue;
 
@@ -98,7 +121,8 @@ bool UInventorySaveBehaviour::Load_Implementation(USaveData* SaveData)
 		InventorySaveData->PostLoadItem(Item, ItemSaveData);
 	}
 
-	return Super::Load_Implementation(SaveData);
+	Inventory->WeightMaxCapacity = InventorySaveData->SavedMaxWeight;
+	return true;
 }
 
 bool UInventorySaveBehaviour::Check() const

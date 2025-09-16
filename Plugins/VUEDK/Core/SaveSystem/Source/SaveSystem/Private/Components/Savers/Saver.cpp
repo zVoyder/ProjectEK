@@ -20,16 +20,22 @@ FName USaver::MakeCompositeSaveID(const FName SaveDataID) const
 	return FName(*FString::Printf(TEXT("%s_%s"), *GetUniqueSaveID().ToString(), *SaveDataID.ToString()));
 }
 
-bool USaver::PushDataToSaveGame(USaveData* SaveData, const FName SaveDataID)
+bool USaver::PushDataToSaveGame(USaveDataBase* SaveData) const
 {
-	const FName FullSaveID = MakeCompositeSaveID(SaveDataID);
-	return USSSerializationUtility::TrySerializeSaveDataObjectInSaveGame(SaveData, FullSaveID);
+	if (!IsValid(SaveData))
+		return false;
+	
+	SaveData->SetSaveDataID(GetUniqueSaveID());
+	return USSSerializationUtility::TrySerializeSaveDataObjectInSaveGame(SaveData);
 }
 
-bool USaver::PullDataFromSaveGame(USaveData* SaveData, const FName SaveDataID)
+bool USaver::PullDataFromSaveGame(USaveDataBase* SaveData) const
 {
-	const FName FullSaveID = MakeCompositeSaveID(SaveDataID);
-	return USSSerializationUtility::TryDeserializeSaveDataObjectFromSaveGame(SaveData, FullSaveID);
+	if (!IsValid(SaveData))
+		return false;
+	
+	SaveData->SetSaveDataID(GetUniqueSaveID());
+	return USSSerializationUtility::TryDeserializeSaveDataObjectFromSaveGame(SaveData);
 }
 
 void USaver::BeginPlay()
@@ -160,12 +166,22 @@ void USaver::OnBeginWithNewSharedSaveGameEvent_Implementation(UDefaultSaveGame* 
 void USaver::MakeUniqueSaveID()
 {
 	const FName MasterID = USSUtility::GetSaveMasterID();
-	const FName OwnerName = GetOwner()->GetFName();
+	const FName OwnerName = GetOwner() ? GetOwner()->GetFName() : NAME_None;
+	const FName OwnerPath = GetOwner() ? FName(*GetOwner()->GetPathName()) : NAME_None;
 	const FString LevelName = UGameplayStatics::GetCurrentLevelName(this, true);
-	const FString UniqueID = OwnerName.ToString() + LevelName + MasterID.ToString();
-	const int32 Hash = GetTypeHash(UniqueID);
-	const FString Hex = FString::Printf(TEXT("%08X"), Hash);
+	
+	const FString Base = FString::Printf(TEXT("%s|%s|%s|%s"),
+		*OwnerName.ToString(),
+		*LevelName,
+		*MasterID.ToString(),
+		*OwnerPath.ToString());
+	
+	FMD5 Md5Gen;
+	Md5Gen.Update(reinterpret_cast<const uint8*>(TCHAR_TO_ANSI(*Base)), Base.Len());
+	uint8 Digest[16];
+	Md5Gen.Final(Digest);
 
+	const FString Hex = BytesToHex(Digest, 16);
 	UniqueSaveID = FName(*Hex);
 }
 
@@ -263,9 +279,10 @@ void USaver::SaveAllBehaviours()
 	{
 		if (IsValid(Behaviour))
 		{
-			USaveData* SaveData = Behaviour->GetSaveDataInstance();
+			USaveDataBase* SaveData = Behaviour->GetSaveDataInstance();
+			Behaviour->PrepareForSerializationNative(SaveData);
 			Behaviour->Execute_Save(Behaviour, SaveData);
-			PushDataToSaveGame(SaveData, Behaviour->GetSaveBehaviourID());
+			PushDataToSaveGame(SaveData);
 		}
 	}
 }
@@ -276,8 +293,10 @@ void USaver::LoadAllBehaviours()
 	{
 		if (IsValid(Behaviour))
 		{
-			USaveData* SaveData = Behaviour->GetSaveDataInstance();
-			PullDataFromSaveGame(SaveData, Behaviour->GetSaveBehaviourID());
+			USaveDataBase* SaveData = Behaviour->GetSaveDataInstance();
+			// PullDataFromSaveGame(SaveData);
+			Behaviour->PrepareForDeserializationNative(SaveData);
+			PullDataFromSaveGame(SaveData);
 			Behaviour->Execute_Load(Behaviour, SaveData);
 		}
 	}
@@ -288,7 +307,10 @@ void USaver::CallSaveBehavioursBeginPlay()
 	for (USaveBehaviourBase* Behaviour : SaveBehaviours)
 	{
 		if (IsValid(Behaviour))
+		{
+			Behaviour->SetSaveBehaviourID(GetUniqueSaveID());
 			Behaviour->BeginPlay();
+		}
 	}
 }
 

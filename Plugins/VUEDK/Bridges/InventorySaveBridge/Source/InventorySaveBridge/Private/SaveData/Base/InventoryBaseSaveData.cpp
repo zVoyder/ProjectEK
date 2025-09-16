@@ -3,18 +3,31 @@
 #include "SaveData/Base/InventoryBaseSaveData.h"
 #include "InventorySaveBridge.h"
 #include "Base/ItemBase.h"
+#include "Base/Data/ItemDataBase.h"
+#include "SaveBehaviours/InventorySaveBehaviour.h"
 
-UItemBaseSaveData* UInventoryBaseSaveData::CreateItemSaveData_Implementation()
+UItemBaseSaveData* UInventoryBaseSaveData::CreateItemSaveData(const UInventorySaveBehaviour* InventorySaveBehaviour)
 {
-	UItemBaseSaveData* ItemSaveData = NewObject<UItemBaseSaveData>(this);
+	if (!IsValid(InventorySaveBehaviour))
+	{
+		UE_LOG(LogInventorySaveBridge, Warning, TEXT("UInventoryBaseSaveData::CreateItemSaveData_Implementation: InventorySaveBehaviour is not valid."));
+		return nullptr;
+	}
+
+	UItemBaseSaveData* ItemSaveData = CreateItemSaveDataInstance();
+	ItemSaveData->SetSaveDataID(InventorySaveBehaviour->GetSaveBehaviourID());
 	return ItemSaveData;
+}
+
+UItemBaseSaveData* UInventoryBaseSaveData::CreateItemSaveDataInstance_Implementation()
+{
+	return NewObject<UItemBaseSaveData>(this);
 }
 
 void UInventoryBaseSaveData::SaveItem(UItemBase* Item, UItemBaseSaveData* ItemSaveData)
 {
 	SaveItemNative(Item, ItemSaveData);
 	ReceiveSaveItem(Item, ItemSaveData);
-	SavedItemsData.Add(ItemSaveData);
 }
 
 void UInventoryBaseSaveData::PostSaveItem(UItemBase* Item, UItemBaseSaveData* ItemSaveData)
@@ -37,6 +50,7 @@ void UInventoryBaseSaveData::PostLoadItem(UItemBase* Item, UItemBaseSaveData* It
 
 void UInventoryBaseSaveData::SaveItemNative(UItemBase* Item, UItemBaseSaveData* ItemSaveData)
 {
+	ItemSaveData->SavedItemDataID = Item->GetItemData()->ItemDataID;
 	ItemSaveData->SavedQuantity = Item->GetCurrentQuantity();
 	ItemSaveData->SavedEquipSlotIndex = Item->GetEquipSlotIndex();
 }

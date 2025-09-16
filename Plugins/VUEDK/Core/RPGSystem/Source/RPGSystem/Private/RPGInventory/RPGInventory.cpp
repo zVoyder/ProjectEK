@@ -10,12 +10,12 @@ URPGInventory::URPGInventory()
 {
 }
 
-USaveData* URPGInventory::CreateSaveDataObject_Implementation()
+USaveDataBase* URPGInventory::CreateSaveDataObject_Implementation()
 {
 	return NewObject<URPGInventorySaveData>();
 }
 
-USaveData* URPGInventory::CreateInventorySaveData_Implementation(USaveData* SaveData, TArray<UItemBase*>& ItemsToSave)
+USaveDataBase* URPGInventory::CreateInventorySaveData_Implementation(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave)
 {
 	Super::Super::CreateInventorySaveData_Implementation(SaveData, ItemsToSave); // Do not use the save data implementation of tetris items
 	URPGInventorySaveData* RPGInventorySaveData = Cast<URPGInventorySaveData>(SaveData);

@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/Saves/DefaultSaveGame.h"
-#include "Data/Saves/SlotInfoItem.h"
+#include "Data/SaveGame/DefaultSaveGame.h"
+#include "Data/SaveGame/SlotInfoItem.h"
 #include "SaveManagerData.generated.h"
 
 USTRUCT(BlueprintType)

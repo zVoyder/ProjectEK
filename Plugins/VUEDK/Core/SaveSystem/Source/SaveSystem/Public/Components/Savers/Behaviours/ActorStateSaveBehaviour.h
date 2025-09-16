@@ -27,9 +27,9 @@ public:
 	bool bSaveMass = false;
 	
 public:
-	virtual USaveData* CreateSaveDataInstance_Implementation() override;
+	virtual USaveDataBase* CreateSaveDataInstance_Implementation() override;
 
-	virtual bool Save_Implementation(USaveData* SaveData) override;
+	virtual bool Save_Implementation(USaveDataBase* SaveData) override;
 
-	virtual bool Load_Implementation(USaveData* SaveData) override;
+	virtual bool Load_Implementation(USaveDataBase* SaveData) override;
 };

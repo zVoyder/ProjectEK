@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/Saves/DefaultSaveGame.h"
+#include "Data/SaveGame/DefaultSaveGame.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "SSSerializationUtility.generated.h"
 
-class USaveData;
+class USaveDataBase;
 class FMemoryWriter;
 class FMemoryReader;
 
@@ -19,10 +19,10 @@ class SAVESYSTEM_API USSSerializationUtility : public UBlueprintFunctionLibrary
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Save System|Serialization")
-	static bool TrySerializeSaveDataObjectInSaveGame(USaveData* SaveDataToSerialize, const FName SaveDataID);
+	static bool TrySerializeSaveDataObjectInSaveGame(USaveDataBase* SaveDataToSerialize);
 
 	UFUNCTION(BlueprintCallable, Category = "Save System|Serialization")
-	static bool TryDeserializeSaveDataObjectFromSaveGame(USaveData* SaveDataToDeserialize, const FName SaveDataID);
+	static bool TryDeserializeSaveDataObjectFromSaveGame(USaveDataBase* SaveDataToDeserialize);
 
 	UFUNCTION(BlueprintCallable, Category = "Save System|Serialization")
 	static bool TrySerializeObjectInSaveGame(UObject* ObjectToSerialize, const FName ObjectID);

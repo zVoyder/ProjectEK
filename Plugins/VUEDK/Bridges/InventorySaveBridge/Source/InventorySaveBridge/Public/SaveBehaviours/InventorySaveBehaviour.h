@@ -6,7 +6,6 @@
 #include "Base/InventoryBase.h"
 #include "Components/Savers/Behaviours/SaveBehaviourBase.h"
 #include "SaveData/Base/InventoryBaseSaveData.h"
-#include "SaveData/Base/ItemBaseSaveData.h"
 #include "InventorySaveBehaviour.generated.h"
 
 UCLASS()
@@ -25,11 +24,13 @@ protected:
 public:
 	virtual void BeginPlay() override;
 
-	virtual USaveData* CreateSaveDataInstance_Implementation() override;
+	virtual USaveDataBase* CreateSaveDataInstance_Implementation() override;
+	
+	virtual void PrepareForDeserialization_Implementation(USaveDataBase* SaveData) override;
 
-	virtual bool Save_Implementation(USaveData* SaveData) override;
+	virtual bool Save_Implementation(USaveDataBase* SaveData) override;
 
-	virtual bool Load_Implementation(USaveData* SaveData) override;
+	virtual bool Load_Implementation(USaveDataBase* SaveData) override;
 
 private:
 	bool Check() const;

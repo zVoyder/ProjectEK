@@ -1,14 +1,14 @@
 ﻿// Copyright VUEDK, Inc. All Rights Reserved.
 
 #include "Components/Savers/Behaviours/ActorStateSaveBehaviour.h"
-#include "Data/ActorStateSaveData.h"
+#include "Data/SaveData/ActorStateSaveData.h"
 
-USaveData* UActorStateSaveBehaviour::CreateSaveDataInstance_Implementation()
+USaveDataBase* UActorStateSaveBehaviour::CreateSaveDataInstance_Implementation()
 {
 	return NewObject<UActorStateSaveData>(this);
 }
 
-bool UActorStateSaveBehaviour::Save_Implementation(USaveData* SaveData)
+bool UActorStateSaveBehaviour::Save_Implementation(USaveDataBase* SaveData)
 {
 	UActorStateSaveData* TransformSaveData = Cast<UActorStateSaveData>(SaveData);
 	if (!IsValid(TransformSaveData))
@@ -49,7 +49,7 @@ bool UActorStateSaveBehaviour::Save_Implementation(USaveData* SaveData)
 	return true;
 }
 
-bool UActorStateSaveBehaviour::Load_Implementation(USaveData* SaveData)
+bool UActorStateSaveBehaviour::Load_Implementation(USaveDataBase* SaveData)
 {
 	const UActorStateSaveData* TransformSaveData = Cast<UActorStateSaveData>(SaveData);
 

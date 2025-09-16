@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/SaveData.h"
+#include "Data/SaveData/SaveDataBase.h"
 #include "UObject/Object.h"
 #include "Saveable.generated.h"
 
@@ -19,11 +19,17 @@ class ISaveable
 
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	USaveData* CreateSaveDataInstance();
+	USaveDataBase* CreateSaveDataInstance();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	bool Save(USaveData* SaveData);
+	void PrepareForSerialization(USaveDataBase* SaveData);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	bool Load(USaveData* SaveData);
+	void PrepareForDeserialization(USaveDataBase* SaveData);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool Save(USaveDataBase* SaveData);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool Load(USaveDataBase* SaveData);
 };

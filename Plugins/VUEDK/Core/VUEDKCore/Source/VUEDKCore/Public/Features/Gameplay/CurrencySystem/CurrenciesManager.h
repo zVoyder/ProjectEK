@@ -36,10 +36,10 @@ public:
 	UCurrenciesManager();
 	
 	UFUNCTION(BlueprintPure)
-	virtual USaveData* CreateSaveDataInstance();
+	virtual USaveDataBase* CreateSaveDataInstance();
 
 	UFUNCTION(BlueprintCallable)
-	virtual bool Load(USaveData* SavedData);
+	virtual bool Load(USaveDataBase* SavedData);
 
 	/**
 	 * Gets the currency instance for the specified currency data.

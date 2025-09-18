@@ -16,4 +16,7 @@ public:
 	FIntPoint SlotPosition;
 	UPROPERTY(SaveGame, BlueprintReadOnly)
 	bool bIsRotated;
+
+public:
+	virtual bool SaveObjectDataNative(UObject* ObjectToSave) override;
 };

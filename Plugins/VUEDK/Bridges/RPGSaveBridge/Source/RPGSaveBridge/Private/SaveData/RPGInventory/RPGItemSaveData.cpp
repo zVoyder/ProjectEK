@@ -1,0 +1,37 @@
+﻿// Copyright VUEDK, Inc. All Rights Reserved.
+
+#include "SaveData/RPGInventory/RPGItemSaveData.h"
+#include "RPGInventory/Data/RPGItemData.h"
+#include "RPGInventory/Items/RPGItem.h"
+#include "RPGInventory/Utility/RPGInventoriesUtility.h"
+
+bool URPGItemSaveData::SaveObjectDataNative(UObject* ObjectToSave)
+{
+	const URPGItem* RPGItem = Cast<URPGItem>(ObjectToSave);
+	if (!IsValid(RPGItem))
+		return false;
+
+	const bool bUseRarity = IsValid(RPGItem->GetRPGItemData()) ? RPGItem->GetRPGItemData()->bUseRarity : false;
+	SavedVisualDetails = RPGItem->VisualDetails;
+
+	if (bUseRarity)
+	{
+		if (IsValid(RPGItem->RarityLevel))
+			SavedRarityID = RPGItem->RarityLevel->RarityID;
+		else
+			UE_LOG(LogInventorySystem, Warning, TEXT("URPGItemSaveData::SaveObjectNative: Trying to save an invalid Rarity level for item %s."), *RPGItem->GetItemFullName().ToString());
+	}
+	
+	return Super::SaveObjectDataNative(ObjectToSave);
+}
+
+bool URPGItemSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
+{
+	URPGItem* RPGItem = Cast<URPGItem>(ObjectToLoad);
+	if (!IsValid(RPGItem))
+		return false;
+	
+	RPGItem->VisualDetails = SavedVisualDetails;
+	RPGItem->RarityLevel = URPGInventoriesUtility::GetItemRarityByID(SavedRarityID);
+	return Super::LoadObjectDatatNative(ObjectToLoad);
+}

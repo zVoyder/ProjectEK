@@ -20,14 +20,29 @@ public:
 	TArray<UItemBaseSaveData*> SavedItemsData;
 	UPROPERTY(SaveGame, BlueprintReadOnly)
 	double SavedMaxWeight;
-	UPROPERTY(SaveGame, BlueprintReadOnly)
-	int32 ItemsCount;
+
+protected:
+	UPROPERTY()
+	UInventorySaveBehaviour* InventorySaveBehaviour;
+	
+private:
+	TMap<TSubclassOf<UItemBase>, TSubclassOf<UItemBaseSaveData>> ItemToSaveDataMap;
 
 public:
-	UItemBaseSaveData* CreateItemSaveData(const UInventorySaveBehaviour* InventorySaveBehaviour);
+	void Init(UInventorySaveBehaviour* InInventorySaveBehaviour);
+	
+	virtual bool SaveObjectDataNative(UObject* ObjectToSave) override;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	UItemBaseSaveData* CreateItemSaveDataInstance();
+	virtual bool LoadObjectDatatNative(UObject* ObjectToLoad) override;
+	
+	virtual void RegisterItemsNative();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RegisterItems();
+	
+	UItemBaseSaveData* CreateItemSaveData(const UItemBase* Item);
+
+	void RegisterItemSaveData(TSubclassOf<UItemBase> ItemClass, TSubclassOf<UItemBaseSaveData> ItemSaveDataClass);
 	
 	void SaveItem(UItemBase* Item, UItemBaseSaveData* ItemSaveData);
 
@@ -57,4 +72,6 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "PostLoadItem"))
 	void ReceivePostLoadItem(UItemBase* Item, UItemBaseSaveData* ItemSaveData);
+
+	bool Check() const;
 };

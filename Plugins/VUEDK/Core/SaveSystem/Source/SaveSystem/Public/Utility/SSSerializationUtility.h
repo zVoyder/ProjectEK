@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/SaveGame/DefaultSaveGame.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "SSSerializationUtility.generated.h"

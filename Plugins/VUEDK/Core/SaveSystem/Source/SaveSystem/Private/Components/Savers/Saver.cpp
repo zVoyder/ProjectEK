@@ -294,7 +294,6 @@ void USaver::LoadAllBehaviours()
 		if (IsValid(Behaviour))
 		{
 			USaveDataBase* SaveData = Behaviour->GetSaveDataInstance();
-			// PullDataFromSaveGame(SaveData);
 			Behaviour->PrepareForDeserializationNative(SaveData);
 			PullDataFromSaveGame(SaveData);
 			Behaviour->Execute_Load(Behaviour, SaveData);

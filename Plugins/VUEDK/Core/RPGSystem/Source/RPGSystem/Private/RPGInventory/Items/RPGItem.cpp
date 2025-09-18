@@ -3,7 +3,7 @@
 #include "RPGInventory/Items/RPGItem.h"
 #include "Utility/ISInventoriesUtility.h"
 #include "RPGInventory/Data/RPGItemData.h"
-#include "RPGInventory/Data/SaveData/RPGItemSaveData.h"
+#include "RPGInventory/Data/SaveData/RPGItemSaveDataDEPRECATED.h"
 #include "RPGInventory/Utility/RPGInventoriesUtility.h"
 #include "RPGItemsGeneration/Data/Rarities/RPGItemsRaritiesData.h"
 
@@ -54,9 +54,9 @@ void URPGItem::NativeOnPostGeneration()
 	OnPostGeneration();
 }
 
-FRPGItemSaveData URPGItem::CreateRPGItemSaveData() const
+FRPGItemSaveDataDEPRECATED URPGItem::CreateRPGItemSaveData() const
 {
-	FRPGItemSaveData RPGItemSaveData;
+	FRPGItemSaveDataDEPRECATED RPGItemSaveData;
 	RPGItemSaveData.TetrisItemSaveData = CreateTetrisSaveData();
 	RPGItemSaveData.VisualDetails = VisualDetails;
 
@@ -71,7 +71,7 @@ FRPGItemSaveData URPGItem::CreateRPGItemSaveData() const
 	return RPGItemSaveData;
 }
 
-void URPGItem::LoadRPGItemSaveData(URPGInventory* LoadingInventory, const FRPGItemSaveData& RPGItemSaveData)
+void URPGItem::LoadRPGItemSaveData(URPGInventory* LoadingInventory, const FRPGItemSaveDataDEPRECATED& RPGItemSaveData)
 {
 	VisualDetails = RPGItemSaveData.VisualDetails;
 	RarityLevel = URPGInventoriesUtility::GetItemRarityByID(RPGItemSaveData.RarityID);

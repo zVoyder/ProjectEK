@@ -4,25 +4,10 @@
 #include "SaveData/TetrisInventory/TetrisItemSaveData.h"
 #include "TetrisInventory/TetrisItem.h"
 
-UItemBaseSaveData* UTetrisInventorySaveData::CreateItemSaveDataInstance_Implementation()
+void UTetrisInventorySaveData::RegisterItemsNative()
 {
-	return NewObject<UTetrisItemSaveData>(this);
-}
-
-void UTetrisInventorySaveData::SaveItemNative(UItemBase* Item, UItemBaseSaveData* ItemSaveData)
-{
-	Super::SaveItemNative(Item, ItemSaveData);
-	
-	UTetrisItemSaveData* TetrisItemSaveData = Cast<UTetrisItemSaveData>(ItemSaveData);
-	if (!IsValid(TetrisItemSaveData))
-		return;
-
-	const UTetrisItem* TetrisItem = Cast<UTetrisItem>(Item);
-	if (!IsValid(TetrisItem))
-		return;
-
-	TetrisItemSaveData->SlotPosition = TetrisItem->GetCurrentPosition();
-	TetrisItemSaveData->bIsRotated = TetrisItem->IsRotated();
+	Super::RegisterItemsNative();
+	RegisterItemSaveData(UTetrisItem::StaticClass(), UTetrisItemSaveData::StaticClass());
 }
 
 void UTetrisInventorySaveData::PostLoadItemNative(UItemBase* Item, UItemBaseSaveData* ItemSaveData)
@@ -31,7 +16,7 @@ void UTetrisInventorySaveData::PostLoadItemNative(UItemBase* Item, UItemBaseSave
 
 	if (Item->IsEquipped())
 		return;
-	
+
 	const UTetrisItemSaveData* TetrisItemSaveData = Cast<UTetrisItemSaveData>(ItemSaveData);
 	if (!IsValid(TetrisItemSaveData))
 		return;

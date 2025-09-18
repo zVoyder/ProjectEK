@@ -18,18 +18,20 @@ public:
 	bool bSaveRotation = true;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ActorSaveBehaviour|Transform")
 	bool bSaveScale = true;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ActorSaveBehaviour|Physics")
 	bool bSaveLinearVelocity = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ActorSaveBehaviour|Physics")
 	bool bSaveAngularVelocity = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ActorSaveBehaviour|Physics")
 	bool bSaveMass = false;
-	
+
 public:
 	virtual USaveDataBase* CreateSaveDataInstance_Implementation() override;
 
 	virtual bool Save_Implementation(USaveDataBase* SaveData) override;
 
 	virtual bool Load_Implementation(USaveDataBase* SaveData) override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };

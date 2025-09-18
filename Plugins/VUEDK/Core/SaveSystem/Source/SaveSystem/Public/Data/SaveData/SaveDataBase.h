@@ -17,6 +17,10 @@ protected:
 	FName SaveDataID = "DefaultID";
 
 public:
+	virtual bool SaveObjectDataNative(UObject* ObjectToSave);
+
+	virtual bool LoadObjectDatatNative(UObject* ObjectToLoad);
+	
 	UFUNCTION(BlueprintCallable)
 	void SetSaveDataID(const FName NewID);
 
@@ -24,15 +28,21 @@ public:
 	FName GetSaveDataID() const;
 	
 protected:
+	UFUNCTION(BlueprintImplementableEvent)
+	bool SaveObjectData(UObject* ObjectToSave);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	bool LoadObjectData(UObject* ObjectToLoad);
+	
 	virtual void Serialize(FArchive& Ar) override;
 	
-	void SerializeSaveGameMembers(const FArchive& Ar);
+	void SerializeSaveGameMembers(FArchive& Ar);
 	
-	void HandleObjectProperty(const FArchive& Ar, const FObjectProperty* ObjProp) const;
+	void HandleObjectProperty(FArchive& Ar, const FObjectProperty* ObjProp);
 	
-	void HandleArrayProperty(const FArchive& Ar, const FArrayProperty* ArrayProp);
+	void HandleArrayProperty(FArchive& Ar, const FArrayProperty* ArrayProp);
 	
-	void HandleMapProperty(const FArchive& Ar, const FMapProperty* MapProp);
+	void HandleMapProperty(FArchive& Ar, const FMapProperty* MapProp);
 	
-	void HandleSetProperty(const FArchive& Ar, const FSetProperty* SetProp);
+	void HandleSetProperty(FArchive& Ar, const FSetProperty* SetProp);
 };

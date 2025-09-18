@@ -3,7 +3,7 @@
 #include "RPGInventory/RPGInventory.h"
 #include "Base/ItemBase.h"
 #include "RPGInventory/Items/RPGGearItem.h"
-#include "RPGInventory/Data/SaveData/RPGInventorySaveData.h"
+#include "RPGInventory/Data/SaveData/RPGInventorySaveDataDEPRECATED.h"
 #include "Factories/RPGFactory.h"
 
 URPGInventory::URPGInventory()
@@ -12,13 +12,13 @@ URPGInventory::URPGInventory()
 
 USaveDataBase* URPGInventory::CreateSaveDataObject_Implementation()
 {
-	return NewObject<URPGInventorySaveData>();
+	return NewObject<URPGInventorySaveDataDEPRECATED>();
 }
 
 USaveDataBase* URPGInventory::CreateInventorySaveData_Implementation(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave)
 {
 	Super::Super::CreateInventorySaveData_Implementation(SaveData, ItemsToSave); // Do not use the save data implementation of tetris items
-	URPGInventorySaveData* RPGInventorySaveData = Cast<URPGInventorySaveData>(SaveData);
+	URPGInventorySaveDataDEPRECATED* RPGInventorySaveData = Cast<URPGInventorySaveDataDEPRECATED>(SaveData);
 	CreateRPGInventorySaveData(RPGInventorySaveData->RPGItemsSaveData, ItemsToSave);
 	return SaveData;
 }
@@ -26,7 +26,7 @@ USaveDataBase* URPGInventory::CreateInventorySaveData_Implementation(USaveDataBa
 void URPGInventory::LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData)
 {
 	Super::Super::LoadInventorySaveData_Implementation(InventorySaveData);
-	URPGInventorySaveData* RPGInventorySaveData = Cast<URPGInventorySaveData>(InventorySaveData);
+	URPGInventorySaveDataDEPRECATED* RPGInventorySaveData = Cast<URPGInventorySaveDataDEPRECATED>(InventorySaveData);
 	LoadRPGInventorySaveData(RPGInventorySaveData->RPGItemsSaveData);
 }
 
@@ -45,7 +45,7 @@ void URPGInventory::CreateRPGInventorySaveData(FRPGInventoryItemsSaveData& RPGIt
 			if (!RPGItemsSaveData.GearItems.Contains(ItemID))
 				RPGItemsSaveData.GearItems.Add(ItemID, FRPGGearItemsSaveArray());
 
-			FRPGGearItemSaveData GearItemSaveData = GearItem->CreateRPGGearItemSaveData();
+			FRPGGearItemSaveDataDEPRECATED GearItemSaveData = GearItem->CreateRPGGearItemSaveData();
 			RPGItemsSaveData.GearItems[ItemID].GearItems.Add(GearItemSaveData);
 			continue;
 		}
@@ -57,7 +57,7 @@ void URPGInventory::CreateRPGInventorySaveData(FRPGInventoryItemsSaveData& RPGIt
 		if (!RPGItemsSaveData.GenericItems.Contains(ItemID))
 			RPGItemsSaveData.GenericItems.Add(ItemID, FRPGItemsSaveArray());
 
-		FRPGItemSaveData ItemSaveData = RPGItem->CreateRPGItemSaveData();
+		FRPGItemSaveDataDEPRECATED ItemSaveData = RPGItem->CreateRPGItemSaveData();
 		RPGItemsSaveData.GenericItems[ItemID].Items.Add(ItemSaveData);
 	}
 
@@ -70,7 +70,7 @@ void URPGInventory::LoadRPGInventorySaveData(FRPGInventoryItemsSaveData& RPGItem
 	{
 		const FGuid ItemID = GenericItems.Key;
 
-		for (FRPGItemSaveData& RPGItemSaveData : GenericItems.Value.Items)
+		for (FRPGItemSaveDataDEPRECATED& RPGItemSaveData : GenericItems.Value.Items)
 		{
 			UItemDataBase* ItemData = GetItemDataFromRegistry(ItemID);
 
@@ -92,7 +92,7 @@ void URPGInventory::LoadRPGInventorySaveData(FRPGInventoryItemsSaveData& RPGItem
 	{
 		const FGuid ItemID = GearItems.Key;
 
-		for (FRPGGearItemSaveData& GearItemSaveData : GearItems.Value.GearItems)
+		for (FRPGGearItemSaveDataDEPRECATED& GearItemSaveData : GearItems.Value.GearItems)
 		{
 			UItemDataBase* ItemData = GetItemDataFromRegistry(ItemID);
 

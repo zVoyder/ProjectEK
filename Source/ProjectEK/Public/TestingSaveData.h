@@ -23,6 +23,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, SaveGame)
 	TMap<FString, UTestingInstancedSaveData*> InstancedDataMap;
+
+	UPROPERTY(BlueprintReadWrite, SaveGame)
+	UTestingInstancedSaveData* InstanceData = nullptr;
 	
 	UPROPERTY(BlueprintReadWrite, SaveGame)
 	int32 SomeInt;

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RPGInventory/Data/SaveData/RPGItemSaveData.h"
+#include "RPGInventory/Data/SaveData/RPGItemSaveDataDEPRECATED.h"
 #include "TetrisInventory/TetrisItem.h"
 #include "RPGInventory/RPGInventoriesManager.h"
 #include "RPGInventory/RPGInventory.h"
@@ -31,9 +31,9 @@ public:
 
 	virtual void NativeOnPostGeneration();
 	
-	FRPGItemSaveData CreateRPGItemSaveData() const;
+	FRPGItemSaveDataDEPRECATED CreateRPGItemSaveData() const;
 
-	void LoadRPGItemSaveData(URPGInventory* LoadingInventory, const FRPGItemSaveData& RPGItemSaveData);
+	void LoadRPGItemSaveData(URPGInventory* LoadingInventory, const FRPGItemSaveDataDEPRECATED& RPGItemSaveData);
 
 	virtual FText GetItemFullName() const override;
 

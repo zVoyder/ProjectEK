@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RPGInventory/Data/SaveData/RPGItemSaveData.h"
+#include "RPGInventory/Data/SaveData/RPGItemSaveDataDEPRECATED.h"
 #include "RPGItemsSaveArray.generated.h"
 
 USTRUCT(BlueprintType)
@@ -12,10 +12,10 @@ struct FRPGItemsSaveArray
 	GENERATED_BODY()
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FRPGItemSaveData> Items;
+	TArray<FRPGItemSaveDataDEPRECATED> Items;
 
 	FRPGItemsSaveArray()
 	{
-		Items = TArray<FRPGItemSaveData>();
+		Items = TArray<FRPGItemSaveDataDEPRECATED>();
 	}
 };

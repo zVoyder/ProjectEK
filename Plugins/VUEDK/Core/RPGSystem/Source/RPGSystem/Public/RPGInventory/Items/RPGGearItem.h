@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "RPGItem.h"
 #include "StatsSystem/Data/CoreStatData.h"
-#include "RPGInventory/Data/SaveData/RPGGearItemSaveData.h"
+#include "RPGInventory/Data/SaveData/RPGGearItemSaveDataDEPRECATED.h"
 #include "RPGInventory/Stats/RPGGearItemStatsContainer.h"
 #include "RPGGearItem.generated.h"
 
@@ -31,9 +31,9 @@ public:
 
 	virtual void Init(UObject* WorldContextObject, UItemDataBase* Data) override;
 	
-	FRPGGearItemSaveData CreateRPGGearItemSaveData() const;
+	FRPGGearItemSaveDataDEPRECATED CreateRPGGearItemSaveData() const;
 	
-	void LoadRPGGearItemSaveData(URPGInventory* LoadingInventory, FRPGGearItemSaveData& GearSaveData);
+	void LoadRPGGearItemSaveData(URPGInventory* LoadingInventory, FRPGGearItemSaveDataDEPRECATED& GearSaveData);
 
 	/**
 	 * Adds a stat to the gear item with an operation.

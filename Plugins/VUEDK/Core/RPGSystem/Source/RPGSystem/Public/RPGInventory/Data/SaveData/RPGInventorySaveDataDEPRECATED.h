@@ -5,10 +5,10 @@
 #include "CoreMinimal.h"
 #include "RPGInventoryItemsSaveData.h"
 #include "TetrisInventory/Data/SaveData/TetrisInventorySaveDataDEPRECATED.h"
-#include "RPGInventorySaveData.generated.h"
+#include "RPGInventorySaveDataDEPRECATED.generated.h"
 
 UCLASS()
-class RPGSYSTEM_API URPGInventorySaveData : public UInventoryBaseSaveDataDEPRECATED
+class RPGSYSTEM_API URPGInventorySaveDataDEPRECATED : public UInventoryBaseSaveDataDEPRECATED
 {
 	GENERATED_BODY()
 

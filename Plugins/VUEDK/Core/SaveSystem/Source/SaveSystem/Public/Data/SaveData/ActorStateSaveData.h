@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SaveDataBase.h"
+#include "Components/Savers/Behaviours/ActorStateSaveBehaviour.h"
 #include "ActorStateSaveData.generated.h"
 
 namespace ActorSaveKeys
@@ -27,112 +28,53 @@ public:
 	UPROPERTY(SaveGame)
 	TMap<FName, float> SavedValues;
 
+private:
+	UPROPERTY()
+	UActorStateSaveBehaviour* Behaviour = nullptr;
+
 public:
-	void SaveLocation(const FVector& InLocation)
-	{
-		SavedVectors.Add(ActorSaveKeys::Location, InLocation);
-	}
-
-	void SaveRotation(const FRotator& InRotation)
-	{
-		SavedVectors.Add(ActorSaveKeys::Rotation, InRotation.Vector());
-	}
-
-	void SaveScale(const FVector& InScale)
-	{
-		SavedVectors.Add(ActorSaveKeys::Scale, InScale);
-	}
-
-	void SaveLinearVelocity(const FVector& InVelocity)
-	{
-		SavedVectors.Add(ActorSaveKeys::LinearVelocity, InVelocity);
-	}
-
-	void SaveAngularVelocity(const FVector& InVelocity)
-	{
-		SavedVectors.Add(ActorSaveKeys::AngularVelocity, InVelocity);
-	}
-
-	void SaveMass(float InMass)
-	{
-		SavedValues.Add(ActorSaveKeys::Mass, InMass);
-	}
-
-	FVector GetLocation() const
-	{
-		if (const FVector* Loc = SavedVectors.Find(ActorSaveKeys::Location))
-			return *Loc;
-		
-		return FVector::ZeroVector;
-	}
-
-	FRotator GetRotation() const
-	{
-		if (const FVector* Rot = SavedVectors.Find(ActorSaveKeys::Rotation))
-			return Rot->Rotation();
-		
-		return FRotator::ZeroRotator;
-	}
-
-	FVector GetScale() const
-	{
-		if (const FVector* Scale = SavedVectors.Find(ActorSaveKeys::Scale))
-			return *Scale;
-		
-		return FVector::OneVector;
-	}
-
-	FVector GetLinearVelocity() const
-	{
-		if (const FVector* Vel = SavedVectors.Find(ActorSaveKeys::LinearVelocity))
-			return *Vel;
-		
-		return FVector::ZeroVector;
-	}
-
-	FVector GetAngularVelocity() const
-	{
-		if (const FVector* Vel = SavedVectors.Find(ActorSaveKeys::AngularVelocity))
-			return *Vel;
-		
-		return FVector::ZeroVector;
-	}
-
-	float GetMass() const
-	{
-		if (const float* Mass = SavedValues.Find(ActorSaveKeys::Mass))
-			return *Mass;
-		
-		return 0.f;
-	}
-
-	bool HasLocation() const
-	{
-		return SavedVectors.Contains(ActorSaveKeys::Location);
-	}
+	void Init(UActorStateSaveBehaviour* InBehaviour);
 	
-	bool HasRotation() const
-	{
-		return SavedVectors.Contains(ActorSaveKeys::Rotation);
-	}
+	virtual bool SaveObjectDataNative(UObject* ObjectToSave) override;
+
+	virtual bool LoadObjectDatatNative(UObject* ObjectToLoad) override;
+
+private:
+	void SaveLocation(const FVector& InLocation);
+
+	void SaveRotation(const FRotator& InRotation);
+
+	void SaveScale(const FVector& InScale);
+
+	void SaveLinearVelocity(const FVector& InVelocity);
+
+	void SaveAngularVelocity(const FVector& InVelocity);
 	
-	bool HasScale() const
-	{
-		return SavedVectors.Contains(ActorSaveKeys::Scale);
-	}
+	void SaveMass(float InMass);
 
-	bool HasLinearVelocity() const
-	{
-		return SavedVectors.Contains(ActorSaveKeys::LinearVelocity);
-	}
+	FVector GetLocation() const;
 
-	bool HasAngularVelocity() const
-	{
-		return SavedVectors.Contains(ActorSaveKeys::AngularVelocity);
-	}
+	FRotator GetRotation() const;
 
-	bool HasMass() const
-	{
-		return SavedValues.Contains(ActorSaveKeys::Mass);
-	}
+	FVector GetScale() const;
+
+	FVector GetLinearVelocity() const;
+
+	FVector GetAngularVelocity() const;
+
+	float GetMass() const;
+
+	bool HasLocation() const;
+	
+	bool HasRotation() const;
+	
+	bool HasScale() const;
+	
+	bool HasLinearVelocity() const;
+	
+	bool HasAngularVelocity() const;
+
+	bool HasMass() const;
+	
+	bool Check() const;
 };

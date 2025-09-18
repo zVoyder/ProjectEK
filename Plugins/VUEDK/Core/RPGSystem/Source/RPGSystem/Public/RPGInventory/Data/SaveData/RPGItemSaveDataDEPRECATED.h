@@ -5,10 +5,10 @@
 #include "CoreMinimal.h"
 #include "TetrisInventory/Data/SaveData/TetrisItemSaveDataDEPRECATED.h"
 #include "RPGItemsGeneration/Data/Visuals/RPGItemVisualDetails.h"
-#include "RPGItemSaveData.generated.h"
+#include "RPGItemSaveDataDEPRECATED.generated.h"
 
 USTRUCT(BlueprintType)
-struct FRPGItemSaveData
+struct FRPGItemSaveDataDEPRECATED
 {
 	GENERATED_BODY()
 	

@@ -16,9 +16,9 @@ void URPGGearItem::Init(UObject* WorldContextObject, UItemDataBase* Data)
 	Super::Init(WorldContextObject, Data);
 }
 
-FRPGGearItemSaveData URPGGearItem::CreateRPGGearItemSaveData() const
+FRPGGearItemSaveDataDEPRECATED URPGGearItem::CreateRPGGearItemSaveData() const
 {
-	FRPGGearItemSaveData GearSaveData;
+	FRPGGearItemSaveDataDEPRECATED GearSaveData;
 	GearSaveData.RPGItemSaveData = CreateRPGItemSaveData();
 
 	for (const auto& StatModifier : GearStatsContainer->GetValues())
@@ -27,7 +27,7 @@ FRPGGearItemSaveData URPGGearItem::CreateRPGGearItemSaveData() const
 	return GearSaveData;
 }
 
-void URPGGearItem::LoadRPGGearItemSaveData(URPGInventory* LoadingInventory, FRPGGearItemSaveData& GearSaveData)
+void URPGGearItem::LoadRPGGearItemSaveData(URPGInventory* LoadingInventory, FRPGGearItemSaveDataDEPRECATED& GearSaveData)
 {
 	for (const auto& Stats : GearSaveData.GearStats)
 	{

@@ -7,6 +7,8 @@
 #include "Data/SaveData/SaveDataBase.h"
 #include "ItemBaseSaveData.generated.h"
 
+class UItemBase;
+
 UCLASS()
 class INVENTORYSAVEBRIDGE_API UItemBaseSaveData : public USaveDataBase
 {
@@ -19,4 +21,9 @@ public:
 	int32 SavedQuantity;
 	UPROPERTY(SaveGame, BlueprintReadOnly)
 	int32 SavedEquipSlotIndex;
+
+public:
+	virtual bool SaveObjectDataNative(UObject* ObjectToSave) override;
+
+	virtual bool LoadObjectDatatNative(UObject* ObjectToLoad) override;
 };

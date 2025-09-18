@@ -25,6 +25,8 @@ public:
 	FName SlotNameKey;
 	UPROPERTY()
 	TMap<FName, FSerializedObject> SavedObjects;
+	UPROPERTY()
+	TArray<FName> DestroyedActors;
 	
 	UDefaultSaveGame(): SlotNameKey("")
 	{

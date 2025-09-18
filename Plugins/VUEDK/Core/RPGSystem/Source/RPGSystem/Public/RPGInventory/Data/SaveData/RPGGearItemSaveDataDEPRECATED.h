@@ -3,20 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RPGItemSaveData.h"
-#include "RPGGearItemSaveData.generated.h"
+#include "RPGItemSaveDataDEPRECATED.h"
+#include "RPGGearItemSaveDataDEPRECATED.generated.h"
 
 USTRUCT(BlueprintType)
-struct FRPGGearItemSaveData
+struct FRPGGearItemSaveDataDEPRECATED
 {
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadWrite)
-	FRPGItemSaveData RPGItemSaveData;
+	FRPGItemSaveDataDEPRECATED RPGItemSaveData;
 	UPROPERTY(BlueprintReadWrite)
 	TMap<FGuid, float> GearStats;
 
-	FRPGGearItemSaveData(): RPGItemSaveData()
+	FRPGGearItemSaveDataDEPRECATED(): RPGItemSaveData()
 	{
 	}
 };

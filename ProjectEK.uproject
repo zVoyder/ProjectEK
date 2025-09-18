@@ -21,6 +21,10 @@
 		{
 			"Name": "InventorySaveBridge",
 			"Enabled": true
+		},
+		{
+			"Name": "RPGSaveBridge",
+			"Enabled": true
 		}
 	]
 }

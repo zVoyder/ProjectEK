@@ -1,92 +1,69 @@
 ﻿// Copyright VUEDK, Inc. All Rights Reserved.
 
 #include "Components/Savers/Behaviours/ActorStateSaveBehaviour.h"
+
+#include "SaveManager.h"
 #include "Data/SaveData/ActorStateSaveData.h"
+#include "Utility/SSUtility.h"
 
 USaveDataBase* UActorStateSaveBehaviour::CreateSaveDataInstance_Implementation()
 {
-	return NewObject<UActorStateSaveData>(this);
+	UActorStateSaveData* SaveData = NewObject<UActorStateSaveData>();
+	SaveData->Init(this);
+	return SaveData;
 }
 
 bool UActorStateSaveBehaviour::Save_Implementation(USaveDataBase* SaveData)
 {
-	UActorStateSaveData* TransformSaveData = Cast<UActorStateSaveData>(SaveData);
-	if (!IsValid(TransformSaveData))
+	UActorStateSaveData* ActorStateSaveData = Cast<UActorStateSaveData>(SaveData);
+	if (!IsValid(ActorStateSaveData))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UTransformSaveBehaviour::Save_Implementation: SaveData is not of type UTransformSaveData."));
+		UE_LOG(LogSaveSystem, Warning, TEXT("UTransformSaveBehaviour::Save_Implementation: SaveData is not of type UActorStateSaveData."));
 		return false;
 	}
+	
+	UDefaultSaveGame* SaveGame = USSUtility::GetSaveGame();
+	if (IsValid(SaveGame))
+		SaveGame->DestroyedActors.Remove(GetSaveBehaviourID());
 
-	const AActor* Owner = GetOwnerActor();
-	if (!IsValid(Owner))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UTransformSaveBehaviour::Save_Implementation: Owner is not valid."));
-		return false;
-	}
-
-	if (bSaveLocation)
-		TransformSaveData->SaveLocation(Owner->GetActorLocation());
-
-	if (bSaveRotation)
-		TransformSaveData->SaveRotation(Owner->GetActorRotation());
-
-	if (bSaveScale)
-		TransformSaveData->SaveScale(Owner->GetActorScale3D());
-
-	UPrimitiveComponent* PrimComp = Cast<UPrimitiveComponent>(Owner->GetRootComponent());
-	if (!IsValid(PrimComp) || !PrimComp->IsSimulatingPhysics())
-		return true;
-
-	if (bSaveLinearVelocity)
-		TransformSaveData->SaveLinearVelocity(PrimComp->GetPhysicsLinearVelocity());
-
-	if (bSaveAngularVelocity)
-		TransformSaveData->SaveAngularVelocity(PrimComp->GetPhysicsAngularVelocityInDegrees());
-
-	if (bSaveMass)
-		TransformSaveData->SaveMass(PrimComp->GetMass());
-
-	return true;
+	return ActorStateSaveData->SaveObjectDataNative(GetOwnerActor());
 }
 
 bool UActorStateSaveBehaviour::Load_Implementation(USaveDataBase* SaveData)
 {
-	const UActorStateSaveData* TransformSaveData = Cast<UActorStateSaveData>(SaveData);
-
-	if (!IsValid(TransformSaveData))
+	UActorStateSaveData* ActorStateSaveData = Cast<UActorStateSaveData>(SaveData);
+	if (!IsValid(ActorStateSaveData))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UTransformSaveBehaviour::Load_Implementation: SavedData is not of type UTransformSaveData."));
+		UE_LOG(LogSaveSystem, Warning, TEXT("UTransformSaveBehaviour::Load_Implementation: SavedData is not of type UActorStateSaveData."));
 		return false;
 	}
 
-	AActor* Owner = GetOwnerActor();
-	if (!IsValid(Owner))
+	const UDefaultSaveGame* SaveGame = USSUtility::GetSaveGame();
+	if (!IsValid(SaveGame))
+		return false;
+
+	if (SaveGame->DestroyedActors.Contains(GetSaveBehaviourID()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UTransformSaveBehaviour::Load_Implementation: Owner is not valid."));
+		if (AActor* OwnerActor = GetOwnerActor())
+		{
+			OwnerActor->Destroy();
+			return true;
+		}
+
 		return false;
 	}
+	
+	return ActorStateSaveData->LoadObjectDatatNative(GetOwnerActor());
+}
 
-	if (bSaveLocation && TransformSaveData->HasLocation())
-		Owner->SetActorLocation(TransformSaveData->GetLocation());
+void UActorStateSaveBehaviour::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
 
-	if (bSaveRotation && TransformSaveData->HasRotation())
-		Owner->SetActorRotation(TransformSaveData->GetRotation());
+	UDefaultSaveGame* SaveGame = USSUtility::GetSaveGame();
 
-	if (bSaveScale && TransformSaveData->HasScale())
-		Owner->SetActorScale3D(TransformSaveData->GetScale());
+	if (!IsValid(SaveGame))
+		return;
 
-	UPrimitiveComponent* PrimComp = Cast<UPrimitiveComponent>(Owner->GetRootComponent());
-	if (!IsValid(PrimComp) || !PrimComp->IsSimulatingPhysics())
-		return true;
-
-	if (bSaveLinearVelocity && TransformSaveData->HasLinearVelocity())
-		PrimComp->SetPhysicsLinearVelocity(TransformSaveData->GetLinearVelocity());
-
-	if (bSaveAngularVelocity && TransformSaveData->HasAngularVelocity())
-		PrimComp->SetPhysicsAngularVelocityInDegrees(TransformSaveData->GetAngularVelocity());
-
-	if (bSaveMass && TransformSaveData->HasMass())
-		PrimComp->SetMassOverrideInKg(NAME_None, TransformSaveData->GetMass(), true);
-
-	return true;
+	SaveGame->DestroyedActors.Add(GetSaveBehaviourID());
 }

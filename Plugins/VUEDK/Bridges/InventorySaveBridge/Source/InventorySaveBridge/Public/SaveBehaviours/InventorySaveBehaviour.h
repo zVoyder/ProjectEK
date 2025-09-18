@@ -25,8 +25,6 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual USaveDataBase* CreateSaveDataInstance_Implementation() override;
-	
-	virtual void PrepareForDeserialization_Implementation(USaveDataBase* SaveData) override;
 
 	virtual bool Save_Implementation(USaveDataBase* SaveData) override;
 

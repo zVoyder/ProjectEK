@@ -30,8 +30,7 @@ public class RPGSystem : ModuleRules
 			"Engine",
 			"Slate",
 			"SlateCore",
-			"InventorySystem",
-			"SaveSystem"
+			"InventorySystem"
 		});
 
 		DynamicallyLoadedModuleNames.AddRange(new string[]

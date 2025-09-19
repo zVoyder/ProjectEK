@@ -136,27 +136,7 @@ protected:
 	 * Called when the game starts or when spawned.
 	 */
 	virtual void BeginPlay() override;
-
-	/**
-	 * Creates the save data object for this inventory.
-	 * @return Pointer to the created USaveData object.
-	 */
-	virtual USaveDataBase* CreateSaveDataObject_Implementation() override;
-
-	/**
-	 * Creates the inventory save data for this inventory.
-	 * @param SaveData The base save data object.
-	 * @param ItemsToSave The items to include in the save data.
-	 * @return Pointer to the created USaveData object.
-	 */
-	virtual USaveDataBase* CreateInventorySaveData_Implementation(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave) override;
-
-	/**
-	 * Loads the inventory state from the provided save data.
-	 * @param InventorySaveData The save data to load from.
-	 */
-	virtual void LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData) override;
-
+	
 	/**
 	 * Called when an item is added to the inventory.
 	 * @param Item The item that was added.

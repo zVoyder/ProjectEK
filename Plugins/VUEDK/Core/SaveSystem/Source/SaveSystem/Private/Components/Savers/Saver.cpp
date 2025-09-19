@@ -20,22 +20,29 @@ FName USaver::MakeCompositeSaveID(const FName SaveDataID) const
 	return FName(*FString::Printf(TEXT("%s_%s"), *GetUniqueSaveID().ToString(), *SaveDataID.ToString()));
 }
 
-bool USaver::PushDataToSaveGame(USaveDataBase* SaveData) const
+bool USaver::PushDataToSaveGame(USaveDataBase* SaveData, const bool bIsSharedSave) const
 {
 	if (!IsValid(SaveData))
 		return false;
 	
 	SaveData->SetSaveDataID(GetUniqueSaveID());
-	return USSSerializationUtility::TrySerializeSaveDataObjectInSaveGame(SaveData);
+	return USSSerializationUtility::TrySerializeSaveDataObjectInSaveGame(SaveData, bIsSharedSave);
 }
 
-bool USaver::PullDataFromSaveGame(USaveDataBase* SaveData) const
+bool USaver::PullDataFromSaveGame(USaveDataBase* SaveData, const bool bIsSharedSave) const
 {
 	if (!IsValid(SaveData))
 		return false;
 	
 	SaveData->SetSaveDataID(GetUniqueSaveID());
-	return USSSerializationUtility::TryDeserializeSaveDataObjectFromSaveGame(SaveData);
+	return USSSerializationUtility::TryDeserializeSaveDataObjectFromSaveGame(SaveData, bIsSharedSave);
+}
+
+TArray<USaveBehaviourBase*> USaver::GetAllSaveBehaviours() const
+{
+	TArray<USaveBehaviourBase*> AllBehaviours = SaveBehaviours.Array();
+	AllBehaviours.Append(SharedSaveBehaviours.Array());
+	return AllBehaviours;
 }
 
 void USaver::BeginPlay()
@@ -103,6 +110,7 @@ void USaver::PrepareSharedSave(UDefaultSaveGame* SaveGame, USlotInfoItem* SlotIn
 {
 	OnPrepSharedSave.Broadcast(SaveGame, SlotInfoItem, Instigator);
 	OnPrepareSharedSave(SaveGame, SlotInfoItem, Instigator);
+	SaveAllSharedBehaviours();
 }
 
 void USaver::PrepareSharedLoad(UDefaultSaveGame* SaveGame, UObject* Instigator)
@@ -148,6 +156,7 @@ void USaver::OnSharedSaveCompletedEvent_Implementation(const FString& SlotName, 
 
 void USaver::OnSharedLoadCompletedEvent_Implementation(const FString& SlotName, const int32 UserIndex, UDefaultSaveGame* LoadedData, UObject* Instigator)
 {
+	LoadAllSharedBehaviours();
 	OnSharedLoadGameCompleted.Broadcast(SlotName, UserIndex, LoadedData, Instigator);
 }
 
@@ -287,6 +296,20 @@ void USaver::SaveAllBehaviours()
 	}
 }
 
+void USaver::SaveAllSharedBehaviours()
+{
+	for (USaveBehaviourBase* Behaviour : SharedSaveBehaviours)
+	{
+		if (IsValid(Behaviour))
+		{
+			USaveDataBase* SaveData = Behaviour->GetSaveDataInstance();
+			Behaviour->PrepareForSerializationNative(SaveData);
+			Behaviour->Execute_Save(Behaviour, SaveData);
+			PushDataToSaveGame(SaveData, true);
+		}
+	}
+}
+
 void USaver::LoadAllBehaviours()
 {
 	for (USaveBehaviourBase* Behaviour : SaveBehaviours)
@@ -301,9 +324,23 @@ void USaver::LoadAllBehaviours()
 	}
 }
 
-void USaver::CallSaveBehavioursBeginPlay()
+void USaver::LoadAllSharedBehaviours()
 {
-	for (USaveBehaviourBase* Behaviour : SaveBehaviours)
+	for (USaveBehaviourBase* Behaviour : SharedSaveBehaviours)
+	{
+		if (IsValid(Behaviour))
+		{
+			USaveDataBase* SaveData = Behaviour->GetSaveDataInstance();
+			Behaviour->PrepareForDeserializationNative(SaveData);
+			PullDataFromSaveGame(SaveData, true);
+			Behaviour->Execute_Load(Behaviour, SaveData);
+		}
+	}
+}
+
+void USaver::CallSaveBehavioursBeginPlay() const
+{
+	for (USaveBehaviourBase* Behaviour : GetAllSaveBehaviours())
 	{
 		if (IsValid(Behaviour))
 		{
@@ -313,9 +350,9 @@ void USaver::CallSaveBehavioursBeginPlay()
 	}
 }
 
-void USaver::CallSaveBehavioursEndPlay(const EEndPlayReason::Type EndPlayReason)
+void USaver::CallSaveBehavioursEndPlay(const EEndPlayReason::Type EndPlayReason) const
 {
-	for (USaveBehaviourBase* Behaviour : SaveBehaviours)
+	for (USaveBehaviourBase* Behaviour : GetAllSaveBehaviours())
 	{
 		if (IsValid(Behaviour))
 			Behaviour->EndPlay(EndPlayReason);

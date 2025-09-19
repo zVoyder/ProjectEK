@@ -19,7 +19,6 @@ public class InventorySystem : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
 			"Core",
-			"SaveSystem",
 			"UMG",
 			"BetterDragSystem",
 			"Settings"

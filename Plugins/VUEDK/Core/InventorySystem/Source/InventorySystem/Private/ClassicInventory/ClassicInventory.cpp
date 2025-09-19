@@ -2,9 +2,7 @@
 
 #include "ClassicInventory/ClassicInventory.h"
 #include "ClassicInventory/ClassicItem.h"
-#include "ClassicInventory/Data/SaveData/ClassicInventorySaveData.h"
 #include "ClassicInventory/Data/ClassicItemSlotData.h"
-#include "ClassicInventory/Data/SaveData/ClassicItemSaveData.h"
 #include "Factories/ISFactory.h"
 #include "Utility/ISInventoriesUtility.h"
 
@@ -14,46 +12,46 @@ UClassicInventory::UClassicInventory()
 {
 }
 
-USaveDataBase* UClassicInventory::CreateSaveDataObject_Implementation()
-{
-	return NewObject<UClassicInventorySaveData>();
-}
-
-USaveDataBase* UClassicInventory::CreateInventorySaveData_Implementation(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave)
-{
-	UClassicInventorySaveData* ClassicInventorySaveData = Cast<UClassicInventorySaveData>(SaveData);
-	
-	for (UItemBase* Item : ItemsToSave)
-	{
-		const UClassicItem* ClassicItem = Cast<UClassicItem>(Item);
-		FClassicItemSaveData ItemSaveData = ClassicItem->CreateClassicItemSaveData();
-		FGuid ItemID = Item->GetItemData()->ItemDataID;
-		ClassicInventorySaveData->SavedItems.Add(ItemID, ItemSaveData);
-	}
-
-	return ClassicInventorySaveData;
-}
-
-void UClassicInventory::LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData)
-{
-	const UClassicInventorySaveData* ClassicInventorySaveData = Cast<UClassicInventorySaveData>(InventorySaveData);
-	
-	for (const auto& LoadedItem : ClassicInventorySaveData->SavedItems)
-	{
-		const FGuid ItemID = LoadedItem.Key;
-		const FClassicItemSaveData ItemSaveData = LoadedItem.Value;
-	
-		if (UItemDataBase* ItemData = GetItemDataFromRegistry(ItemID))
-		{
-			UClassicItem* ClassicItem = Cast<UClassicItem>(UISFactory::CreateItem(this, ItemData));
-			ClassicItem->LoadClassicItemSaveData(this, ItemSaveData);
-		}
-		else
-		{
-			UE_LOG(LogInventorySystem, Warning, TEXT("Item with ID %s not found in the inventory registry %s."), *ItemID.ToString(), *GetName());
-		}
-	}
-}
+// USaveDataBase* UClassicInventory::CreateSaveDataObject_Implementation()
+// {
+// 	return NewObject<UClassicInventorySaveData>();
+// }
+//
+// USaveDataBase* UClassicInventory::CreateInventorySaveData_Implementation(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave)
+// {
+// 	UClassicInventorySaveData* ClassicInventorySaveData = Cast<UClassicInventorySaveData>(SaveData);
+// 	
+// 	for (UItemBase* Item : ItemsToSave)
+// 	{
+// 		const UClassicItem* ClassicItem = Cast<UClassicItem>(Item);
+// 		FClassicItemSaveData ItemSaveData = ClassicItem->CreateClassicItemSaveData();
+// 		FGuid ItemID = Item->GetItemData()->ItemDataID;
+// 		ClassicInventorySaveData->SavedItems.Add(ItemID, ItemSaveData);
+// 	}
+//
+// 	return ClassicInventorySaveData;
+// }
+//
+// void UClassicInventory::LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData)
+// {
+// 	const UClassicInventorySaveData* ClassicInventorySaveData = Cast<UClassicInventorySaveData>(InventorySaveData);
+// 	
+// 	for (const auto& LoadedItem : ClassicInventorySaveData->SavedItems)
+// 	{
+// 		const FGuid ItemID = LoadedItem.Key;
+// 		const FClassicItemSaveData ItemSaveData = LoadedItem.Value;
+// 	
+// 		if (UItemDataBase* ItemData = GetItemDataFromRegistry(ItemID))
+// 		{
+// 			UClassicItem* ClassicItem = Cast<UClassicItem>(UISFactory::CreateItem(this, ItemData));
+// 			ClassicItem->LoadClassicItemSaveData(this, ItemSaveData);
+// 		}
+// 		else
+// 		{
+// 			UE_LOG(LogInventorySystem, Warning, TEXT("Item with ID %s not found in the inventory registry %s."), *ItemID.ToString(), *GetName());
+// 		}
+// 	}
+// }
 
 void UClassicInventory::OnItemAdded_Implementation(UItemBase* Item)
 {

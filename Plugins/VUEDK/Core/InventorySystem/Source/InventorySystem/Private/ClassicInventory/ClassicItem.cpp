@@ -3,20 +3,19 @@
 #include "ClassicInventory/ClassicItem.h"
 #include "ClassicInventory/Data/ClassicItemData.h"
 #include "ClassicInventory/Data/ClassicItemSlotData.h"
-#include "ClassicInventory/Data/SaveData/ClassicItemSaveData.h"
 
-FClassicItemSaveData UClassicItem::CreateClassicItemSaveData() const
-{
-	FClassicItemSaveData ClassicItemSaveData;
-	ClassicItemSaveData.ItemSaveData = CreateItemBaseSaveData();
-	return ClassicItemSaveData;
-}
-
-void UClassicItem::LoadClassicItemSaveData(UInventoryBase* LoadingInventory, const FClassicItemSaveData ItemSaveData)
-{
-	bool bHasBeenEquipped;
-	LoadItemBaseSaveData(LoadingInventory, ItemSaveData.ItemSaveData, bHasBeenEquipped);
-}
+// FClassicItemSaveData UClassicItem::CreateClassicItemSaveData() const
+// {
+// 	FClassicItemSaveData ClassicItemSaveData;
+// 	ClassicItemSaveData.ItemSaveData = CreateItemBaseSaveData();
+// 	return ClassicItemSaveData;
+// }
+//
+// void UClassicItem::LoadClassicItemSaveData(UInventoryBase* LoadingInventory, const FClassicItemSaveData ItemSaveData)
+// {
+// 	bool bHasBeenEquipped;
+// 	LoadItemBaseSaveData(LoadingInventory, ItemSaveData.ItemSaveData, bHasBeenEquipped);
+// }
 
 UClassicItemData* UClassicItem::GetClassicItemData() const
 {

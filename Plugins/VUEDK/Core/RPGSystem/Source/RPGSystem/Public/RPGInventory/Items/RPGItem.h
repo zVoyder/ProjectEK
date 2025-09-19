@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RPGInventory/Data/SaveData/RPGItemSaveDataDEPRECATED.h"
 #include "TetrisInventory/TetrisItem.h"
 #include "RPGInventory/RPGInventoriesManager.h"
 #include "RPGInventory/RPGInventory.h"
@@ -30,10 +29,6 @@ public:
 	virtual void Init(UObject* WorldContextObject, UItemDataBase* Data) override;
 
 	virtual void NativeOnPostGeneration();
-	
-	FRPGItemSaveDataDEPRECATED CreateRPGItemSaveData() const;
-
-	void LoadRPGItemSaveData(URPGInventory* LoadingInventory, const FRPGItemSaveDataDEPRECATED& RPGItemSaveData);
 
 	virtual FText GetItemFullName() const override;
 

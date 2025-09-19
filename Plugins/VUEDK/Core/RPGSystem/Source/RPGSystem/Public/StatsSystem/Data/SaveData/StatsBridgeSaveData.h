@@ -3,11 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/SaveData/SaveDataBase.h"
 #include "StatsBridgeSaveData.generated.h"
 
 UCLASS()
-class RPGSYSTEM_API UStatsBridgeSaveData : public USaveDataBase
+class RPGSYSTEM_API UStatsBridgeSaveData : public UObject
 {
 	GENERATED_BODY()
 

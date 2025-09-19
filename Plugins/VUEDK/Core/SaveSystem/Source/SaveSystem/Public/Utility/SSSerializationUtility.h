@@ -18,16 +18,16 @@ class SAVESYSTEM_API USSSerializationUtility : public UBlueprintFunctionLibrary
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Save System|Serialization")
-	static bool TrySerializeSaveDataObjectInSaveGame(USaveDataBase* SaveDataToSerialize);
+	static bool TrySerializeSaveDataObjectInSaveGame(USaveDataBase* SaveDataToSerialize, bool bIsSharedSave = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Save System|Serialization")
-	static bool TryDeserializeSaveDataObjectFromSaveGame(USaveDataBase* SaveDataToDeserialize);
+	static bool TryDeserializeSaveDataObjectFromSaveGame(USaveDataBase* SaveDataToDeserialize, bool bIsSharedSave = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Save System|Serialization")
-	static bool TrySerializeObjectInSaveGame(UObject* ObjectToSerialize, const FName ObjectID);
+	static bool TrySerializeObjectInSaveGame(UObject* ObjectToSerialize, const FName ObjectID, bool bIsSharedSave = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Save System|Serialization")
-	static bool TryDeserializeObjectFromSaveGame(UObject* ObjectToDeserialize, const FName ObjectID);
+	static bool TryDeserializeObjectFromSaveGame(UObject* ObjectToDeserialize, const FName ObjectID, bool bIsSharedSave = false);
 
 private:
 	static void SerializeAsSaveGame(UObject* ObjectToSerialize, FObjectAndNameAsStringProxyArchive& Ar);

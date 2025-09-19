@@ -3,7 +3,6 @@
 #include "RPGInventory/Items/RPGItem.h"
 #include "Utility/ISInventoriesUtility.h"
 #include "RPGInventory/Data/RPGItemData.h"
-#include "RPGInventory/Data/SaveData/RPGItemSaveDataDEPRECATED.h"
 #include "RPGInventory/Utility/RPGInventoriesUtility.h"
 #include "RPGItemsGeneration/Data/Rarities/RPGItemsRaritiesData.h"
 
@@ -52,30 +51,6 @@ void URPGItem::NativeOnPostGeneration()
 {
 	SetItemMeshToLoad();
 	OnPostGeneration();
-}
-
-FRPGItemSaveDataDEPRECATED URPGItem::CreateRPGItemSaveData() const
-{
-	FRPGItemSaveDataDEPRECATED RPGItemSaveData;
-	RPGItemSaveData.TetrisItemSaveData = CreateTetrisSaveData();
-	RPGItemSaveData.VisualDetails = VisualDetails;
-
-	if (GetRPGItemData()->bUseRarity)
-	{
-		if (IsValid(RarityLevel))
-			RPGItemSaveData.RarityID = RarityLevel->RarityID;
-		else
-			UE_LOG(LogInventorySystem, Error, TEXT("URPGItem::CreateRPGItemSaveData: Trying to save an innvalid Rarity level for item %s."), *GetItemFullName().ToString());
-	}
-
-	return RPGItemSaveData;
-}
-
-void URPGItem::LoadRPGItemSaveData(URPGInventory* LoadingInventory, const FRPGItemSaveDataDEPRECATED& RPGItemSaveData)
-{
-	VisualDetails = RPGItemSaveData.VisualDetails;
-	RarityLevel = URPGInventoriesUtility::GetItemRarityByID(RPGItemSaveData.RarityID);
-	LoadTetrisSaveData(LoadingInventory, RPGItemSaveData.TetrisItemSaveData); // Call this after setting VisualDetails so that the item's icon is set correctly
 }
 
 FText URPGItem::GetItemFullName() const

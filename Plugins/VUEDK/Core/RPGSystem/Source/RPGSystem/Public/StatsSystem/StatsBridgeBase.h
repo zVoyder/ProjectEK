@@ -9,7 +9,6 @@
 #include "Containers/CoreStatsContainer.h"
 #include "Containers/SpecialStatsContainer.h"
 #include "Data/SpecialStatData.h"
-#include "Interfaces/Saveable.h"
 #include "StatsBridgeBase.generated.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogStatsSystem, Log, All);
@@ -25,7 +24,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 );
 
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class RPGSYSTEM_API UStatsBridgeBase : public UActorComponent//, public ISaveable
+class RPGSYSTEM_API UStatsBridgeBase : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -53,11 +52,11 @@ public:
 	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	UFUNCTION(BlueprintPure)
-	virtual USaveDataBase* CreateSaveDataInstance();
-
-	UFUNCTION(BlueprintCallable)
-	virtual bool Load(USaveDataBase* SavedData);
+	// UFUNCTION(BlueprintPure)
+	// virtual USaveDataBase* CreateSaveDataInstance();
+	//
+	// UFUNCTION(BlueprintCallable)
+	// virtual bool Load(USaveDataBase* SavedData);
 
 	/**
 	 * Gets the special stat data by its unique identifier.

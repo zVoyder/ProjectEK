@@ -2,7 +2,6 @@
 
 #include "Base/InventoryBase.h"
 #include "Base/ItemBase.h"
-#include "Base/Data/SaveData/InventoryBaseSaveDataDEPRECATED.h"
 #include "Factories/ISFactory.h"
 #include "Utility/ISInventoriesUtility.h"
 
@@ -20,31 +19,6 @@ void UInventoryBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	
 	if (IsValid(RelatedEquipment))
 		UnlinkEquipment();
-}
-
-USaveDataBase* UInventoryBase::CreateSaveDataInstance()
-{
-	UE_LOG(LogInventorySystem, Display, TEXT("Creating Save Data for inventory %s."), *GetName());
-	USaveDataBase* SaveData = CreateSaveDataObject();
-	TArray<UItemBase*> ItemsToSave = GetItems();
-	return CreateInventorySaveData_Implementation(SaveData, ItemsToSave);
-}
-
-bool UInventoryBase::Load(USaveDataBase* SavedData)
-{
-	if (UInventoryBaseSaveDataDEPRECATED* InventorySaveData = Cast<UInventoryBaseSaveDataDEPRECATED>(SavedData))
-	{
-		// Clear the inventory before loading the save data
-		if (IsValid(RelatedEquipment))
-			RelatedEquipment->ClearEquipment();
-
-		ClearInventory();
-		LoadInventorySaveData(InventorySaveData);
-		return true;
-	}
-
-	UE_LOG(LogInventorySystem, Error, TEXT("Invalid Save Data type for inventory %s."), *GetName());
-	return false;
 }
 
 void UInventoryBase::LinkEquipment(UEquipment* Equipment)
@@ -344,23 +318,6 @@ void UInventoryBase::BeginPlay()
 
 	if (bIsMainInventory)
 		UISInventoriesUtility::SetMainInventory(this);
-}
-
-USaveDataBase* UInventoryBase::CreateSaveDataObject_Implementation()
-{
-	return NewObject<UInventoryBaseSaveDataDEPRECATED>();
-}
-
-USaveDataBase* UInventoryBase::CreateInventorySaveData_Implementation(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave)
-{
-	UInventoryBaseSaveDataDEPRECATED* InventorySaveData = Cast<UInventoryBaseSaveDataDEPRECATED>(SaveData);
-	InventorySaveData->MaxWeight = WeightMaxCapacity;
-	return SaveData;
-}
-
-void UInventoryBase::LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData)
-{
-	CurrentWeight = InventorySaveData->MaxWeight;
 }
 
 void UInventoryBase::AddItemToList(UItemBase* Item)

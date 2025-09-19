@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "TetrisInventory.h"
-#include "Data/SaveData/TetrisItemSaveDataDEPRECATED.h"
 #include "Base/ItemBase.h"
 #include "TetrisItem.generated.h"
 
@@ -39,11 +38,7 @@ public:
 	UTetrisItem();
 
 	virtual void Init(UObject* WorldContextObject, UItemDataBase* Data) override;
-
-	FTetrisItemSaveDataDEPRECATED CreateTetrisSaveData() const;
-
-	void LoadTetrisSaveData(UInventoryBase* LoadingInventory, const FTetrisItemSaveDataDEPRECATED& TetrisSaveData);
-
+	
 	/**
 	 * Checks if the item can be rotated based on its current data.
 	 * @return True if the item can be rotated, false otherwise.

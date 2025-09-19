@@ -5,7 +5,7 @@
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "Utility/SSUtility.h"
 
-bool USSSerializationUtility::TrySerializeSaveDataObjectInSaveGame(USaveDataBase* SaveDataToSerialize)
+bool USSSerializationUtility::TrySerializeSaveDataObjectInSaveGame(USaveDataBase* SaveDataToSerialize, bool bIsSharedSave)
 {
 	if (!IsValid(SaveDataToSerialize))
 	{
@@ -13,10 +13,10 @@ bool USSSerializationUtility::TrySerializeSaveDataObjectInSaveGame(USaveDataBase
 		return false;
 	}
 
-	return TrySerializeObjectInSaveGame(SaveDataToSerialize, SaveDataToSerialize->GetSaveDataID());
+	return TrySerializeObjectInSaveGame(SaveDataToSerialize, SaveDataToSerialize->GetSaveDataID(), bIsSharedSave);
 }
 
-bool USSSerializationUtility::TryDeserializeSaveDataObjectFromSaveGame(USaveDataBase* SaveDataToDeserialize)
+bool USSSerializationUtility::TryDeserializeSaveDataObjectFromSaveGame(USaveDataBase* SaveDataToDeserialize, bool bIsSharedSave)
 {
 	if (!IsValid(SaveDataToDeserialize))
 	{
@@ -24,10 +24,10 @@ bool USSSerializationUtility::TryDeserializeSaveDataObjectFromSaveGame(USaveData
 		return false;
 	}
 
-	return TryDeserializeObjectFromSaveGame(SaveDataToDeserialize, SaveDataToDeserialize->GetSaveDataID());
+	return TryDeserializeObjectFromSaveGame(SaveDataToDeserialize, SaveDataToDeserialize->GetSaveDataID(), bIsSharedSave);
 }
 
-bool USSSerializationUtility::TrySerializeObjectInSaveGame(UObject* ObjectToSerialize, const FName ObjectID)
+bool USSSerializationUtility::TrySerializeObjectInSaveGame(UObject* ObjectToSerialize, const FName ObjectID, bool bIsSharedSave)
 {
 	if (!IsValid(ObjectToSerialize))
 	{
@@ -35,7 +35,7 @@ bool USSSerializationUtility::TrySerializeObjectInSaveGame(UObject* ObjectToSeri
 		return false;
 	}
 
-	UDefaultSaveGame* SaveGame = USSUtility::GetSaveGame();
+	UDefaultSaveGame* SaveGame = bIsSharedSave ? USSUtility::GetSharedSaveGame() : USSUtility::GetSaveGame();
 	if (!IsValid(SaveGame))
 	{
 		UE_LOG(LogSaveSystem, Warning, TEXT("USSSerializationUtility::TrySerializeObjectInSaveGame: Failed Serialization: SaveGame instance is not valid."));
@@ -50,7 +50,7 @@ bool USSSerializationUtility::TrySerializeObjectInSaveGame(UObject* ObjectToSeri
 	return true;
 }
 
-bool USSSerializationUtility::TryDeserializeObjectFromSaveGame(UObject* ObjectToDeserialize, const FName ObjectID)
+bool USSSerializationUtility::TryDeserializeObjectFromSaveGame(UObject* ObjectToDeserialize, const FName ObjectID, bool bIsSharedSave)
 {
 	if (!IsValid(ObjectToDeserialize))
 	{
@@ -58,7 +58,7 @@ bool USSSerializationUtility::TryDeserializeObjectFromSaveGame(UObject* ObjectTo
 		return false;
 	}
 
-	const UDefaultSaveGame* SaveGame = USSUtility::GetSaveGame();
+	const UDefaultSaveGame* SaveGame = bIsSharedSave ? USSUtility::GetSharedSaveGame() : USSUtility::GetSaveGame();
 	if (!IsValid(SaveGame))
 	{
 		UE_LOG(LogSaveSystem, Warning, TEXT("USSSerializationUtility::TryDeserializeObjectFromSaveGame: Failed Deserialization: SaveGame instance is not valid."));

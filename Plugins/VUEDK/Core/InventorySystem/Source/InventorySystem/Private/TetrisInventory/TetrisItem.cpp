@@ -3,7 +3,6 @@
 #include "TetrisInventory/TetrisItem.h"
 #include "TetrisInventory/TetrisInventory.h"
 #include "TetrisInventory/Data/TetrisItemData.h"
-#include "TetrisInventory/Data/SaveData/TetrisItemSaveDataDEPRECATED.h"
 
 UTetrisItem::UTetrisItem(): TopLeftCornerPosition(),
                             bIsRotated(false),
@@ -16,28 +15,6 @@ void UTetrisItem::Init(UObject* WorldContextObject, UItemDataBase* Data)
 {
 	Super::Init(WorldContextObject, Data);
 	CachedSize = GetTetrisItemData()->Size;
-}
-
-FTetrisItemSaveDataDEPRECATED UTetrisItem::CreateTetrisSaveData() const
-{
-	FTetrisItemSaveDataDEPRECATED TetrisSaveData;
-	TetrisSaveData.ItemSaveData = CreateItemBaseSaveData();
-	TetrisSaveData.SlotPosition = TopLeftCornerPosition;
-	TetrisSaveData.bIsRotated = bIsRotated;
-	return TetrisSaveData;
-}
-
-void UTetrisItem::LoadTetrisSaveData(UInventoryBase* LoadingInventory, const FTetrisItemSaveDataDEPRECATED& TetrisSaveData)
-{
-	bool bHasBeenEquipped;
-	LoadItemBaseSaveData(LoadingInventory, TetrisSaveData.ItemSaveData, bHasBeenEquipped);
-	UTetrisInventory* TetrisInventory = Cast<UTetrisInventory>(LoadingInventory);
-
-	if (bHasBeenEquipped)
-		return;
-
-	SetRotation(TetrisSaveData.bIsRotated);
-	TetrisInventory->TryMoveItem(this, TetrisSaveData.SlotPosition); // Since the item is already added in LoadItemBaseSaveData
 }
 
 bool UTetrisItem::CanRotate() const

@@ -56,6 +56,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced)
 	TSet<USaveBehaviourBase*> SaveBehaviours;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced)
+	TSet<USaveBehaviourBase*> SharedSaveBehaviours;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, AdvancedDisplay,
 		meta = (ToolTip = "If true, OnPrepSave will attempt to serialize the owner actor, and OnLoadGame will attempt to deserialize it. Keep in mind this is not optimal; it is recommended to package your data in a SaveData object instead."))
@@ -95,7 +97,7 @@ public:
 	 * @return True if the operation was successful, False otherwise.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
-	bool PushDataToSaveGame(USaveDataBase* SaveData) const;
+	bool PushDataToSaveGame(USaveDataBase* SaveData, const bool bIsSharedSave = false) const;
 
 	/**
 	 * Pulls some SaveData from the SaveGame instance (calling function TryDeserializeSaveDataObjectFromSaveGame internally).
@@ -103,7 +105,10 @@ public:
 	 * @return True if the operation was successful and data was found, False otherwise.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
-	bool PullDataFromSaveGame(USaveDataBase* SaveData) const;
+	bool PullDataFromSaveGame(USaveDataBase* SaveData, const bool bIsSharedSave = false) const;
+
+	UFUNCTION(BlueprintPure)
+	TArray<USaveBehaviourBase*> GetAllSaveBehaviours() const;
 
 protected:
 	/**
@@ -282,11 +287,15 @@ private:
 
 	void SaveAllBehaviours();
 
-	void LoadAllBehaviours();
-	
-	void CallSaveBehavioursBeginPlay();
+	void SaveAllSharedBehaviours();
 
-	void CallSaveBehavioursEndPlay(const EEndPlayReason::Type EndPlayReason);
+	void LoadAllBehaviours();
+
+	void LoadAllSharedBehaviours();
+	
+	void CallSaveBehavioursBeginPlay() const;
+
+	void CallSaveBehavioursEndPlay(const EEndPlayReason::Type EndPlayReason) const;
 
 	void CheckBehavioursDuplicates();
 	

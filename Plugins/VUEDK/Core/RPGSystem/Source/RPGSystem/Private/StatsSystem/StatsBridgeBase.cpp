@@ -18,43 +18,43 @@ void UStatsBridgeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	CoreStatsContainer->OnStatsValuesChanged.RemoveDynamic(this, &UStatsBridgeBase::CalculateFullStatsValues);
 }
 
-USaveDataBase* UStatsBridgeBase::CreateSaveDataInstance()
-{
-	UStatsBridgeSaveData* BridgeSaveData = NewObject<UStatsBridgeSaveData>();
-
-	for (auto& Pair : SpecialStatsContainer->GetValues())
-		BridgeSaveData->SavedSpecialStats.Add(Pair.Key->StatID, Pair.Value);
-	
-	for (auto& Pair : CoreStatsContainer->GetValues())
-		BridgeSaveData->SavedCoreStats.Add(Pair.Key->StatID, Pair.Value);
-	
-	return BridgeSaveData;
-}
-
-bool UStatsBridgeBase::Load(USaveDataBase* SavedData)
-{
-	if (!SavedData)
-		return false;
-
-	const UStatsBridgeSaveData* BridgeSaveData = Cast<UStatsBridgeSaveData>(SavedData);
-	
-	if (!BridgeSaveData)
-		return false;
-
-	for (auto& SpecialStatsMap = BridgeSaveData->SavedSpecialStats; auto& Pair : SpecialStatsMap)
-	{
-		if (USpecialStatData* SpecialStatData = GetSpecialStatByID(Pair.Key))
-			SpecialStatsContainer->AddStat(SpecialStatData, Pair.Value);
-	}
-	
-	for (auto& CoreStatsMap = BridgeSaveData->SavedCoreStats; auto& Pair : CoreStatsMap)
-	{
-		if (UCoreStatData* CoreStatData = GetCoreStatByID(Pair.Key))
-			CoreStatsContainer->AddStat(CoreStatData, Pair.Value);
-	}
-	
-	return true;
-}
+// USaveDataBase* UStatsBridgeBase::CreateSaveDataInstance()
+// {
+// 	UStatsBridgeSaveData* BridgeSaveData = NewObject<UStatsBridgeSaveData>();
+//
+// 	for (auto& Pair : SpecialStatsContainer->GetValues())
+// 		BridgeSaveData->SavedSpecialStats.Add(Pair.Key->StatID, Pair.Value);
+// 	
+// 	for (auto& Pair : CoreStatsContainer->GetValues())
+// 		BridgeSaveData->SavedCoreStats.Add(Pair.Key->StatID, Pair.Value);
+// 	
+// 	return BridgeSaveData;
+// }
+//
+// bool UStatsBridgeBase::Load(USaveDataBase* SavedData)
+// {
+// 	if (!SavedData)
+// 		return false;
+//
+// 	const UStatsBridgeSaveData* BridgeSaveData = Cast<UStatsBridgeSaveData>(SavedData);
+// 	
+// 	if (!BridgeSaveData)
+// 		return false;
+//
+// 	for (auto& SpecialStatsMap = BridgeSaveData->SavedSpecialStats; auto& Pair : SpecialStatsMap)
+// 	{
+// 		if (USpecialStatData* SpecialStatData = GetSpecialStatByID(Pair.Key))
+// 			SpecialStatsContainer->AddStat(SpecialStatData, Pair.Value);
+// 	}
+// 	
+// 	for (auto& CoreStatsMap = BridgeSaveData->SavedCoreStats; auto& Pair : CoreStatsMap)
+// 	{
+// 		if (UCoreStatData* CoreStatData = GetCoreStatByID(Pair.Key))
+// 			CoreStatsContainer->AddStat(CoreStatData, Pair.Value);
+// 	}
+// 	
+// 	return true;
+// }
 
 USpecialStatData* UStatsBridgeBase::GetSpecialStatByID(const FGuid SpecialStatID) const
 {

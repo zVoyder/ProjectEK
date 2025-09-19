@@ -27,10 +27,6 @@
 			"Enabled": true
 		},
 		{
-			"Name": "SaveSystem",
-			"Enabled": true
-		},
-		{
 			"Name": "BetterDragSystem",
 			"Enabled": true
 		}

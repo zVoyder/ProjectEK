@@ -23,10 +23,6 @@
   "SupportURL": "",
   "Plugins": [
     {
-      "Name": "SaveSystem",
-      "Enabled": true
-    },
-    {
       "Name": "BetterDragSystem",
       "Enabled": true
     }

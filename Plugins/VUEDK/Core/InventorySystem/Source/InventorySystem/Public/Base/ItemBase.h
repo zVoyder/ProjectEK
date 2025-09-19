@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/SaveData/ItemSaveData.h"
 #include "EquipmentSystem/Data/EquipSlotKey.h"
 #include "UObject/Object.h"
 #include "ItemBase.generated.h"
@@ -118,10 +117,6 @@ private:
 
 public:
 	UItemBase();
-	
-	FItemSaveData CreateItemBaseSaveData() const;
-
-	void LoadItemBaseSaveData(UInventoryBase* LoadingInventory, const FItemSaveData ItemSaveData, bool& bOutHasBeenEquipped);
 
 	/**
 	 * Initializes the item with the given world context and item data.

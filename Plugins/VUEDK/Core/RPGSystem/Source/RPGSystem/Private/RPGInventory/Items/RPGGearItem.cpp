@@ -16,30 +16,6 @@ void URPGGearItem::Init(UObject* WorldContextObject, UItemDataBase* Data)
 	Super::Init(WorldContextObject, Data);
 }
 
-FRPGGearItemSaveDataDEPRECATED URPGGearItem::CreateRPGGearItemSaveData() const
-{
-	FRPGGearItemSaveDataDEPRECATED GearSaveData;
-	GearSaveData.RPGItemSaveData = CreateRPGItemSaveData();
-
-	for (const auto& StatModifier : GearStatsContainer->GetValues())
-		GearSaveData.GearStats.Add(StatModifier.Key->StatID, StatModifier.Value);
-
-	return GearSaveData;
-}
-
-void URPGGearItem::LoadRPGGearItemSaveData(URPGInventory* LoadingInventory, FRPGGearItemSaveDataDEPRECATED& GearSaveData)
-{
-	for (const auto& Stats : GearSaveData.GearStats)
-	{
-		if (UCoreStatData* StatData = URPGInventoriesUtility::GetItemStatByID(Stats.Key); IsValid(StatData))
-			GearStatsContainer->AddStat(StatData, Stats.Value);
-		else
-			UE_LOG(LogTemp, Error, TEXT("Failed to load RPGGearItem bonus stat with ID: %s"), *Stats.Key.ToString());
-	}
-
-	LoadRPGItemSaveData(LoadingInventory, GearSaveData.RPGItemSaveData);
-}
-
 void URPGGearItem::AddItemStatWithOperation(UCoreStatData* Stat, UStatOperation* Operation)
 {
 	auto CalculateResult = [this](const UCoreStatData* LocalStat, UStatOperation* LocalOperation) -> float

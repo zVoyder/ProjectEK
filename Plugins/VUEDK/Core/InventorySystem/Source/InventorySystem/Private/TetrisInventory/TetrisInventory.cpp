@@ -2,9 +2,7 @@
 
 #include "TetrisInventory/TetrisInventory.h"
 #include "TetrisInventory/TetrisItem.h"
-#include "TetrisInventory/Data/SaveData/TetrisInventorySaveDataDEPRECATED.h"
 #include "TetrisInventory/Data/TetrisItemData.h"
-#include "TetrisInventory/Data/SaveData/TetrisItemSaveDataDEPRECATED.h"
 #include "Factories/ISFactory.h"
 
 UTetrisInventory::UTetrisInventory(): GridSize()
@@ -168,56 +166,6 @@ void UTetrisInventory::BeginPlay()
 {
 	Super::BeginPlay();
 	ConstructGrid();
-}
-
-USaveDataBase* UTetrisInventory::CreateSaveDataObject_Implementation()
-{
-	return NewObject<UTetrisInventorySaveDataDEPRECATED>();
-}
-
-USaveDataBase* UTetrisInventory::CreateInventorySaveData_Implementation(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave)
-{
-	Super::CreateInventorySaveData_Implementation(SaveData, ItemsToSave);
-	UTetrisInventorySaveDataDEPRECATED* TetrisInventorySaveData = Cast<UTetrisInventorySaveDataDEPRECATED>(SaveData);
-
-	for (UItemBase* Item : ItemsToSave)
-	{
-		const UTetrisItem* TetrisItem = Cast<UTetrisItem>(Item);
-		FTetrisItemSaveDataDEPRECATED ItemSaveData = TetrisItem->CreateTetrisSaveData();
-
-		FGuid ItemID = Item->GetItemData()->ItemDataID;
-
-		if (!TetrisInventorySaveData->TetrisItems.Contains(ItemID))
-			TetrisInventorySaveData->TetrisItems.Add(ItemID, FTetrisItemsSaveArray());
-
-		TetrisInventorySaveData->TetrisItems[ItemID].Items.Add(ItemSaveData);
-	}
-
-	return TetrisInventorySaveData;
-}
-
-void UTetrisInventory::LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData)
-{
-	Super::LoadInventorySaveData_Implementation(InventorySaveData);
-	UTetrisInventorySaveDataDEPRECATED* TetrisInventorySaveData = Cast<UTetrisInventorySaveDataDEPRECATED>(InventorySaveData);
-
-	for (const auto& LoadedItem : TetrisInventorySaveData->TetrisItems)
-	{
-		auto [ItemID, ItemsSaveArray] = LoadedItem;
-
-		if (UItemDataBase* ItemData = GetItemDataFromRegistry(ItemID))
-		{
-			for (FTetrisItemSaveDataDEPRECATED& ItemSaveData : ItemsSaveArray.Items)
-			{
-				UTetrisItem* CreatedItem = Cast<UTetrisItem>(UISFactory::CreateItem(this, ItemData));
-				CreatedItem->LoadTetrisSaveData(this, ItemSaveData);
-			}
-		}
-		else
-		{
-			UE_LOG(LogInventorySystem, Warning, TEXT("Item with ID %s not found in the inventory registry %s."), *ItemID.ToString(), *GetName());
-		}
-	}
 }
 
 void UTetrisInventory::OnItemAdded_Implementation(UItemBase* Item)

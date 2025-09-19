@@ -5,7 +5,6 @@
 #include "Engine/StreamableManager.h"
 #include "Base/InventoryBase.h"
 #include "Base/Data/ItemDataBase.h"
-#include "Base/Data/SaveData/ItemSaveData.h"
 #include "Factories/ISFactory.h"
 
 UItemBase::UItemBase(): RelatedInventory(nullptr),
@@ -15,38 +14,6 @@ UItemBase::UItemBase(): RelatedInventory(nullptr),
                         CurrentQuantity(1),
                         ItemWorldContext(nullptr)
 {
-}
-
-FItemSaveData UItemBase::CreateItemBaseSaveData() const
-{
-	FItemSaveData ItemSaveData;
-	ItemSaveData.EquipSlotIndex = EquipSlotIndex;
-	ItemSaveData.Quantity = CurrentQuantity;
-	return ItemSaveData;
-}
-
-void UItemBase::LoadItemBaseSaveData(UInventoryBase* LoadingInventory, const FItemSaveData ItemSaveData, bool& bOutHasBeenEquipped)
-{
-	bOutHasBeenEquipped = false;
-	EquipSlotIndex = ItemSaveData.EquipSlotIndex;
-	CurrentQuantity = ItemSaveData.Quantity;
-
-	if (EquipSlotIndex == -1)
-	{
-		if (!LoadingInventory->TryAddItem(this))
-			UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::LoadItemBaseSaveData, Item %s couldn't be added to the inventory %s."), *ItemData->ItemTypeID, *LoadingInventory->GetName());
-
-		return;
-	}
-
-	if (!LoadingInventory->GetEquipment()->TryEquipItem(this, ItemData->EquipSlotKey, EquipSlotIndex))
-	{
-		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::LoadItemBaseSaveData, Item %s couldn't be equipped to the equipment %s."), *ItemData->ItemTypeID, *LoadingInventory->GetEquipment()->GetName());
-		ClearEquipSlot();
-		return;
-	}
-
-	bOutHasBeenEquipped = true;
 }
 
 void UItemBase::Init(UObject* WorldContextObject, UItemDataBase* Data)

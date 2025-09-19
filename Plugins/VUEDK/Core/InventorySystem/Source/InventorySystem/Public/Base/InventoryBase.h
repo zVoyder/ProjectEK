@@ -4,9 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Data/SaveData/InventoryBaseSaveDataDEPRECATED.h"
 #include "EquipmentSystem/Equipment.h"
-#include "Interfaces/Saveable.h"
 #include "InventoryBase.generated.h"
 
 struct FItemSaveData;
@@ -45,7 +43,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(
 );
 
 UCLASS(Abstract, Blueprintable, BlueprintType, ClassGroup=(Custom))
-class INVENTORYSYSTEM_API UInventoryBase : public UActorComponent//, public ISaveable
+class INVENTORYSYSTEM_API UInventoryBase : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -87,12 +85,6 @@ public:
 	UInventoryBase();
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
-	UFUNCTION(BlueprintPure)
-	virtual USaveDataBase* CreateSaveDataInstance();
-	
-	UFUNCTION(BlueprintCallable)
-	virtual bool Load(USaveDataBase* SavedData);
 	
 	/**
 	 * Links this inventory to the specified equipment.
@@ -257,15 +249,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	
-	UFUNCTION(BlueprintNativeEvent)
-	USaveDataBase* CreateSaveDataObject();
-
-	UFUNCTION(BlueprintNativeEvent)
-	USaveDataBase* CreateInventorySaveData(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave);
-
-	UFUNCTION(BlueprintNativeEvent)
-	void LoadInventorySaveData(UInventoryBaseSaveDataDEPRECATED* InventorySaveData);
-
 	/**
 	 * Adds an item to the inventory list.
 	 * @param Item The item to add.

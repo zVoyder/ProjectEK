@@ -20,22 +20,22 @@ bool UInventoryBaseSaveData::SaveObjectDataNative(UObject* ObjectToSave)
 		UE_LOG(LogInventorySaveBridge, Warning, TEXT("UInventoryBaseSaveData::SaveObjectNative: ObjectToSave is not of type UInventoryBase."));
 		return false;
 	}
-	
+
 	SavedItemsData.Empty();
 	for (UItemBase* Item : Inventory->GetItems())
 	{
 		if (!IsValid(Item))
 			continue;
-	
+
 		UItemBaseSaveData* ItemSaveData = CreateItemSaveData(Item);
 		if (!IsValid(ItemSaveData))
 			continue;
-		
+
 		SaveItem(Item, ItemSaveData);
 		PostSaveItem(Item, ItemSaveData);
 		SavedItemsData.Add(ItemSaveData);
 	}
-	
+
 	SavedMaxWeight = Inventory->WeightMaxCapacity;
 	return true;
 }
@@ -48,35 +48,31 @@ bool UInventoryBaseSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
 		UE_LOG(LogInventorySaveBridge, Warning, TEXT("UInventoryBaseSaveData::LoadObjectNative: ObjectToLoad is not of type UInventoryBase."));
 		return false;
 	}
-	
+
 	Inventory->ClearInventory();
 	for (UItemBaseSaveData* ItemSaveData : SavedItemsData)
 	{
 		if (!IsValid(ItemSaveData))
 			continue;
-		
+
 		UItemDataBase* ItemData = UISInventoriesUtility::GetItemDataFromRegistry(ItemSaveData->SavedItemDataID);
 		if (!IsValid(ItemData))
 			continue;
-		
+
 		UItemBase* Item = UISFactory::CreateItem(this, ItemData);
 		if (!IsValid(Item))
 			continue;
-	
+
 		LoadItem(Item, ItemSaveData);
-		if (Item->GetEquipSlotIndex() != -1)
-		{
-			UEquipment* Equipment = Inventory->GetEquipment();
-			if (!IsValid(Equipment))
-				return Inventory->TryAddItem(Item);
-	
-			return Equipment->TryEquipItem(Item, Item->GetEquipSlotKey(), Item->GetEquipSlotIndex());
-		}
-	
-		Inventory->TryAddItem(Item);
+		UEquipment* Equipment = Inventory->GetEquipment();
+		if (IsValid(Equipment) && Item->GetEquipSlotIndex() != -1)
+			Equipment->TryEquipItem(Item, Item->GetEquipSlotKey(), Item->GetEquipSlotIndex());
+		else
+			Inventory->TryAddItem(Item);
+
 		PostLoadItem(Item, ItemSaveData);
 	}
-	
+
 	Inventory->WeightMaxCapacity = SavedMaxWeight;
 	return true;
 }
@@ -94,7 +90,7 @@ UItemBaseSaveData* UInventoryBaseSaveData::CreateItemSaveData(const UItemBase* I
 		UE_LOG(LogInventorySaveBridge, Warning, TEXT("UInventoryBaseSaveData::CreateItemSaveData: Check failed."));
 		return nullptr;
 	}
-	
+
 	UClass* ItemClass = Item->GetClass();
 	const TSubclassOf<UItemBaseSaveData>* ItemSaveDataClass = nullptr;
 	while (ItemClass && ItemClass->IsChildOf(UItemBase::StaticClass()))

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/SaveData/ClassicItemSaveData.h"
 #include "Base/ItemBase.h"
 #include "UObject/Object.h"
 #include "ClassicItem.generated.h"
@@ -17,9 +16,9 @@ class INVENTORYSYSTEM_API UClassicItem : public UItemBase
 	GENERATED_BODY()
 
 public:
-	FClassicItemSaveData CreateClassicItemSaveData() const;
-
-	void LoadClassicItemSaveData(UInventoryBase* LoadingInventory, const FClassicItemSaveData ItemSaveData);
+	// FClassicItemSaveData CreateClassicItemSaveData() const;
+	//
+	// void LoadClassicItemSaveData(UInventoryBase* LoadingInventory, const FClassicItemSaveData ItemSaveData);
 
 	/**
 	 * Returns the ClassicItemData associated with this item.

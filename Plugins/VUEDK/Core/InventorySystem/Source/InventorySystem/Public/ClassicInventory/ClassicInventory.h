@@ -15,11 +15,11 @@ class INVENTORYSYSTEM_API UClassicInventory : public UInventoryBase
 public:
 	UClassicInventory();
 	
-	virtual USaveDataBase* CreateSaveDataObject_Implementation() override;
-
-	virtual USaveDataBase* CreateInventorySaveData_Implementation(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave) override;
-	
-	virtual void LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData) override;
+	// virtual USaveDataBase* CreateSaveDataObject_Implementation() override;
+	//
+	// virtual USaveDataBase* CreateInventorySaveData_Implementation(USaveDataBase* SaveData, TArray<UItemBase*>& ItemsToSave) override;
+	//
+	// virtual void LoadInventorySaveData_Implementation(UInventoryBaseSaveDataDEPRECATED* InventorySaveData) override;
 
 	virtual void OnItemAdded_Implementation(UItemBase* Item) override;
 

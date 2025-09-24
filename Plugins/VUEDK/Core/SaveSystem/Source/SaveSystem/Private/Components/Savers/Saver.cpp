@@ -10,7 +10,7 @@ USaver::USaver() : SaveManager(nullptr)
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-FName USaver::GetUniqueSaveID() const
+FGuid USaver::GetUniqueSaveID() const
 {
 	return UniqueSaveID;
 }
@@ -24,8 +24,9 @@ bool USaver::PushDataToSaveGame(USaveDataBase* SaveData, const bool bIsSharedSav
 {
 	if (!IsValid(SaveData))
 		return false;
-	
-	SaveData->SetSaveDataID(GetUniqueSaveID());
+
+	const FName SaveDataID = FName(UniqueSaveID.ToString());
+	SaveData->SetSaveDataID(SaveDataID);
 	return USSSerializationUtility::TrySerializeSaveDataObjectInSaveGame(SaveData, bIsSharedSave);
 }
 
@@ -33,8 +34,9 @@ bool USaver::PullDataFromSaveGame(USaveDataBase* SaveData, const bool bIsSharedS
 {
 	if (!IsValid(SaveData))
 		return false;
-	
-	SaveData->SetSaveDataID(GetUniqueSaveID());
+
+	const FName SaveDataID = FName(UniqueSaveID.ToString());
+	SaveData->SetSaveDataID(SaveDataID);
 	return USSSerializationUtility::TryDeserializeSaveDataObjectFromSaveGame(SaveData, bIsSharedSave);
 }
 
@@ -45,17 +47,46 @@ TArray<USaveBehaviourBase*> USaver::GetAllSaveBehaviours() const
 	return AllBehaviours;
 }
 
+#if WITH_EDITOR
+void USaver::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	if (UniqueSaveID.IsValid())
+		return;
+	
+	UniqueSaveID = FGuid::NewGuid();
+}
+
+void USaver::PostLoad()
+{
+	Super::PostLoad();
+
+	if (!UniqueSaveID.IsValid())
+	{
+		UniqueSaveID = FGuid::NewGuid();
+		return;
+	}
+
+	const AActor* Owner = GetOwner();
+	if (IsValid(Owner))
+	{
+		if (!Owner->HasAnyFlags(RF_Transient))
+			UniqueSaveID = Owner->GetActorGuid();
+	}
+}
+#endif
+
 void USaver::BeginPlay()
 {
-	Super::BeginPlay(); 
+	Super::BeginPlay();
 	CheckBehavioursDuplicates();
-	MakeUniqueSaveID();
 	SaveManager = USSUtility::GetSaveManager();
 
 	if (!Check())
 		return;
 
-	CallSaveBehavioursBeginPlay();
+	InitSaveBehaviours();
 	SaveManager->OnPrepareSave.AddDynamic(this, &USaver::PrepareSave);
 	SaveManager->OnPrepareLoad.AddDynamic(this, &USaver::PrepareLoad);
 	SaveManager->OnSaveGame.AddDynamic(this, &USaver::OnSaveCompletedEvent);
@@ -78,7 +109,7 @@ void USaver::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	if (!Check())
 		return;
 
-	CallSaveBehavioursEndPlay(EndPlayReason);
+	EndPlaySaveBehaviours(EndPlayReason);
 	SaveManager->OnPrepareSave.RemoveDynamic(this, &USaver::PrepareSave);
 	SaveManager->OnPrepareLoad.RemoveDynamic(this, &USaver::PrepareLoad);
 	SaveManager->OnSaveGame.RemoveDynamic(this, &USaver::OnSaveCompletedEvent);
@@ -170,28 +201,6 @@ void USaver::OnBeginWithLoadedSharedSaveGameEvent_Implementation(UDefaultSaveGam
 
 void USaver::OnBeginWithNewSharedSaveGameEvent_Implementation(UDefaultSaveGame* SaveGame)
 {
-}
-
-void USaver::MakeUniqueSaveID()
-{
-	const FName MasterID = USSUtility::GetSaveMasterID();
-	const FName OwnerName = GetOwner() ? GetOwner()->GetFName() : NAME_None;
-	const FName OwnerPath = GetOwner() ? FName(*GetOwner()->GetPathName()) : NAME_None;
-	const FString LevelName = UGameplayStatics::GetCurrentLevelName(this, true);
-	
-	const FString Base = FString::Printf(TEXT("%s|%s|%s|%s"),
-		*OwnerName.ToString(),
-		*LevelName,
-		*MasterID.ToString(),
-		*OwnerPath.ToString());
-	
-	FMD5 Md5Gen;
-	Md5Gen.Update(reinterpret_cast<const uint8*>(TCHAR_TO_ANSI(*Base)), Base.Len());
-	uint8 Digest[16];
-	Md5Gen.Final(Digest);
-
-	const FString Hex = BytesToHex(Digest, 16);
-	UniqueSaveID = FName(*Hex);
 }
 
 void USaver::SerializeOwner() const
@@ -338,19 +347,19 @@ void USaver::LoadAllSharedBehaviours()
 	}
 }
 
-void USaver::CallSaveBehavioursBeginPlay() const
+void USaver::InitSaveBehaviours()
 {
 	for (USaveBehaviourBase* Behaviour : GetAllSaveBehaviours())
 	{
 		if (IsValid(Behaviour))
 		{
-			Behaviour->SetSaveBehaviourID(GetUniqueSaveID());
+			Behaviour->Init(this);
 			Behaviour->BeginPlay();
 		}
 	}
 }
 
-void USaver::CallSaveBehavioursEndPlay(const EEndPlayReason::Type EndPlayReason) const
+void USaver::EndPlaySaveBehaviours(const EEndPlayReason::Type EndPlayReason) const
 {
 	for (USaveBehaviourBase* Behaviour : GetAllSaveBehaviours())
 	{

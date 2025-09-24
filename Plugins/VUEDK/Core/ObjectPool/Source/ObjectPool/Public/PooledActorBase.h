@@ -33,7 +33,6 @@ protected:
 	virtual void ReleasePooledActor_Implementation() override;
 	
 	virtual void ClearPooledActor_Implementation() override;
-
 private:
 	bool Check() const;
 };

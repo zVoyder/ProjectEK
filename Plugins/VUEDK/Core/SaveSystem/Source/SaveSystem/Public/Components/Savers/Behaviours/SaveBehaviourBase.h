@@ -24,9 +24,10 @@ private:
 	USaveDataBase* CachedSaveData = nullptr;
 	UPROPERTY()
 	USaver* CachedOwnerSaver = nullptr;
-	FName SaveBehaviourID;
-
+	
 public:
+	void Init(USaver* OwnerSaver);
+	
 	virtual void BeginPlay();
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "BeginPlay"))
@@ -55,12 +56,12 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	USaveDataBase* GetSaveDataInstance();
-
-	UFUNCTION(BlueprintCallable)
-	void SetSaveBehaviourID(const FName NewID);
 	
 	UFUNCTION(BlueprintPure)
 	FName GetSaveBehaviourID() const;
+
+	UFUNCTION(BlueprintPure)
+	virtual bool Check() const;
 
 #if WITH_ENGINE
 	virtual UWorld* GetWorld() const override;

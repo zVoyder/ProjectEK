@@ -3,9 +3,14 @@
 #include "Components/Savers/Behaviours/SaveBehaviourBase.h"
 #include "Components/Savers/Saver.h"
 
+void USaveBehaviourBase::Init(USaver* OwnerSaver)
+{
+	CachedOwnerSaver = OwnerSaver;
+	CacheSaveDataInstanceIfNeeded();
+}
+
 void USaveBehaviourBase::BeginPlay()
 {
-	CacheSaveDataInstanceIfNeeded();
 	ReceiveBeginPlay();
 }
 
@@ -69,15 +74,18 @@ USaveDataBase* USaveBehaviourBase::GetSaveDataInstance()
 	return CreateSaveDataInstanceNative();
 }
 
-void USaveBehaviourBase::SetSaveBehaviourID(const FName NewID)
-{
-	SaveBehaviourID = NewID;
-}
-
 FName USaveBehaviourBase::GetSaveBehaviourID() const
 {
+	if (!Check())
+		return NAME_None;
+	
 	const FName ClassName = GetClass()->GetFName();
-	return FName(*FString::Printf(TEXT("%s_%s"), *SaveBehaviourID.ToString(), *ClassName.ToString()));
+	return FName(*FString::Printf(TEXT("%s_%s"), *CachedOwnerSaver->GetUniqueSaveID().ToString(), *ClassName.ToString()));
+}
+
+bool USaveBehaviourBase::Check() const
+{
+	return IsValid(CachedOwnerSaver);
 }
 
 #if WITH_ENGINE

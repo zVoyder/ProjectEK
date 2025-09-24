@@ -14,7 +14,8 @@ public class ObjectPool : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"GameplayTags",
-			"Settings"
+			"Settings",
+			"LevelEditor"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]

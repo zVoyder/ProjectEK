@@ -54,34 +54,33 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnBeginWithNewSharedSaveGame OnBeginWithNewSharedSaveGame;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced)
 	TSet<USaveBehaviourBase*> SaveBehaviours;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced)
 	TSet<USaveBehaviourBase*> SharedSaveBehaviours;
-	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, AdvancedDisplay,
 		meta = (ToolTip = "If true, OnPrepSave will attempt to serialize the owner actor, and OnLoadGame will attempt to deserialize it. Keep in mind this is not optimal; it is recommended to package your data in a SaveData object instead."))
 	bool bSerializeOwner = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, AdvancedDisplay,
 		meta = (ToolTip = "Useful when you want to delay the BeginWithLoad Events for the next tick in case you want to do some initialization before the events are called."))
 	bool bDelayBeginWithLoadForNextTick = true;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, AdvancedDisplay,
+		meta = (ToolTip = "The unique identifier for this saver instance."))
+	FGuid UniqueSaveID;
 
 protected:
 	UPROPERTY()
 	USaveManager* SaveManager;
-
-private:
-	FName UniqueSaveID;
 
 public:
 	USaver();
 
 	/**
 	 * Returns the unique save ID for this saver instance.
-	 * @return The unique FName identifier for the save.
+	 * @return The unique FGuid identifier for the save.
 	 */
 	UFUNCTION(BlueprintPure)
-	FName GetUniqueSaveID() const;
+	FGuid GetUniqueSaveID() const;
 
 	/**
 	 * Combines the provided SaveDataID with the unique save ID of this saver instance.
@@ -111,6 +110,12 @@ public:
 	TArray<USaveBehaviourBase*> GetAllSaveBehaviours() const;
 
 protected:
+#if WITH_EDITOR
+	virtual void PostInitProperties() override;
+
+	virtual void PostLoad() override;
+#endif
+
 	/**
 	 * Called when the component begins play. Used for initialization logic.
 	 */
@@ -254,8 +259,6 @@ protected:
 	void OnBeginWithNewSharedSaveGameEvent(UDefaultSaveGame* SaveGame);
 
 private:
-	void MakeUniqueSaveID();
-	
 	void SerializeOwner() const;
 
 	void DeserializeOwner() const;
@@ -292,13 +295,13 @@ private:
 	void LoadAllBehaviours();
 
 	void LoadAllSharedBehaviours();
-	
-	void CallSaveBehavioursBeginPlay() const;
 
-	void CallSaveBehavioursEndPlay(const EEndPlayReason::Type EndPlayReason) const;
+	void InitSaveBehaviours();
+
+	void EndPlaySaveBehaviours(const EEndPlayReason::Type EndPlayReason) const;
 
 	void CheckBehavioursDuplicates();
-	
+
 	/**
 	 * Checks if the saver is in a valid state for operations.
 	 * @return true if valid, false otherwise.

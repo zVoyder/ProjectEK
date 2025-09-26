@@ -25,6 +25,16 @@ FName USaveDataBase::GetSaveDataID() const
 	return FName(*FString::Printf(TEXT("%s_%s"), *ClassName.ToString(), *SaveDataID.ToString()));
 }
 
+bool USaveDataBase::SaveObjectData_Implementation(UObject* ObjectToSave)
+{
+	return true;
+}
+
+bool USaveDataBase::LoadObjectData_Implementation(UObject* ObjectToLoad)
+{
+	return true;
+}
+
 void USaveDataBase::Serialize(FArchive& Ar)
 {
 	Super::Serialize(Ar);

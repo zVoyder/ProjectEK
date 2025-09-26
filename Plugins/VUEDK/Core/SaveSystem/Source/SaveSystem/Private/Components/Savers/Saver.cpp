@@ -80,7 +80,6 @@ void USaver::PostLoad()
 void USaver::BeginPlay()
 {
 	Super::BeginPlay();
-	CheckBehavioursDuplicates();
 	SaveManager = USSUtility::GetSaveManager();
 
 	if (!Check())
@@ -365,27 +364,6 @@ void USaver::EndPlaySaveBehaviours(const EEndPlayReason::Type EndPlayReason) con
 	{
 		if (IsValid(Behaviour))
 			Behaviour->EndPlay(EndPlayReason);
-	}
-}
-
-void USaver::CheckBehavioursDuplicates()
-{
-	TSet<FName> IDs;
-	for (const USaveBehaviourBase* Behaviour : SaveBehaviours)
-	{
-		if (IsValid(Behaviour))
-		{
-			const FName ID = Behaviour->GetSaveBehaviourID();
-			if (IDs.Contains(ID))
-			{
-				UE_LOG(LogSaveSystem, Warning, TEXT("Saver %s has duplicate SaveBehaviour with ID %s. Removing duplicate."), *GetName(), *ID.ToString());
-				SaveBehaviours.Remove(Behaviour);
-			}
-			else
-			{
-				IDs.Add(ID);
-			}
-		}
 	}
 }
 

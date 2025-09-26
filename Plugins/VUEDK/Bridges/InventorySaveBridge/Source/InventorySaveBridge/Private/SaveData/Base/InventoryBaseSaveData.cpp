@@ -109,7 +109,7 @@ UItemBaseSaveData* UInventoryBaseSaveData::CreateItemSaveData(const UItemBase* I
 	}
 
 	UItemBaseSaveData* ItemSaveData = NewObject<UItemBaseSaveData>(this, *ItemSaveDataClass);
-	ItemSaveData->SetSaveDataID(InventorySaveBehaviour->GetSaveBehaviourID());
+	ItemSaveData->SetSaveDataID(InventorySaveBehaviour->GetCompositeSaveBehaviourID());
 	return ItemSaveData;
 }
 

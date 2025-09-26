@@ -19,8 +19,14 @@ USaveDataBase* UInventorySaveBehaviour::CreateSaveDataInstance_Implementation()
 {
 	if (!Check())
 		return nullptr;
+	
+	if (!SaveDataClass->IsChildOf(UInventoryBaseSaveData::StaticClass()))
+	{
+		UE_LOG(LogInventorySaveBridge, Warning, TEXT("InventorySaveBehaviour: SaveDataClass is not a child of InventoryBaseSaveData."));
+		return nullptr;
+	}
 
-	UInventoryBaseSaveData* InventorySaveData = NewObject<UInventoryBaseSaveData>(this, InventorySaveDataClass);
+	UInventoryBaseSaveData* InventorySaveData = NewObject<UInventoryBaseSaveData>(this, SaveDataClass);
 	InventorySaveData->Init(this);
 	InventorySaveData->RegisterItemsNative();
 	return InventorySaveData;

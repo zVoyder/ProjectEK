@@ -16,16 +16,24 @@ class SAVESYSTEM_API USaveBehaviourBase : public UObject, public ISaveable
 	friend class USaver;
 
 public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<USaveDataBase> SaveDataClass = USaveDataBase::StaticClass();
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "If true, the SaveData instance will not be created every time a save/load is performed, but will be preserved between saves/loads."))
 	bool bPreserveSaveDataInstance = false;
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FGuid UniqueBehaviourID;
 
 private:
 	UPROPERTY()
 	USaveDataBase* CachedSaveData = nullptr;
 	UPROPERTY()
 	USaver* CachedOwnerSaver = nullptr;
-	
+
 public:
+	USaveBehaviourBase();
+	
 	void Init(USaver* OwnerSaver);
 	
 	virtual void BeginPlay();
@@ -58,7 +66,7 @@ public:
 	USaveDataBase* GetSaveDataInstance();
 	
 	UFUNCTION(BlueprintPure)
-	FName GetSaveBehaviourID() const;
+	FName GetCompositeSaveBehaviourID() const;
 
 	UFUNCTION(BlueprintPure)
 	virtual bool Check() const;

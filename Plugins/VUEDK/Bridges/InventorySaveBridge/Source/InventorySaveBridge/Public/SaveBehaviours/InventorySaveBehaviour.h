@@ -13,10 +13,6 @@ class INVENTORYSAVEBRIDGE_API UInventorySaveBehaviour : public USaveBehaviourBas
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UInventoryBaseSaveData> InventorySaveDataClass = UInventoryBaseSaveData::StaticClass();
-	
 protected:
 	UPROPERTY()
 	UInventoryBase* Inventory;

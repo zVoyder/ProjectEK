@@ -24,7 +24,7 @@ bool UActorStateSaveBehaviour::Save_Implementation(USaveDataBase* SaveData)
 	
 	UDefaultSaveGame* SaveGame = USSUtility::GetSaveGame();
 	if (IsValid(SaveGame))
-		SaveGame->DestroyedActors.Remove(GetSaveBehaviourID());
+		SaveGame->DestroyedActors.Remove(GetCompositeSaveBehaviourID());
 
 	return ActorStateSaveData->SaveObjectDataNative(GetOwnerActor());
 }
@@ -42,7 +42,7 @@ bool UActorStateSaveBehaviour::Load_Implementation(USaveDataBase* SaveData)
 	if (!IsValid(SaveGame))
 		return false;
 
-	if (SaveGame->DestroyedActors.Contains(GetSaveBehaviourID()))
+	if (SaveGame->DestroyedActors.Contains(GetCompositeSaveBehaviourID()))
 	{
 		if (AActor* OwnerActor = GetOwnerActor())
 		{
@@ -65,5 +65,5 @@ void UActorStateSaveBehaviour::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	if (!IsValid(SaveGame))
 		return;
 
-	SaveGame->DestroyedActors.Add(GetSaveBehaviourID());
+	SaveGame->DestroyedActors.Add(GetCompositeSaveBehaviourID());
 }

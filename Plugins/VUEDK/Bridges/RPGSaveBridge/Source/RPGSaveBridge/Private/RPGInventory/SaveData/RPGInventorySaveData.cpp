@@ -1,9 +1,9 @@
 ﻿// Copyright VUEDK, Inc. All Rights Reserved.
 
-#include "SaveData/RPGInventory/RPGInventorySaveData.h"
+#include "RPGInventory/SaveData/RPGInventorySaveData.h"
 #include "RPGInventory/Items/RPGGearItem.h"
-#include "SaveData/RPGInventory/RPGGearItemSaveData.h"
-#include "SaveData/RPGInventory/RPGItemSaveData.h"
+#include "RPGInventory/SaveData/RPGGearItemSaveData.h"
+#include "RPGInventory/SaveData/RPGItemSaveData.h"
 
 void URPGInventorySaveData::RegisterItemsNative()
 {

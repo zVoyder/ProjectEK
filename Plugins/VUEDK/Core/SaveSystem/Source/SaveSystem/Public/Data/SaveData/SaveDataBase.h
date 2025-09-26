@@ -28,10 +28,10 @@ public:
 	FName GetSaveDataID() const;
 	
 protected:
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintNativeEvent)
 	bool SaveObjectData(UObject* ObjectToSave);
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintNativeEvent)
 	bool LoadObjectData(UObject* ObjectToLoad);
 	
 	virtual void Serialize(FArchive& Ar) override;

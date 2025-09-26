@@ -1,6 +1,6 @@
 ﻿// Copyright VUEDK, Inc. All Rights Reserved.
 
-#include "SaveData/RPGInventory/RPGGearItemSaveData.h"
+#include "RPGInventory/SaveData/RPGGearItemSaveData.h"
 
 #include "InventorySaveBridge.h"
 #include "RPGInventory/Items/RPGGearItem.h"

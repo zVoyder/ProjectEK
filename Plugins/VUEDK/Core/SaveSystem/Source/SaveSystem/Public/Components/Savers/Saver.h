@@ -300,8 +300,6 @@ private:
 
 	void EndPlaySaveBehaviours(const EEndPlayReason::Type EndPlayReason) const;
 
-	void CheckBehavioursDuplicates();
-
 	/**
 	 * Checks if the saver is in a valid state for operations.
 	 * @return true if valid, false otherwise.

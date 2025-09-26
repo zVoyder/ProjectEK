@@ -41,7 +41,7 @@ bool USSSerializationUtility::TrySerializeObjectInSaveGame(UObject* ObjectToSeri
 		UE_LOG(LogSaveSystem, Warning, TEXT("USSSerializationUtility::TrySerializeObjectInSaveGame: Failed Serialization: SaveGame instance is not valid."));
 		return false;
 	}
-
+	
 	FSerializedObject SerializedObject;
 	FMemoryWriter MemoryWriter(SerializedObject.Bytes, true);
 	FObjectAndNameAsStringProxyArchive Ar(MemoryWriter, true);

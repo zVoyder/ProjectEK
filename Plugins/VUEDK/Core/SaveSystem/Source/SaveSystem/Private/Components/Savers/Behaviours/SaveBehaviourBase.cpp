@@ -3,6 +3,10 @@
 #include "Components/Savers/Behaviours/SaveBehaviourBase.h"
 #include "Components/Savers/Saver.h"
 
+USaveBehaviourBase::USaveBehaviourBase() : UniqueBehaviourID(FGuid::NewGuid())
+{
+}
+
 void USaveBehaviourBase::Init(USaver* OwnerSaver)
 {
 	CachedOwnerSaver = OwnerSaver;
@@ -23,14 +27,14 @@ USaveDataBase* USaveBehaviourBase::CreateSaveDataInstanceNative()
 {
 	USaveDataBase* SaveData = Execute_CreateSaveDataInstance(this);
 	if (IsValid(SaveData))
-		SaveData->SetSaveDataID(GetSaveBehaviourID());
+		SaveData->SetSaveDataID(GetCompositeSaveBehaviourID());
 
 	return SaveData;
 }
 
 USaveDataBase* USaveBehaviourBase::CreateSaveDataInstance_Implementation()
 {
-	return nullptr;
+	return NewObject<USaveDataBase>(this, SaveDataClass);
 }
 
 void USaveBehaviourBase::PrepareForSerializationNative(USaveDataBase* SaveData)
@@ -74,13 +78,13 @@ USaveDataBase* USaveBehaviourBase::GetSaveDataInstance()
 	return CreateSaveDataInstanceNative();
 }
 
-FName USaveBehaviourBase::GetSaveBehaviourID() const
+FName USaveBehaviourBase::GetCompositeSaveBehaviourID() const
 {
 	if (!Check())
 		return NAME_None;
 	
-	const FName ClassName = GetClass()->GetFName();
-	return FName(*FString::Printf(TEXT("%s_%s"), *CachedOwnerSaver->GetUniqueSaveID().ToString(), *ClassName.ToString()));
+	const FName UniqueID = FName(*UniqueBehaviourID.ToString());
+	return CachedOwnerSaver->MakeCompositeSaveID(UniqueID);
 }
 
 bool USaveBehaviourBase::Check() const

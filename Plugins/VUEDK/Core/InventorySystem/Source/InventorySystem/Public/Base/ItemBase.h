@@ -240,7 +240,7 @@ public:
 	 * Returns the total weight of the item stack (quantity * single item weight).
 	 * @return The total weight of the item stack.
 	 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintPure)
+	UFUNCTION(BlueprintPure)
 	float GetItemFullWeight() const;
 
 	/**
@@ -354,6 +354,8 @@ public:
 	int32 SetQuantity(const int32 Quantity);
 
 	UItemBase* DuplicateItem() const;
+
+	bool Check() const;
 
 protected:
 	/**

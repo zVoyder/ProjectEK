@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "RPGSaveBridge",
+	"FriendlyName": "CheckpointSaveBridge",
 	"Description": "",
 	"Category": "VUEDK.Bridges",
 	"CreatedBy": "Denis Faraci",
@@ -15,28 +15,20 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "RPGSaveBridge",
+			"Name": "CheckpointSaveBridge",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}
 	],
-	"SupportURL": "",
 	"Plugins": [
 		{
 			"Name": "SaveSystem",
 			"Enabled": true
 		},
 		{
-			"Name": "InventorySystem",
-			"Enabled": true
-		},
-		{
-			"Name": "RPGSystem",
-			"Enabled": true
-		},
-		{
-			"Name": "InventorySaveBridge",
+			"Name": "CheckpointSystem",
 			"Enabled": true
 		}
-	]
+	],
+	"SupportURL": ""
 }

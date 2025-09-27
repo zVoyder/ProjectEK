@@ -17,7 +17,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(
 );
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class VUEDKCORE_API UCurrenciesManager : public UActorComponent //, public ISaveable
+class VUEDKCORE_API UCurrenciesManager : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -36,10 +36,7 @@ public:
 	UCurrenciesManager();
 	
 	UFUNCTION(BlueprintPure)
-	virtual USaveDataBase* CreateSaveDataInstance();
-
-	UFUNCTION(BlueprintCallable)
-	virtual bool Load(USaveDataBase* SavedData);
+	TMap<UCurrencyData*, UCurrency*> GetCurrenciesMap() const;
 
 	/**
 	 * Gets the currency instance for the specified currency data.
@@ -96,9 +93,17 @@ public:
 	 * Sets the amount of the specified currency.
 	 * @param Currency - The currency data to set.
 	 * @param Amount - The amount to set.
+	 * @param bNotify - Whether to notify the listeners about the change.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void SetCurrencyAmount(UCurrencyData* Currency, int32 Amount) const;
+	void SetCurrencyAmount(UCurrencyData* Currency, const int32 Amount, const bool bNotify = true) const;
+
+	/**
+ 	* Finds a currency by its unique identifier.
+ 	* @param CurrencyID - The unique identifier of the currency.
+ 	* @return Pointer to the UCurrency instance if found, nullptr otherwise.
+ 	*/
+	UCurrency* FindCurrencyByID(const FGuid& CurrencyID) const;	
 
 protected:
 	/**
@@ -111,11 +116,4 @@ private:
 	 * Initializes the currencies manager.
 	 */
 	void Init();
-
-	/**
-	 * Finds a currency by its unique identifier.
-	 * @param CurrencyID - The unique identifier of the currency.
-	 * @return Pointer to the UCurrency instance if found, nullptr otherwise.
-	 */
-	UCurrency* FindCurrencyByID(const FGuid& CurrencyID) const;
 };

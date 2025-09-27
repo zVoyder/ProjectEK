@@ -53,8 +53,6 @@ UCLASS(BlueprintType)
 class VUEDKCORE_API UCurrency : public UObject
 {
 	GENERATED_BODY()
-
-	friend class UCurrenciesManager;
 	
 public:
 	UPROPERTY(BlueprintAssignable, Category = Events)
@@ -106,19 +104,24 @@ public:
 	UFUNCTION(BlueprintPure)
 	int32 GetValue() const;
 
+	UFUNCTION(BlueprintPure)
+	UCurrencyData* GetCurrencyData() const;
+
 	/**
 	 * Sets the value of the currency.
 	 * @param NewValue - The new value to set.
+	 * @param bNotify - Whether to notify listeners of the change.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void SetValue(const int32 NewValue);
+	void SetValue(const int32 NewValue, const bool bNotify = true);
 
 	/**
 	 * Modifies the value of the currency by the specified amount.
 	 * @param Amount - The amount to add or subtract from the current value.
+	 * @param bNotify - Whether to notify listeners of the change.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void ModifyValue(const int32 Amount);
+	void ModifyValue(const int32 Amount, const bool bNotify = true);
 
 	/**
 	 * Empties the currency, setting its value to the minimum.

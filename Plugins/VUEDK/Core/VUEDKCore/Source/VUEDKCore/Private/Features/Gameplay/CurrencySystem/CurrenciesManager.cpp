@@ -8,46 +8,9 @@ UCurrenciesManager::UCurrenciesManager()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-USaveDataBase* UCurrenciesManager::CreateSaveDataInstance()
+TMap<UCurrencyData*, UCurrency*> UCurrenciesManager::GetCurrenciesMap() const
 {
-	UCurrenciesSaveData* SaveData = NewObject<UCurrenciesSaveData>();
-
-	for (const TPair<UCurrencyData*, UCurrency*>& Pair : CurrenciesMap)
-	{
-		if (!IsValid(Pair.Key) || !IsValid(Pair.Value))
-		{
-			UE_LOG(LogCurrencySystem, Warning, TEXT("UCurrenciesManager::CreateSaveData: Invalid Currency or CurrencyData."));
-			continue;
-		}
-
-		const FGuid CurrencyGuid = Pair.Key->CurrencyID;
-		SaveData->CurrenciesSaveMap.Add(CurrencyGuid, Pair.Value->GetValue());
-	}
-
-	return SaveData;
-}
-
-bool UCurrenciesManager::Load(USaveDataBase* SavedData)
-{
-	const UCurrenciesSaveData* CurrenciesSaveData = Cast<UCurrenciesSaveData>(SavedData);
-
-	if (!IsValid(CurrenciesSaveData))
-		return false;
-
-	for (const TPair<FGuid, int32>& Pair : CurrenciesSaveData->CurrenciesSaveMap)
-	{
-		UCurrency* Currency = FindCurrencyByID(Pair.Key);
-		if (!IsValid(Currency))
-		{
-			UE_LOG(LogCurrencySystem, Warning, TEXT("UCurrenciesManager::LoadSaveData: Currency with ID %s not found."), *Pair.Key.ToString());
-			continue;
-		}
-
-		Currency->CurrentValue = Pair.Value;
-	}
-
-	OnCurrencyUINeedsUpdate.Broadcast();
-	return true;
+	return CurrenciesMap;
 }
 
 UCurrency* UCurrenciesManager::GetCurrency(const UCurrencyData* Currency) const
@@ -127,7 +90,7 @@ void UCurrenciesManager::ConsumeCurrency(UCurrencyData* Currency, const int32 Am
 	CurrentCurrency->ModifyValue(-OutConsumedAmount);
 }
 
-void UCurrenciesManager::SetCurrencyAmount(UCurrencyData* Currency, const int32 Amount) const
+void UCurrenciesManager::SetCurrencyAmount(UCurrencyData* Currency, const int32 Amount, const bool bNotify) const
 {
 	UCurrency* CurrentCurrency = GetCurrency(Currency);
 
@@ -137,7 +100,25 @@ void UCurrenciesManager::SetCurrencyAmount(UCurrencyData* Currency, const int32 
 		return;
 	}
 
-	CurrentCurrency->SetValue(Amount);
+	CurrentCurrency->SetValue(Amount, bNotify);
+}
+
+UCurrency* UCurrenciesManager::FindCurrencyByID(const FGuid& CurrencyID) const
+{
+	const UCurrencyData* FoundCurrencyData = nullptr;
+	for (const UCurrencyData* CurrencyData : Currencies)
+	{
+		if (CurrencyData->CurrencyID == CurrencyID)
+		{
+			FoundCurrencyData = CurrencyData;
+			break;
+		}
+	}
+
+	if (IsValid(FoundCurrencyData))
+		return GetCurrency(FoundCurrencyData);
+
+	return nullptr;
 }
 
 void UCurrenciesManager::BeginPlay()
@@ -160,22 +141,4 @@ void UCurrenciesManager::Init()
 		NewCurrency->Init(CurrencyData, this);
 		CurrenciesMap.Add(CurrencyData, NewCurrency);
 	}
-}
-
-UCurrency* UCurrenciesManager::FindCurrencyByID(const FGuid& CurrencyID) const
-{
-	const UCurrencyData* FoundCurrencyData = nullptr;
-	for (const UCurrencyData* CurrencyData : Currencies)
-	{
-		if (CurrencyData->CurrencyID == CurrencyID)
-		{
-			FoundCurrencyData = CurrencyData;
-			break;
-		}
-	}
-
-	if (IsValid(FoundCurrencyData))
-		return GetCurrency(FoundCurrencyData);
-
-	return nullptr;
 }

@@ -12,6 +12,11 @@ class VUEDKCORE_API UCurrenciesSaveData : public USaveDataBase
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ExposeOnSpawn = true))
-	TMap<FGuid, int32> CurrenciesSaveMap;
+	UPROPERTY(SaveGame, BlueprintReadWrite)
+	TMap<FGuid, int32> SavedCurrencies;
+
+public:
+	virtual bool SaveObjectDataNative(UObject* ObjectToSave) override;
+
+	virtual bool LoadObjectDatatNative(UObject* ObjectToLoad) override;
 };

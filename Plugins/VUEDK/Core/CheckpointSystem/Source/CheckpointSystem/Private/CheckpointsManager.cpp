@@ -1,26 +1,11 @@
 // Copyright VUEDK, Inc. All Rights Reserved.
 
 #include "CheckpointsManager.h"
-#include "Data/SaveData/CheckpointsSaveData.h"
 #include "Utility/CSUtility.h"
 
 UCheckpointsManager::UCheckpointsManager()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-}
-
-FCheckpointsSaveData UCheckpointsManager::CreateSaveData() const
-{
-	FCheckpointsSaveData SaveData;
-	SaveData.CheckpointIndex = CheckpointIndex;
-	SaveData.CurrentCheckpoints = CheckpointsMap;
-	return SaveData;
-}
-
-void UCheckpointsManager::LoadSaveData(const FCheckpointsSaveData SaveData)
-{
-	CheckpointIndex = SaveData.CheckpointIndex;
-	CheckpointsMap = SaveData.CurrentCheckpoints;
 }
 
 bool UCheckpointsManager::TrySetCheckpoint(const FName CheckpointKey, const FTransform CheckpointTransform)
@@ -36,7 +21,7 @@ bool UCheckpointsManager::TrySetCheckpoint(const FName CheckpointKey, const FTra
 		UE_LOG(LogCheckpointSystem, Warning, TEXT("UCheckpointsManager::TrySetCheckpoint: Checkpoint with key %s already exists."), *CheckpointKey.ToString());
 		return false;
 	}
-	
+
 	const FCheckpointIndexData CheckpointIndexData = FCheckpointIndexData(CheckpointIndex++, CheckpointKey);
 	CheckpointsMap.Add(CheckpointIndexData, CheckpointTransform);
 	OnCheckpointSet.Broadcast();
@@ -50,7 +35,7 @@ bool UCheckpointsManager::TryGetCheckpoint(const FName CheckpointKey, FTransform
 		UE_LOG(LogCheckpointSystem, Warning, TEXT("UCheckpointsManager::TryGetMapCheckpointByKey: Checkpoint with key %s does not exist."), *CheckpointKey.ToString());
 		return false;
 	}
-	
+
 	OutCheckpointTransform = GetCheckpointTransformWithKey(CheckpointKey);
 	return true;
 }
@@ -74,6 +59,26 @@ bool UCheckpointsManager::TryGetLastCheckpoint(FTransform& OutCheckpointTransfor
 	}
 
 	return true;
+}
+
+TMap<FCheckpointIndexData, FTransform> UCheckpointsManager::GetCheckpointsMap() const
+{
+	return CheckpointsMap;
+}
+
+int32 UCheckpointsManager::GetCheckpointIndex() const
+{
+	return CheckpointIndex;
+}
+
+void UCheckpointsManager::SetCheckpointIndex(const int32 InCheckpointIndex)
+{
+	CheckpointIndex = InCheckpointIndex;
+}
+
+void UCheckpointsManager::SetCheckpointsMap(const TMap<FCheckpointIndexData, FTransform>& InCheckpointsMap)
+{
+	CheckpointsMap = InCheckpointsMap;
 }
 
 void UCheckpointsManager::BeginPlay()

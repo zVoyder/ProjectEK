@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Data/CheckpointIndexData.h"
-#include "Data/SaveData/CheckpointsSaveData.h"
 #include "CheckpointsManager.generated.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogCheckpointSystem, Log, All);
@@ -29,20 +28,6 @@ private:
 
 public:
 	UCheckpointsManager();
-
-	/**
-	 * @brief Creates a save data object containing all checkpoints.
-	 * @return The checkpoints save data.
-	 */
-	UFUNCTION(BlueprintPure)
-	FCheckpointsSaveData CreateSaveData() const;
-
-	/**
-	 * @brief Loads checkpoints from the provided save data.
-	 * @param SaveData The save data to load checkpoints from.
-	 */
-	UFUNCTION(BlueprintCallable)
-	void LoadSaveData(FCheckpointsSaveData SaveData);
 
 	/**
 	 * @brief Tries to set a checkpoint with the given key and transform.
@@ -69,6 +54,14 @@ public:
 	 */
 	UFUNCTION(BlueprintPure)
 	bool TryGetLastCheckpoint(FTransform& OutCheckpointTransform) const;
+	
+	TMap<FCheckpointIndexData, FTransform> GetCheckpointsMap() const;
+	
+	int32 GetCheckpointIndex() const;
+
+	void SetCheckpointIndex(const int32 InCheckpointIndex);
+
+	void SetCheckpointsMap(const TMap<FCheckpointIndexData, FTransform>& InCheckpointsMap);
 
 protected:
 	virtual void BeginPlay() override;

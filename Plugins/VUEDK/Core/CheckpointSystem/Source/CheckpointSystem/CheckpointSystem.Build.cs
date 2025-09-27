@@ -12,7 +12,7 @@ public class CheckpointSystem : ModuleRules
 		{
 			"Core",
 			"CoreUObject",
-			"Engine",
+			"Engine"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]

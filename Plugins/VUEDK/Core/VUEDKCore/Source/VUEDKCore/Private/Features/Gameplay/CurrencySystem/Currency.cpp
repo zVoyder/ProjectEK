@@ -40,11 +40,19 @@ int32 UCurrency::GetValue() const
 	return CurrentValue;
 }
 
-void UCurrency::SetValue(const int32 NewValue)
+UCurrencyData* UCurrency::GetCurrencyData() const
+{
+	return CurrencyData;
+}
+
+void UCurrency::SetValue(const int32 NewValue, const bool bNotify)
 {
 	const int32 OldValue = CurrentValue;
 	CurrentValue = FMath::Clamp(NewValue, MinValue, MaxValue);
 
+	if (!bNotify)
+		return;
+	
 	if (OldValue == CurrentValue)
 		return;
 
@@ -62,10 +70,10 @@ void UCurrency::SetValue(const int32 NewValue)
 		OnCurrencyCapped.Broadcast(CurrentValue);
 }
 
-void UCurrency::ModifyValue(const int32 Amount)
+void UCurrency::ModifyValue(const int32 Amount, const bool bNotify)
 {
 	const int32 NewValue = CurrentValue + Amount;
-	SetValue(NewValue);
+	SetValue(NewValue, bNotify);
 }
 
 void UCurrency::Empty()

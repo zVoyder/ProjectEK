@@ -18,6 +18,12 @@ UItemBase::UItemBase(): RelatedInventory(nullptr),
 
 void UItemBase::Init(UObject* WorldContextObject, UItemDataBase* Data)
 {
+	if (!IsValid(Data))
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::Init: ItemData is nullptr."));
+		return;
+	}
+	
 	ItemWorldContext = WorldContextObject;
 	OnPreInit(Data);
 	ItemData = Data;
@@ -69,6 +75,12 @@ bool UItemBase::IsEquipped() const
 
 bool UItemBase::TryDrop(const FVector Location, const FRotator Rotation, AItemDropActor*& OutItemDropActor, const bool bNotify)
 {
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::Drop(): Check failed."));
+		return false;
+	}
+	
 	if (!CanDrop())
 		return false;
 
@@ -109,11 +121,16 @@ void UItemBase::Remove()
 
 void UItemBase::Use()
 {
-	UE_LOG(LogInventorySystem, Display, TEXT("ItemBase::Use(), Item %s has been used."), *ItemData->ItemTypeID);
-
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::Use(): Check failed."));
+		return;
+	}
+	
 	OnItemUsed.Broadcast(this);
 	RelatedInventory->OnAnyItemUsed.Broadcast(this);
 	OnUse();
+	UE_LOG(LogInventorySystem, Display, TEXT("ItemBase::Use(), Item %s has been used."), *ItemData->ItemTypeID);
 
 	if (ItemData->bConsumeUponUse)
 		Consume();
@@ -121,11 +138,16 @@ void UItemBase::Use()
 
 int32 UItemBase::Consume(const int32 AmountToConsume)
 {
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::Consume(): Check failed."));
+		return 0;
+	}
+	
 	if (!ItemData->bIsConsumable)
 		return 0;
 
 	UE_LOG(LogInventorySystem, Display, TEXT("Consuming Item %s, Current Quantity: %d, Amount To Consume: %d."), *ItemData->ItemTypeID, CurrentQuantity, AmountToConsume);
-
 	RelatedInventory->OnAnyItemConsumed.Broadcast(this);
 	OnItemConsumed.Broadcast(this);
 	OnConsume_Implementation();
@@ -135,16 +157,34 @@ int32 UItemBase::Consume(const int32 AmountToConsume)
 
 FText UItemBase::GetItemFullName() const
 {
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::GetItemFullName(): Check failed."));
+		return FText::FromString("Invalid Item");
+	}
+	
 	return ItemData->ItemName;
 }
 
 FSlateBrush UItemBase::GetItemIcon() const
 {
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::GetItemIcon(): Check failed."));
+		return FSlateBrush();
+	}
+	
 	return ItemData->ItemIcon;
 }
 
 FText UItemBase::GetItemDescription() const
 {
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::GetItemDescription(): Check failed."));
+		return FText::FromString("Invalid Item");
+	}
+	
 	return ItemData->ItemDescription;
 }
 
@@ -175,10 +215,16 @@ void UItemBase::LoadItemMeshAsync() const
 
 float UItemBase::GetItemWeight_Implementation() const
 {
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::GetItemWeight(): Check failed."));
+		return 0.f;
+	}
+	
 	return ItemData->ItemWeight;
 }
 
-float UItemBase::GetItemFullWeight_Implementation() const
+float UItemBase::GetItemFullWeight() const
 {
 	return GetItemWeight() * CurrentQuantity;
 }
@@ -190,6 +236,12 @@ int32 UItemBase::GetEquipSlotIndex() const
 
 UEquipSlotKey* UItemBase::GetEquipSlotKey() const
 {
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::GetEquipSlotKey(): Check failed."));
+		return nullptr;
+	}
+	
 	return ItemData->EquipSlotKey;
 }
 
@@ -210,6 +262,12 @@ bool UItemBase::HasEquipPermission_Implementation() const
 
 bool UItemBase::AreEquipPreconditionsMet()
 {
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::AreEquipPreconditionsMet(): Check failed."));
+		return false;
+	}
+	
 	if (!ItemData->bUsePreconditions)
 		return true;
 
@@ -237,6 +295,12 @@ bool UItemBase::AreEquipPreconditionsMet()
 
 bool UItemBase::CanStackItem_Implementation(UItemBase* OtherItem) const
 {
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::CanStackItem(): Check failed."));
+		return false;
+	}
+	
 	return
 		OtherItem != this &&
 		IsValid(OtherItem) &&
@@ -246,11 +310,23 @@ bool UItemBase::CanStackItem_Implementation(UItemBase* OtherItem) const
 
 bool UItemBase::IsMaxStacked() const
 {
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::IsMaxStacked(): Check failed."));
+		return false;
+	}
+	
 	return CurrentQuantity >= ItemData->MaxStackSize;
 }
 
 bool UItemBase::IsStackable() const
 {
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::IsStackable(): Check failed."));
+		return false;
+	}
+	
 	return ItemData->MaxStackSize > 1;
 }
 
@@ -261,6 +337,12 @@ int32 UItemBase::GetCurrentQuantity() const
 
 bool UItemBase::TryStackItem(UItemBase* Item, const int32 AmountToStack)
 {
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::TryStackItem(): Check failed."));
+		return false;
+	}
+	
 	if (AmountToStack <= 0 || !CanStackItem(Item))
 		return false;
 
@@ -330,6 +412,12 @@ int32 UItemBase::DecreaseQuantity(const int32 Amount)
 
 int32 UItemBase::SetQuantity(const int32 Quantity)
 {
+	if (!Check())
+	{
+		UE_LOG(LogInventorySystem, Error, TEXT("ItemBase::SetQuantity(): Check failed."));
+		return 0;
+	}
+	
 	if (!IsStackable())
 		return 0;
 
@@ -348,6 +436,11 @@ int32 UItemBase::SetQuantity(const int32 Quantity)
 UItemBase* UItemBase::DuplicateItem() const
 {
 	return DuplicateObject<UItemBase>(this, GetOuter());
+}
+
+bool UItemBase::Check() const
+{
+	return IsValid(ItemData);
 }
 
 void UItemBase::OnPreInit(UItemDataBase* Data)

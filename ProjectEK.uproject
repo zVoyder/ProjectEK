@@ -9,26 +9,5 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}
-	],
-	"Plugins": [
-		{
-			"Name": "ModelingToolsEditorMode",
-			"Enabled": true,
-			"TargetAllowList": [
-				"Editor"
-			]
-		},
-		{
-			"Name": "InventorySaveBridge",
-			"Enabled": true
-		},
-		{
-			"Name": "RPGSaveBridge",
-			"Enabled": true
-		},
-		{
-			"Name": "CheckpointSaveBridge",
-			"Enabled": true
-		}
 	]
 }

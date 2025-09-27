@@ -20,8 +20,7 @@ public class BetterUI : ModuleRules
 		{
 			"Core",
 			"UMG",
-			"GameplayTags",
-			"Settings"
+			"GameplayTags"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
@@ -35,5 +34,10 @@ public class BetterUI : ModuleRules
 		DynamicallyLoadedModuleNames.AddRange(new string[]
 		{
 		});
+		
+		if (Target.Configuration != UnrealTargetConfiguration.Shipping)
+		{
+			PublicDependencyModuleNames.Add("Settings");
+		}
 	}
 }

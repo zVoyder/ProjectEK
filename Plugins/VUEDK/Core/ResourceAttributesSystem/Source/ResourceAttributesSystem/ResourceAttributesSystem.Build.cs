@@ -17,11 +17,10 @@ public class ResourceAttributesSystem : ModuleRules
 		});
 
 		PublicDependencyModuleNames.AddRange(new string[]
-			{
-				"Core",
-				"GameplayTags"
-			}
-		);
+		{
+			"Core",
+			"GameplayTags"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
@@ -30,7 +29,7 @@ public class ResourceAttributesSystem : ModuleRules
 			"Slate",
 			"SlateCore"
 		});
-		
+
 		DynamicallyLoadedModuleNames.AddRange(new string[]
 		{
 		});

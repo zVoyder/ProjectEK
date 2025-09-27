@@ -11,8 +11,7 @@ public class CursorHandlerSystem : ModuleRules
 			"Core",
 			"CoreUObject",
 			"Engine",
-			"UMG",
-			"Settings"
+			"UMG"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
@@ -20,5 +19,10 @@ public class CursorHandlerSystem : ModuleRules
 			"Slate",
 			"SlateCore"
 		});
+		
+		if (Target.Configuration != UnrealTargetConfiguration.Shipping)
+		{
+			PublicDependencyModuleNames.Add("Settings");
+		}
 	}
 }

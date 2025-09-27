@@ -23,8 +23,7 @@ public class CrosshairSystem : ModuleRules
 			"Engine",
 			"UMG",
 			"Slate",
-			"SlateCore",
-			"Settings"
+			"SlateCore"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
@@ -38,5 +37,10 @@ public class CrosshairSystem : ModuleRules
 		DynamicallyLoadedModuleNames.AddRange(new string[]
 		{
 		});
+		
+		if (Target.Configuration != UnrealTargetConfiguration.Shipping)
+		{
+			PublicDependencyModuleNames.Add("Settings");
+		}
 	}
 }

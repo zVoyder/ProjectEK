@@ -32,7 +32,10 @@ public class ProjectEK : ModuleRules
 			"BetterUI",
 			"WeaponSystem",
 			"ResourceAttributesSystem",
-			"VUEDKCore"
+			"VUEDKCore",
+			"CheckpointSaveBridge",
+			"InventorySaveBridge",
+			"RPGSaveBridge"
 		});
 
 		PublicIncludePaths.AddRange(new string[]

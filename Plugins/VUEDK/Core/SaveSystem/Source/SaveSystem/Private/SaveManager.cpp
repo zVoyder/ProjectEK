@@ -28,6 +28,7 @@ USaveManager::USaveManager() : SaveGameClass(UDefaultSaveGame::StaticClass()),
                                bHasEverSharedLoaded(false),
                                PreviousSlotNameKey(NAME_None),
                                bSaveAsNewGame(false),
+                               bIsNewSaveGame(false),
                                SaveMasterID(DEFAULT_MASTER_SAVE_ID)
 {
 }
@@ -110,10 +111,12 @@ void USaveManager::StartNewSaveGame()
 	bSaveAsNewGame = true;
 	OnNewSaveGame.Broadcast();
 	ManualSave(this);
+	bIsNewSaveGame = true;
 }
 
 void USaveManager::ManualSave(UObject* Instigator, const bool bOverrideCurrentSlot)
 {
+	bIsNewSaveGame = false;
 	if (bOverrideCurrentSlot && USSSlotsUtility::DoesAnySlotFileExist())
 	{
 		Save(USSSlotsUtility::GetSelectedSlotName(), Instigator);
@@ -182,6 +185,11 @@ bool USaveManager::GetStatus(bool& OutIsLoading, bool& OutIsSaving) const
 	OutIsLoading = bIsLoading;
 	OutIsSaving = bIsSaving;
 	return bIsLoading || bIsSaving;
+}
+
+bool USaveManager::IsNewSaveGame() const
+{
+	return bSaveAsNewGame;
 }
 
 bool USaveManager::HasInstanceEverSaved() const

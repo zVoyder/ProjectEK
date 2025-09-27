@@ -146,6 +146,7 @@ private:
 	bool bHasEverSharedLoaded;
 	FName PreviousSlotNameKey;
 	bool bSaveAsNewGame;
+	bool bIsNewSaveGame;
 	FTimerHandle TimePlayedTimerHandle;
 	FName SaveMasterID;
 
@@ -256,6 +257,13 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool GetStatus(bool& OutIsLoading, bool& OutIsSaving) const;
 
+	/**
+	 * Checks if this save game is a new save game.
+	 * @return True if it is a new save game, false otherwise.
+	 */
+	UFUNCTION(BlueprintPure)
+	bool IsNewSaveGame() const;
+	
 	/**
 	 * Checks if the save manager is currently loading a save.
 	 * @return True if loading, false otherwise.

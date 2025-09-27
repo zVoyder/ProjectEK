@@ -15,8 +15,7 @@ public class InputsHandlerSystem : ModuleRules
 			"Engine",
 			"UMG",
 			"InputCore",
-			"EnhancedInput",
-			"Settings"
+			"EnhancedInput"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
@@ -24,5 +23,10 @@ public class InputsHandlerSystem : ModuleRules
 			"Slate",
 			"SlateCore"
 		});
+		
+		if (Target.Configuration != UnrealTargetConfiguration.Shipping)
+		{
+			PublicDependencyModuleNames.Add("Settings");
+		}
 	}
 }

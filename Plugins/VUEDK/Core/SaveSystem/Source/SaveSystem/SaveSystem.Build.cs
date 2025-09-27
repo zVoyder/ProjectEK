@@ -10,8 +10,7 @@ public class SaveSystem : ModuleRules
 		{
 			"Core",
 			"CoreUObject",
-			"Engine",
-			"Settings"
+			"Engine"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
@@ -19,5 +18,10 @@ public class SaveSystem : ModuleRules
 			"Slate",
 			"SlateCore"
 		});
+		
+		if (Target.Configuration != UnrealTargetConfiguration.Shipping)
+		{
+			PublicDependencyModuleNames.Add("Settings");
+		}
 	}
 }

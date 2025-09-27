@@ -20,8 +20,7 @@ public class InventorySystem : ModuleRules
 		{
 			"Core",
 			"UMG",
-			"BetterDragSystem",
-			"Settings"
+			"BetterDragSystem"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
@@ -35,5 +34,10 @@ public class InventorySystem : ModuleRules
 		DynamicallyLoadedModuleNames.AddRange(new string[]
 		{
 		});
+		
+		if (Target.Configuration != UnrealTargetConfiguration.Shipping)
+		{
+			PublicDependencyModuleNames.Add("Settings");
+		}
 	}
 }

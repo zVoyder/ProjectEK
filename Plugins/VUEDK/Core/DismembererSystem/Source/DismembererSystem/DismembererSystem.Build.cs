@@ -14,8 +14,7 @@ public class DismembererSystem : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"Niagara",
-			"GameplayTags",
-			"Settings"
+			"GameplayTags"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
@@ -23,5 +22,10 @@ public class DismembererSystem : ModuleRules
 			"Slate",
 			"SlateCore"
 		});
+		
+		if (Target.Configuration != UnrealTargetConfiguration.Shipping)
+		{
+			PublicDependencyModuleNames.Add("Settings");
+		}
 	}
 }

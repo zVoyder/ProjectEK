@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class InventorySaveBridge : ModuleRules
+public class QuestSaveBridge : ModuleRules
 {
-	public InventorySaveBridge(ReadOnlyTargetRules Target) : base(Target)
+	public QuestSaveBridge(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -20,7 +20,7 @@ public class InventorySaveBridge : ModuleRules
 		{
 			"Core",
 			"SaveSystem",
-			"InventorySystem"
+			"QuestSystem",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]

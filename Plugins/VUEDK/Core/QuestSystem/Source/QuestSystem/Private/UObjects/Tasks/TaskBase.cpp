@@ -8,20 +8,6 @@ void UTaskBase::Init(UTaskData* InitData, UQuestBase* Quest)
 	RelatedQuest = Quest;
 }
 
-FTaskSaveData UTaskBase::CreateTaskSaveData() const
-{
-	FTaskSaveData TaskSaveData = FTaskSaveData();
-	TaskSaveData.bIsAchieved = bIsAchieved;
-	return TaskSaveData;
-}
-
-void UTaskBase::LoadSaveData(const FTaskSaveData TaskSaveData)
-{
-	bIsAchieved = TaskSaveData.bIsAchieved;
-	if (bIsAchieved)
-		AchieveTask(true);
-}
-
 void UTaskBase::AchieveTask(bool bFullyAchieve)
 {
 }

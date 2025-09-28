@@ -5,6 +5,11 @@
 #include "Factories/ISFactory.h"
 #include "Utility/ISInventoriesUtility.h"
 
+UInventorySaveBehaviour::UInventorySaveBehaviour()
+{
+	SaveDataClass = UInventoryBaseSaveData::StaticClass();
+}
+
 void UInventorySaveBehaviour::BeginPlay()
 {
 	const AActor* Actor = GetOwnerActor();
@@ -58,5 +63,5 @@ bool UInventorySaveBehaviour::Load_Implementation(USaveDataBase* SaveData)
 
 bool UInventorySaveBehaviour::Check() const
 {
-	return IsValid(Inventory);
+	return IsValid(Inventory) && Super::Check();
 }

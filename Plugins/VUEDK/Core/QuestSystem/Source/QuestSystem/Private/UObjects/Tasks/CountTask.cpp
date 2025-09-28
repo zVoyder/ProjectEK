@@ -12,12 +12,6 @@ void UCountTask::Init(UTaskData* InitData, UQuestBase* Quest)
 		CountToAchieve = CountTaskData->CountToAchieve;
 }
 
-void UCountTask::LoadSaveData(FTaskSaveData TaskSaveData)
-{
-	Super::LoadSaveData(TaskSaveData);
-	CurrentCount = TaskSaveData.CurrentAchieveCount;
-}
-
 void UCountTask::AchieveTask(const bool bFullyAchieve)
 {
 	if (bIsAchieved) return;
@@ -35,18 +29,15 @@ void UCountTask::AchieveTask(const bool bFullyAchieve)
 	}
 }
 
-FTaskSaveData UCountTask::CreateTaskSaveData() const
-{
-	FTaskSaveData TaskSaveData = FTaskSaveData();
-	TaskSaveData.bIsAchieved = bIsAchieved;
-	TaskSaveData.CurrentAchieveCount = CurrentCount;
-	return TaskSaveData;
-}
-
 void UCountTask::ResetTask()
 {
 	Super::ResetTask();
 	CurrentCount = 0;
+}
+
+void UCountTask::SetCurrentCount(int32 NewCount)
+{
+	CurrentCount = FMath::Clamp(NewCount, 0, CountToAchieve);
 }
 
 int32 UCountTask::GetCurrentCount() const

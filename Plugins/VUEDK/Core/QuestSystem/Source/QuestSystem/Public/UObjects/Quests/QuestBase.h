@@ -6,7 +6,6 @@
 #include "Data/DataAssets/QuestData.h"
 #include "Data/Enums/QuestStatus.h"
 #include "Data/Structs/QuestEntryData.h"
-#include "Data/Structs/QuestSaveData.h"
 #include "UObject/Object.h"
 #include "QuestBase.generated.h"
 
@@ -41,21 +40,7 @@ public:
 	 * @param EntryData - The entry data for this quest instance.
 	 */
 	virtual void Init(UQuestData* InitData, const FQuestEntryData& EntryData);
-
-	/**
-	 * Creates a save data structure representing the current state of the quest.
-	 * @return FQuestSaveData containing all relevant quest information for saving.
-	 */
-	UFUNCTION(BlueprintCallable)
-	virtual FQuestSaveData CreateQuestSaveData() const;
 	
-	/**
-	 * Loads quest state from the provided save data.
-	 * @param QuestSaveData - The save data to load from.
-	 */
-	UFUNCTION(BlueprintCallable)
-	virtual void LoadSaveData(FQuestSaveData QuestSaveData);
-
 	/**
 	 * Marks a specific quest task as achieved.
 	 * @param TaskDataKey - The task to achieve.

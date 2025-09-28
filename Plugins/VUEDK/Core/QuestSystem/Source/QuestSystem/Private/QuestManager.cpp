@@ -41,53 +41,6 @@ void UQuestManager::Init()
 	UE_LOG(LogQuestSystem, Display, TEXT("QuestLog initialized."));
 }
 
-FQuestLogSaveData UQuestManager::CreateSaveData()
-{
-	FQuestLogSaveData QuestLogSaveData;
-
-	for (const TTuple<UQuestData*, UQuestBase*> QuestTuple : AllQuests)
-	{
-		FQuestSaveData QuestSaveData = QuestTuple.Value->CreateQuestSaveData();
-		QuestLogSaveData.Quests.Add(QuestTuple.Key->GetFName(), QuestSaveData);
-	}
-	
-	QuestLogSaveData.TrackedQuestFName = TrackedQuest ? TrackedQuest->QuestData->GetFName() : NAME_None;
-	return QuestLogSaveData;
-}
-
-void UQuestManager::LoadSaveData(FQuestLogSaveData QuestLogSaveData)
-{
-	ResetQuestLog();
-	for (const TTuple<FName, FQuestSaveData> QuestsData : QuestLogSaveData.Quests)
-	{
-		UQuestBase* Quest = GetQuestByFName(QuestsData.Key);
-		if (!Quest) continue; // If the quest is not found, skip it
-
-		Quest->LoadSaveData(QuestsData.Value);
-		
-		switch (QuestsData.Value.QuestStatus)
-		{
-			case EQuestStatus::Active:
-				AddToActiveQuests(Quest->QuestData);
-				break;
-		
-			case EQuestStatus::Inactive:
-				AddToInactiveQuests(Quest->QuestData);
-				break;
-		
-			case EQuestStatus::Completed:
-				AddToCompletedQuests(Quest->QuestData);
-				break;
-		
-			default: ;
-		}
-	}
-	
-	TrackedQuest = nullptr;
-	if (QuestLogSaveData.TrackedQuestFName != NAME_None)
-		TrackQuestByFName(QuestLogSaveData.TrackedQuestFName);
-}
-
 void UQuestManager::TrackQuest(const UQuestData* QuestDataKey)
 {
 	UQuestBase* Quest = GetQuest(QuestDataKey);

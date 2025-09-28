@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Data/DataAssets/TaskData.h"
-#include "Data/Structs/TaskSaveData.h"
 #include "UObject/Object.h"
 #include "TaskBase.generated.h"
 
@@ -30,12 +29,6 @@ public:
 public:
 	virtual void Init(UTaskData* InitData, UQuestBase* Quest);
 
-	UFUNCTION(BlueprintCallable)
-	virtual FTaskSaveData CreateTaskSaveData() const;
-	
-	UFUNCTION(BlueprintCallable)
-	virtual void LoadSaveData(FTaskSaveData TaskSaveData);
-	
 	UFUNCTION(BlueprintCallable)
 	virtual void AchieveTask(bool bFullyAchieve = false);
 	

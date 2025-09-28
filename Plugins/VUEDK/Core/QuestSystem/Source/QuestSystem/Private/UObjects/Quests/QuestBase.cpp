@@ -17,31 +17,6 @@ void UQuestBase::Init(UQuestData* InitData, const FQuestEntryData& EntryData)
 	}
 }
 
-FQuestSaveData UQuestBase::CreateQuestSaveData() const
-{
-	FQuestSaveData QuestSaveData = FQuestSaveData();
-	
-	for (const auto& Task : AllTasks)
-	{
-		QuestSaveData.QuestStatus = QuestStatus;
-		QuestSaveData.Tasks.Add(Task.Key->GetFName(), Task.Value->CreateTaskSaveData());
-	}
-
-	return QuestSaveData;
-}
-
-void UQuestBase::LoadSaveData(FQuestSaveData QuestSaveData)
-{
-	ResetQuest();
-	for (const auto TaskSaveData : QuestSaveData.Tasks)
-	{
-		UTaskBase* Task = GetTaskByFName(TaskSaveData.Key);
-		if (!Task) continue; // If the task is not found, skip it
-		
-		Task->LoadSaveData(TaskSaveData.Value);
-	}
-}
-
 void UQuestBase::AchieveQuestTask(const UTaskData* TaskDataKey, const bool bFullyAchieve)
 {
 }

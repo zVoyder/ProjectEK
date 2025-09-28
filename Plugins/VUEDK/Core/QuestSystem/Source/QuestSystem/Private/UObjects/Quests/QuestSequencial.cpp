@@ -9,12 +9,6 @@ void UQuestSequencial::Init(UQuestData* InitData, const FQuestEntryData& EntryDa
 	TasksByIndex = InitData->TasksData;
 }
 
-void UQuestSequencial::LoadSaveData(FQuestSaveData QuestSaveData)
-{
-	Super::LoadSaveData(QuestSaveData);
-	CurrentTaskIndex = QuestSaveData.CurrentTaskIndex;
-}
-
 void UQuestSequencial::AchieveQuestTask(const UTaskData* TaskDataKey, const bool bFullyAchieve)
 {
 	if (bIsQuestCompleted) return;
@@ -44,13 +38,6 @@ void UQuestSequencial::ResetQuest()
 {
 	Super::ResetQuest();
 	CurrentTaskIndex = 0;
-}
-
-FQuestSaveData UQuestSequencial::CreateQuestSaveData() const
-{
-	FQuestSaveData QuestSaveData = Super::CreateQuestSaveData();
-	QuestSaveData.CurrentTaskIndex = CurrentTaskIndex;
-	return QuestSaveData;
 }
 
 int32 UQuestSequencial::GetCurrentTaskIndex() const

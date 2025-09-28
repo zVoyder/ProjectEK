@@ -21,14 +21,10 @@ private:
 public:
 	virtual void Init(UQuestData* InitData, const FQuestEntryData& EntryData) override;
 	
-	virtual void LoadSaveData(FQuestSaveData QuestSaveData) override;
-	
 	virtual void AchieveQuestTask(const UTaskData* TaskDataKey, const bool bFullyAchieve) override;
 	
 	virtual void ResetQuest() override;
 	
-	virtual FQuestSaveData CreateQuestSaveData() const override;
-
 	/**
 	 * Achieves all tasks in the quest sequentially.
 	 * @return True if all tasks were achieved, false otherwise.

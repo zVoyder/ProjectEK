@@ -7,7 +7,6 @@
 #include "UObjects/Quests/QuestBase.h"
 #include "Data/DataAssets/QuestData.h"
 #include "Data/DataAssets/QuestLogData.h"
-#include "Data/Structs/QuestLogSaveData.h"
 #include "QuestManager.generated.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogQuestSystem, Log, All);
@@ -61,13 +60,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void Init();
-
-	UFUNCTION(BlueprintCallable)
-	virtual FQuestLogSaveData CreateSaveData();
-
-	UFUNCTION(BlueprintCallable)
-	virtual void LoadSaveData(FQuestLogSaveData QuestLogSaveData);
-
+	
 	/**
 	 * Tracks the specified quest, making it the currently tracked quest.
 	 * @param QuestDataKey - The quest data asset to track.

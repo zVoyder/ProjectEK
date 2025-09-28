@@ -6,9 +6,21 @@
 #include "Data/SaveData/ActorStateSaveData.h"
 #include "Utility/SSUtility.h"
 
-USaveDataBase* UActorStateSaveBehaviour::CreateSaveDataInstance_Implementation()
+UActorStateSaveBehaviour::UActorStateSaveBehaviour()
 {
-	UActorStateSaveData* SaveData = NewObject<UActorStateSaveData>();
+	SaveDataClass = UActorStateSaveData::StaticClass();
+}
+
+USaveDataBase* UActorStateSaveBehaviour::CreateSaveDataInstanceNative()
+{
+	UActorStateSaveData* SaveData = Cast<UActorStateSaveData>(Super::CreateSaveDataInstanceNative());
+
+	if (!IsValid(SaveData))
+	{
+		UE_LOG(LogSaveSystem, Warning, TEXT("UActorStateSaveBehaviour::CreateSaveDataInstanceNative: Failed to create SaveData instance of type UActorStateSaveData."));
+		return nullptr;
+	}
+	
 	SaveData->Init(this);
 	return SaveData;
 }

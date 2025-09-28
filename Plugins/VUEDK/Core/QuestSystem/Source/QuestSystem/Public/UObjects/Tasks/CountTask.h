@@ -22,13 +22,11 @@ private:
 public:
 	virtual void Init(UTaskData* InitData, UQuestBase* Quest) override;
 	
-	virtual void LoadSaveData(FTaskSaveData TaskSaveData) override;
-	
 	virtual void AchieveTask(const bool bFullyAchieve = false) override;
 	
-	virtual FTaskSaveData CreateTaskSaveData() const override;
-	
 	virtual void ResetTask() override;
+
+	void SetCurrentCount(int32 NewCount);
 	
 	/**
 	 * Gets the current progress count for this task.

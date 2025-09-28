@@ -18,6 +18,8 @@ protected:
 	UInventoryBase* Inventory;
 	
 public:
+	UInventorySaveBehaviour();
+	
 	virtual void BeginPlay() override;
 
 	virtual USaveDataBase* CreateSaveDataInstance_Implementation() override;
@@ -25,7 +27,6 @@ public:
 	virtual bool Save_Implementation(USaveDataBase* SaveData) override;
 
 	virtual bool Load_Implementation(USaveDataBase* SaveData) override;
-
-private:
-	bool Check() const;
+	
+	virtual bool Check() const override;
 };

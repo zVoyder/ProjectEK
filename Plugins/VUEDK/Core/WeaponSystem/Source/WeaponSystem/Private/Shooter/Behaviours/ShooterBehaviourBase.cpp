@@ -225,6 +225,16 @@ bool UShooterBehaviourBase::IsBehaviourActive() const
 	return bIsBehaviourActive;
 }
 
+bool UShooterBehaviourBase::IsMagEmpty() const
+{
+	return CurrentAmmo <= 0;
+}
+
+bool UShooterBehaviourBase::IsMagFull() const
+{
+	return CurrentAmmo >= GetMagSize();
+}
+
 APawn* UShooterBehaviourBase::GetOwner() const
 {
 	return Owner;

@@ -199,6 +199,19 @@ UItemBase* UInventoryBase::Find(const UItemDataBase* ItemData) const
 	return nullptr;
 }
 
+TArray<UItemBase*> UInventoryBase::FindAll(const UItemDataBase* ItemData) const
+{
+	TArray<UItemBase*> FoundItems;
+
+	for (UItemBase* Item : Items)
+	{
+		if (Item->GetItemData()->ItemDataID == ItemData->ItemDataID)
+			FoundItems.Add(Item);
+	}
+
+	return FoundItems;
+}
+
 bool UInventoryBase::IsFull() const
 {
 	return Items.Num() >= Capacity;

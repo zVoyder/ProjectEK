@@ -16,10 +16,12 @@ class PROJECTEK_API AEKWeaponFirearm : public AWeaponFirearm
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EKWeaponFirearm|Config")
+	UItemDataBase* AmmoItemData;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EKWeaponFirearm|Config")
 	bool bUseItemFireRate = true;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EKWeaponFirearm|Config")
 	bool bUseItemMagSize = true;
-	
+
 private:
 	UPROPERTY()
 	UEKWeaponFirearmItem* WeaponFirearmItem;
@@ -31,4 +33,7 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	UEKWeaponFirearmItem* GetWeaponFirearmItem() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool TryReloadWithItemData();
 };

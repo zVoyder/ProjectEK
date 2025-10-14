@@ -26,6 +26,16 @@ void AWeaponFirearm::Init(APawn* InOwner, UObject* InPayload)
 	BindEvents();
 }
 
+bool AWeaponFirearm::IsMagEmpty() const
+{
+	return Shooter->ShooterBehaviour->IsMagEmpty();
+}
+
+bool AWeaponFirearm::IsMagFull() const
+{
+	return Shooter->ShooterBehaviour->IsMagFull();
+}
+
 void AWeaponFirearm::AddWeaponDynamicSpread(const float AddSpread, const float ChangeRate, const float RecoveryRate) const
 {
 	Shooter->ShooterBehaviour->AddDynamicSpread(AddSpread, ChangeRate, RecoveryRate);

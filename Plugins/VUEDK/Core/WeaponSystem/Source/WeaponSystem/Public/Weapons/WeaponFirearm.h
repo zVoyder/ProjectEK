@@ -105,6 +105,12 @@ public:
 	 */
 	virtual void Init(APawn* InOwner, UObject* InPayload = nullptr) override;
 
+	UFUNCTION(BlueprintPure)
+	bool IsMagEmpty() const;
+
+	UFUNCTION(BlueprintPure)
+	bool IsMagFull() const;
+
 	/**
 	 * Adds dynamic spread to the weapon, affecting aim stability.
 	 * @param AddSpread - The amount of spread to add.

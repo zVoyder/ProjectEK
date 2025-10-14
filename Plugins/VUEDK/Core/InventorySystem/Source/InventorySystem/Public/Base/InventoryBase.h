@@ -155,12 +155,20 @@ public:
 	void ClearInventory();
 
 	/**
-	 * Finds an item in the inventory by its data.
+	 * Finds the first item in the inventory that matches the specified item data.
 	 * @param ItemData The item data to find.
 	 * @return Pointer to the found UItemBase, or nullptr if not found.
 	 */
 	UFUNCTION(BlueprintCallable)
 	UItemBase* Find(const UItemDataBase* ItemData) const;
+
+	/**
+	 * Finds all items in the inventory that match the specified item data.
+	 * @param ItemData The item data to find.
+	 * @return An array of UItemBase pointers representing the found items.
+	 */
+	UFUNCTION(BlueprintCallable)
+	TArray<UItemBase*> FindAll(const UItemDataBase* ItemData) const;
 
 	/**
 	 * Checks if the inventory is full.

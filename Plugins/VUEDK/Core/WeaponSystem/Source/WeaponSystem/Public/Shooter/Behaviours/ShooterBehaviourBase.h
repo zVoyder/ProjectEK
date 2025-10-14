@@ -298,6 +298,12 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsBehaviourActive() const;
 
+	UFUNCTION(BlueprintPure)
+	bool IsMagEmpty() const;
+
+	UFUNCTION(BlueprintPure)
+	bool IsMagFull() const;
+
 	/**
 	 * Gets the owner of the shooter behaviour.
 	 * @return The pawn that owns this shooter behaviour.

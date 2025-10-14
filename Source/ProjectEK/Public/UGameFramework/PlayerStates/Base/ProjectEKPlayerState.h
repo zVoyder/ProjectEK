@@ -11,11 +11,4 @@ UCLASS(Abstract)
 class PROJECTEK_API AProjectEKPlayerState : public APlayerState
 {
 	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	USaver* Saver;
-
-public:
-	AProjectEKPlayerState();
 };

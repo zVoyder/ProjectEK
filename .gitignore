@@ -75,9 +75,9 @@ DerivedDataCache/*
 
 # Plugins
 Plugins/*/Intermediate/*
-Plugins/VUEDK/*/Binaries/*
-Plugins/VUEDK/*/Intermediate/*
-Plugins/VUEDK/*/Saved/*
+Plugins/VUEDK/*/*/Binaries/*
+Plugins/VUEDK/*/*/Intermediate/*
+Plugins/VUEDK/*/*/Saved/*
 
 # FMOD
 !Plugins/FMODStudio/Binaries/**

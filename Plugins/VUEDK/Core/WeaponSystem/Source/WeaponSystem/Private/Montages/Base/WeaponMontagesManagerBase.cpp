@@ -25,7 +25,7 @@ void UWeaponMontagesManagerBase::PauseWeaponMontage(const FWeaponMontageData& We
 	Weapon->PauseWeaponMontage(WeaponMontageData);
 }
 
-void UWeaponMontagesManagerBase::StartWeaponMontage(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate) const
+void UWeaponMontagesManagerBase::StartWeaponMontage(const FWeaponMontageData& WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate) const
 {
 	if (!Check())
 		return;
@@ -37,7 +37,7 @@ void UWeaponMontagesManagerBase::StartWeaponMontage(FWeaponMontageData WeaponMon
 	);
 }
 
-void UWeaponMontagesManagerBase::StartWeaponMontageWithBlends(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate, const FAlphaBlendArgs& WeaponBlendIn, const FAlphaBlendArgs& CharacterBlendIn) const
+void UWeaponMontagesManagerBase::StartWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate, const FAlphaBlendArgs& WeaponBlendIn, const FAlphaBlendArgs& CharacterBlendIn) const
 {
 	if (!Check())
 		return;
@@ -51,7 +51,7 @@ void UWeaponMontagesManagerBase::StartWeaponMontageWithBlends(FWeaponMontageData
 	);
 }
 
-void UWeaponMontagesManagerBase::StopWeaponMontage(const FWeaponMontageData WeaponMontageData) const
+void UWeaponMontagesManagerBase::StopWeaponMontage(const FWeaponMontageData& WeaponMontageData) const
 {
 	if (!Check())
 		return;

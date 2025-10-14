@@ -15,17 +15,22 @@ void AEKWeaponFirearm::Init(APawn* InOwner, UObject* InPayload)
 		UE_LOG(LogEKWeapons, Display, TEXT("AEKWeaponFirearm::Init: Payload is nullptr."));
 		return;
 	}
-	
+
 	WeaponFirearmItem = GetWeaponFirearmItem();
 	const float Damage = WeaponFirearmItem->GetWeaponDamage();
-	const float FireRate = WeaponFirearmItem->GetFireRate();
-	const float MaxRange = WeaponFirearmItem->GetMaxRange();
-	const int32 MagSize = WeaponFirearmItem->GetMagSize();
-
 	SetWeaponDamage(Damage);
-	SetWeaponFireRate(FireRate);
-	SetWeaponMaxRange(MaxRange);
-	SetWeaponMagSize(MagSize);
+
+	if (bUseItemFireRate)
+	{
+		const float FireRate = WeaponFirearmItem->GetFireRate();
+		SetWeaponFireRate(FireRate);
+	}
+
+	if (bUseItemMagSize)
+	{
+		const int32 MagSize = WeaponFirearmItem->GetMagSize();
+		SetWeaponMagSize(MagSize);
+	}
 }
 
 UEKWeaponFirearmItem* AEKWeaponFirearm::GetWeaponFirearmItem() const

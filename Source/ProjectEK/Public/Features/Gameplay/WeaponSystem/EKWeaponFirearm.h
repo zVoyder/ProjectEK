@@ -14,6 +14,12 @@ class PROJECTEK_API AEKWeaponFirearm : public AWeaponFirearm
 {
 	GENERATED_BODY()
 
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EKWeaponFirearm|Config")
+	bool bUseItemFireRate = true;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EKWeaponFirearm|Config")
+	bool bUseItemMagSize = true;
+	
 private:
 	UPROPERTY()
 	UEKWeaponFirearmItem* WeaponFirearmItem;

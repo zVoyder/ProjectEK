@@ -46,7 +46,7 @@ public:
 	 * @param WeaponPlayRate - The play rate for the weapon montage.
 	 * @param CharacterPlayRate - The play rate for the character animation.
 	 */
-	void StartWeaponMontage(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate) const;
+	void StartWeaponMontage(const FWeaponMontageData& WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate) const;
 	
 	/**
 	 * Starts the specified weapon montage with custom blends for weapon and character.
@@ -56,13 +56,13 @@ public:
 	 * @param WeaponBlendIn - The blend in arguments for the weapon.
 	 * @param CharacterBlendIn - The blend in arguments for the character.
 	 */
-	void StartWeaponMontageWithBlends(FWeaponMontageData WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate, const FAlphaBlendArgs& WeaponBlendIn, const FAlphaBlendArgs& CharacterBlendIn) const;
+	void StartWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate, const FAlphaBlendArgs& WeaponBlendIn, const FAlphaBlendArgs& CharacterBlendIn) const;
 
 	/**
 	 * Stops the specified weapon montage.
 	 * @param WeaponMontageData - The montage data to stop.
 	 */
-	void StopWeaponMontage(const FWeaponMontageData WeaponMontageData) const;
+	void StopWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
 	
 	/**
 	 * Stops the specified weapon montage with custom blend out settings for weapon and character.

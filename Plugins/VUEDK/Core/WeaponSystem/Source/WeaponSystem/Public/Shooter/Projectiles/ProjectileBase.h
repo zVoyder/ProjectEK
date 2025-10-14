@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PooledActorBase.h"
+#include "Components/ArrowComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "ProjectileBase.generated.h"
@@ -21,7 +22,7 @@ class WEAPONSYSTEM_API AProjectileBase : public APooledActorBase
 protected:
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FProjectileHitDelegate OnProjectileHitEvent;
-
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UStaticMeshComponent* MeshComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -36,6 +37,11 @@ private:
 	float Range;
 	float RemainingLifeSpan;
 	bool bIsProjectileAlive;
+
+#if WITH_EDITORONLY_DATA
+	UPROPERTY()
+	UArrowComponent* ForwardArrowComponent;
+#endif
 
 public:
 	AProjectileBase();
@@ -173,7 +179,7 @@ protected:
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnProjectileLifeSpanEnd();
-	
+
 private:
 	/**
 	 * Processes the projectile's lifespan, decrementing it based on the DeltaSeconds.

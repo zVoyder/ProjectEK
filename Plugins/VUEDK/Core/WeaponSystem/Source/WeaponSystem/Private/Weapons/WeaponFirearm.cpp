@@ -325,16 +325,16 @@ bool AWeaponFirearm::NativeDeployWeaponAttack()
 		UE_LOG(LogWeaponSystem, Warning, TEXT("AWeaponFirearm::NativeDeployWeaponAttack: FirearmMontagesManager is not valid."));
 		return false;
 	}
-	
+
 	if (FirearmMontagesManager->IsBusy())
 		return false;
-	
+
 	if (bCanDeployAttackIfReloading)
 		return Shooter->Shoot();
-	
+
 	if (IsReloading())
 		return false;
-	
+
 	return Shooter->Shoot();
 }
 
@@ -349,7 +349,7 @@ void AWeaponFirearm::BindEvents()
 
 	if (!IsValid(Shooter->ShooterBehaviour))
 		return;
-	
+
 	Shooter->ShooterBehaviour->OnCurrentAmmoChanged.AddDynamic(this, &AWeaponFirearm::OnCurrentAmmoChanged);
 	Shooter->ShooterBehaviour->OnEndShootSequence.AddDynamic(this, &AWeaponFirearm::OnEndShootSequence);
 	Shooter->ShooterBehaviour->OnMagEmpty.AddDynamic(this, &AWeaponFirearm::OnMagEmpty);
@@ -361,7 +361,7 @@ void AWeaponFirearm::UnbindEvents()
 
 	if (!IsValid(Shooter->ShooterBehaviour))
 		return;
-	
+
 	Shooter->ShooterBehaviour->OnCurrentAmmoChanged.RemoveDynamic(this, &AWeaponFirearm::OnCurrentAmmoChanged);
 	Shooter->ShooterBehaviour->OnEndShootSequence.RemoveDynamic(this, &AWeaponFirearm::OnEndShootSequence);
 	Shooter->ShooterBehaviour->OnMagEmpty.RemoveDynamic(this, &AWeaponFirearm::OnMagEmpty);
@@ -376,7 +376,7 @@ void AWeaponFirearm::ReloadInsertAmmo()
 {
 	if (!IsReloading())
 		return;
-	
+
 	const FReloadEventData EventData = GetReloadPayload();
 	bHasReloadInsertedAmmo = true;
 	const float Remain = Shooter->ShooterBehaviour->Refill(EventData.AmmoToReload);
@@ -388,7 +388,7 @@ void AWeaponFirearm::OnReloadMontageEnded(const bool bInterrupted)
 {
 	const FReloadEventData EventData = GetReloadPayload();
 	OnReloadEnded.Broadcast();
-	
+
 	if (bInterrupted && !bHasReloadInsertedAmmo)
 	{
 		OnReloadInterrupted.Broadcast(EventData);

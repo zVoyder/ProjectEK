@@ -25,7 +25,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks")
 	FAlphaBlendArgs StopBlendOut;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks")
-	TArray<FWeaponMeleeAttackMontageData> AttackMontages;
+	TArray<UWeaponMeleeAttackMontageData*> AttackMontages;
 
 private:
 	UPROPERTY()
@@ -40,7 +40,8 @@ private:
 	bool bEndAttack = false;
 	bool bIsInterrupting = false;
 	FTimerHandle DefenseCooldownTimer;
-	FWeaponMeleeAttackMontageData* CurrentAttackMontage = nullptr;
+	UPROPERTY()
+	UWeaponMeleeAttackMontageData* CurrentAttackMontage = nullptr;
 
 public:
 	UMeleeMontagesManager();
@@ -162,7 +163,7 @@ protected:
 	 * Plays the specified attack montage.
 	 * @param AttackMontage - The attack montage data to play.
 	 */
-	void PlayAttackMontage(FWeaponMeleeAttackMontageData& AttackMontage);
+	void PlayAttackMontage(UWeaponMeleeAttackMontageData* AttackMontage);
 
 	/**
 	 * Ends the current attack sequence.

@@ -59,7 +59,7 @@ protected:
 
 	// -- Mesh --
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	USceneComponent* WeaponMeshRoot;
+	USceneComponent* WeaponRoot;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USkeletalMeshComponent* WeaponMesh;
 

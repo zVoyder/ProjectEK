@@ -9,10 +9,16 @@ AProjectileBase::AProjectileBase()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
 	SetRootComponent(MeshComponent);
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
-	ProjectileMovementComponent->SetUpdatedComponent(MeshComponent);
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 	ProjectileMovementComponent->bShouldBounce = true;
 	ProjectileMovementComponent->BounceVelocityStopSimulatingThreshold = 200.f;
+	ProjectileMovementComponent->SetUpdatedComponent(MeshComponent);
+#if WITH_EDITORONLY_DATA
+	ForwardArrowComponent = CreateEditorOnlyDefaultSubobject<UArrowComponent>(TEXT("ForwardArrow"));
+	ForwardArrowComponent->ArrowColor = FColor::Red;
+	ForwardArrowComponent->bIsScreenSizeScaled = true;
+	ForwardArrowComponent->SetupAttachment(MeshComponent);
+#endif
 }
 
 void AProjectileBase::Tick(float DeltaSeconds)

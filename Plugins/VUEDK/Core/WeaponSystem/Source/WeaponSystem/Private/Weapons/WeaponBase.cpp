@@ -10,10 +10,10 @@
 AWeaponBase::AWeaponBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	WeaponMeshRoot = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponRoot"));
-	SetRootComponent(WeaponMeshRoot);
+	WeaponRoot = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponRoot"));
+	SetRootComponent(WeaponRoot);
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-	WeaponMesh->SetupAttachment(WeaponMeshRoot);
+	WeaponMesh->SetupAttachment(WeaponRoot);
 
 #if WITH_EDITORONLY_DATA
 	ForwardArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
@@ -229,7 +229,6 @@ void AWeaponBase::PlayMontageInternal(UAnimInstance* AnimInstance, FWeaponMontag
 	if (IsValid(AnimInstance) && IsValid(Montage))
 	{
 		SetWeaponMetaData(Montage);
-
 		AnimInstance->Montage_Play(Montage, PlayRate, EMontagePlayReturnType::MontageLength, 0.f, bStopAll);
 
 		if (bRegisterPlayingMontage)

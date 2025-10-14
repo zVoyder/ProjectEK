@@ -125,7 +125,7 @@ void UMeleeMontagesManager::OnWeaponAttackInterrupted()
 	if (!IsValid(CurrentAttackMontage->AttackInterruptMontage.GetCharacterMontage()))
 		return;
 
-	FWeaponMeleeAttackMontageData* WeaponMontage = CurrentAttackMontage;
+	UWeaponMeleeAttackMontageData* WeaponMontage = CurrentAttackMontage;
 	bIsInterrupting = true;
 	EndAttackSequence();
 	WeaponMontage->AttackInterruptMontage.OnMontageFinished.AddUniqueDynamic(this, &UMeleeMontagesManager::OnAttackInterruptFinished);
@@ -150,15 +150,18 @@ void UMeleeMontagesManager::StartComboAttack()
 	}
 
 	ResetComboAttack();
-	FWeaponMeleeAttackMontageData& AttackMontage = AttackMontages[0];
+	UWeaponMeleeAttackMontageData* AttackMontage = AttackMontages[0];
+
+	if (!IsValid(AttackMontage))
+		return;
 
 	FAlphaBlendArgs WeaponBlendArgs;
 	if (IsValid(DefensiveMontage.GetWeaponMontage()))
 		WeaponBlendArgs = DefensiveMontage.GetWeaponMontage()->BlendOut;
 
-	CurrentAttackMontage = &AttackMontage;
+	CurrentAttackMontage = AttackMontage;
 	StartWeaponMontageWithBlends(
-		AttackMontage.AttackMontage,
+		AttackMontage->AttackMontage,
 		1.0f, // Use the default play rate, since it can be set in the montage itself
 		1.0f,
 		WeaponBlendArgs,
@@ -204,16 +207,16 @@ void UMeleeMontagesManager::PlayAttackMontageAt(const int32 AttackIndex)
 		return;
 	}
 
-	FWeaponMeleeAttackMontageData& AttackMontage = AttackMontages[AttackIndex];
+	UWeaponMeleeAttackMontageData* AttackMontage = AttackMontages[AttackIndex];
 	PlayAttackMontage(AttackMontage);
 }
 
-void UMeleeMontagesManager::PlayAttackMontage(FWeaponMeleeAttackMontageData& AttackMontage)
+void UMeleeMontagesManager::PlayAttackMontage(UWeaponMeleeAttackMontageData* AttackMontage)
 {
-	CurrentAttackMontage = &AttackMontage;
+	CurrentAttackMontage = AttackMontage;
 
 	StartWeaponMontage(
-		AttackMontage.AttackMontage,
+		AttackMontage->AttackMontage,
 		1.0f,
 		1.0f
 	);

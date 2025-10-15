@@ -13,10 +13,10 @@ class CROSSHAIRSYSTEM_API UCrosshairSystemSettings : public UObject
 	GENERATED_BODY()
 
 	UPROPERTY(Config, EditAnywhere, Category = Settings)
-	TSoftClassPtr<UUserWidget> DefaultCrosshairWidget;
+	TSoftClassPtr<UUserWidget> GeneralCrosshairWidget;
 
 public:
 	explicit UCrosshairSystemSettings(const FObjectInitializer& ObjectInitializer);
 
-	TSubclassOf<UUserWidget> GetDefaultCrosshairClass() const;
+	TSubclassOf<UUserWidget> GetGeneralCrosshairClass() const;
 };

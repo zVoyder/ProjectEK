@@ -16,3 +16,24 @@ int32 UEKWeaponFirearmItem::GetMagSize_Implementation()
 {
 	return 0;
 }
+
+int32 UEKWeaponFirearmItem::GetCurrentMagAmmo() const
+{
+	return CurrentMagAmmo;
+}
+
+void UEKWeaponFirearmItem::SetCurrentMagAmmo(const int32 NewAmmo)
+{
+	CurrentMagAmmo = FMath::Clamp(NewAmmo, 0, GetMagSize());
+}
+
+void UEKWeaponFirearmItem::NativeOnPostGeneration()
+{
+	Super::NativeOnPostGeneration();
+
+	if (bHasNewMag)
+	{
+	    SetCurrentMagAmmo(GetMagSize());
+		bHasNewMag = false;
+	}
+}

@@ -7,7 +7,7 @@
 #include "Utility/SSSerializationUtility.h"
 #include "SaveDataBase.generated.h"
 
-UCLASS(Abstract, Blueprintable, BlueprintType)
+UCLASS(Abstract, Blueprintable, BlueprintType, EditInlineNew)
 class SAVESYSTEM_API USaveDataBase : public UObject
 {
 	GENERATED_BODY()

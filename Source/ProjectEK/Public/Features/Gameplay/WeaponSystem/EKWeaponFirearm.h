@@ -19,12 +19,13 @@ public:
 	UItemDataBase* AmmoItemData;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EKWeaponFirearm|Config")
 	bool bUseItemFireRate = true;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EKWeaponFirearm|Config")
-	bool bUseItemMagSize = true;
 
 private:
 	UPROPERTY()
 	UEKWeaponFirearmItem* WeaponFirearmItem;
+	UPROPERTY()
+	TMap<UItemBase*, int32> ReloadingItems;
+	bool bIsReloadingWithItemData = false;
 
 public:
 	AEKWeaponFirearm();
@@ -35,5 +36,15 @@ public:
 	UEKWeaponFirearmItem* GetWeaponFirearmItem() const;
 
 	UFUNCTION(BlueprintCallable)
-	bool TryReloadWithItemData();
+	void ReloadWithItemData();
+
+	virtual bool CanReload_Implementation() const override;
+	
+	bool CanReloadWithItemData() const;
+	
+	virtual void OnCurrentAmmoChanged_Implementation(int32 CurrentAmmo, int32 MagSize) override;
+
+	virtual void OnReloadSuccess_Implementation(float Remain, float ReloadedAmmo) override;
+
+	virtual void OnReloadEnd_Implementation() override;
 };

@@ -4,7 +4,6 @@
 
 // Save System
 #define TIME_PLAYED_TIMER_RATE 0.1f
-#define DEFAULT_MASTER_SAVE_ID TEXT("defaultID")
 
 // Save Files
 #define SAVE_EXTENSION TEXT(".sav")

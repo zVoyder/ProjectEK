@@ -306,7 +306,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void ResetToDefaultShootType() const;
-
+	
 	/**
 	 * Reloads the weapon using a montage animation.
 	 * @param AmmoData - The ammo type data to use for reloading.
@@ -379,16 +379,29 @@ protected:
 	 * Disables the aim state, resetting spread and recoil.
 	 */
 	virtual void DisableAim();
-
+	
 	/**
 	 * Checks if the weapon can reload.
 	 * @return True if the weapon can reload, false otherwise.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	bool CanReload() const;
+	
+	/**
+	 * Called when the reload process starts.
+	 * @param ReloadEventData - The data associated with the reload event.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnReloadStart(FReloadEventData ReloadEventData);
 
 	/**
-	 * Called when the reload process ends successfully.
+	 * Called when the reload is ended, regardless of success or interruption.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnReloadEnd();
+	
+	/**
+	 * Called when the reload process ends successfully, when the ammo is inserted.
 	 * @param Remain - The remaining ammo after reload.
 	 * @param ReloadedAmmo - The amount of ammo that was reloaded.
 	 */
@@ -396,7 +409,7 @@ protected:
 	void OnReloadSuccess(float Remain, float ReloadedAmmo);
 
 	/**
-	 * Called when the reload fails.
+	 * Called when the reload is interrupted.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnReloadFail();
@@ -464,7 +477,7 @@ private:
 	 * Reloads the weapon by inserting ammo into the magazine.
 	 */
 	void ReloadInsertAmmo();
-
+	
 	/**
 	 * Called when the reload montage ends.
 	 * @param bInterrupted - True if the montage was interrupted, false if it completed normally.

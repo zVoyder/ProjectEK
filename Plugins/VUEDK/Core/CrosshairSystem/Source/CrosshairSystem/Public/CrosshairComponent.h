@@ -14,6 +14,8 @@ class CROSSHAIRSYSTEM_API UCrosshairComponent : public UActorComponent
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crosshair")
+	bool bOverrideDefaultCrosshair = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crosshair")
 	TSubclassOf<UCrosshairWidget> CrosshairWidgetClass;
 
 protected:
@@ -30,6 +32,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetPayload(UObject* Payload);
 
+	/**
+	 *  @brief Sets the general crosshair widget in the viewport.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void SetGeneralCrosshair() const;
+	
 	/**
 	 * @brief Sets the default crosshair widget in the viewport.
 	 */
@@ -60,5 +68,3 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CloseCrosshairInViewport() const;
 };
-
-

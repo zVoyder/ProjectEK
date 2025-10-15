@@ -30,6 +30,18 @@ protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnSpreadChanged(float Spread);
 
+	UFUNCTION(BlueprintNativeEvent)
+	void OnReloadStarted(FReloadEventData ReloadPayload);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnReloadEnded();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnReloadSuccess(FReloadEventData ReloadPayload);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void OnReloadFail(FReloadEventData ReloadPayload);
+
 	UFUNCTION(BlueprintCallable)
 	void AnimateCrosshair(UWidgetAnimation* CrosshairAnimation);
 

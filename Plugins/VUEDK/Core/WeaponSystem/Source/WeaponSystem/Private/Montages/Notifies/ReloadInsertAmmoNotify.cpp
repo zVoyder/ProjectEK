@@ -2,6 +2,7 @@
 
 #include "Montages/Notifies//ReloadInsertAmmoNotify.h"
 #include "WeaponSystem.h"
+#include "Montages/Data/WeaponAnimMetaData.h"
 #include "Weapons/WeaponFirearm.h"
 
 void UReloadInsertAmmoNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
@@ -14,7 +15,23 @@ void UReloadInsertAmmoNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 		return;
 	}
 
-	Init(MeshComp->GetOwner());
+	AActor* InOwner = MeshComp->GetOwner();
+	if (!IsValid(InOwner))
+		return;
+	
+	Weapon = Cast<AWeaponFirearm>(InOwner);
+
+	if (!IsValid(Weapon))
+	{
+		const UWeaponAnimMetaData* MetaData = Cast<UWeaponAnimMetaData>(Animation->FindMetaDataByClass(UWeaponAnimMetaData::StaticClass()));
+		Weapon = MetaData ? Cast<AWeaponFirearm>(MetaData->Weapon) : nullptr;
+		
+		if (!IsValid(Weapon))
+		{
+			UE_LOG(LogWeaponSystem, Warning, TEXT("UReloadInsertAmmoNotify::Notify: Weapon is not valid."));
+			return;
+		}
+	}
 	
 	if (!Check())
 		return;
@@ -30,21 +47,4 @@ AWeaponFirearm* UReloadInsertAmmoNotify::GetWeaponFirearm() const
 bool UReloadInsertAmmoNotify::Check() const
 {
 	return IsValid(Weapon);
-}
-
-void UReloadInsertAmmoNotify::Init(AActor* InOwner)
-{
-	if (!IsValid(InOwner))
-	{
-		UE_LOG(LogWeaponSystem, Warning, TEXT("UReloadInsertAmmoNotify::Init: Owner is null."));
-		return;
-	}
-	
-	Weapon = Cast<AWeaponFirearm>(InOwner);
-
-	if (!IsValid(Weapon))
-	{
-		UE_LOG(LogWeaponSystem, Warning, TEXT("UReloadInsertAmmoNotify::Init: Owner is not a weapon."));
-		return;
-	}
 }

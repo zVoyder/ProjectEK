@@ -19,7 +19,9 @@ private:
 	UPROPERTY()
 	TSubclassOf<UCrosshairWidget> CurrentCrosshairWidgetClass;
 	UPROPERTY()
-	TSubclassOf<UCrosshairWidget> DefaultCrosshairWidgetClass;
+	TSubclassOf<UCrosshairWidget> CurrentDefaultCrosshairWidgetClass;
+	UPROPERTY()
+	TSubclassOf<UCrosshairWidget> GeneralCrosshairWidgetClass;
 	UPROPERTY()
 	UObject* CurrentCrosshairPayload;
 	UPROPERTY()
@@ -32,7 +34,10 @@ public:
 	virtual void Deinitialize() override;
 
 	virtual void PlayerControllerChanged(APlayerController* NewPlayerController) override;
-	
+
+	UFUNCTION(BlueprintCallable)
+	void SetGeneralCrosshairInViewport(UObject* Payload = nullptr, bool bOverrideDefault = false);
+
 	/**
 	 * @brief Sets the default crosshair widget in the viewport, optionally with a payload.
 	 * @param Payload Optional payload to associate with the crosshair widget.
@@ -43,10 +48,11 @@ public:
 	/**
 	 * @brief Sets the specified crosshair widget in the viewport, optionally with a payload.
 	 * @param CrosshairWidgetClass The class of the crosshair widget to set.
-	 * @param Payload Optional payload to associate with the crosshair widget.
+	 * @param Payload Optional payload to associate with the crosshair widget, if nullptr, the previous payload will be used.
+	 * @param bOverrideDefault If true, overrides the default crosshair widget class with the specified class.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void SetCrosshairInViewport(const TSubclassOf<UCrosshairWidget> CrosshairWidgetClass, UObject* Payload = nullptr);
+	void SetCrosshairInViewport(const TSubclassOf<UCrosshairWidget> CrosshairWidgetClass, UObject* Payload = nullptr, bool bOverrideDefault = false);
 
 	/**
 	 * @brief Opens the crosshair widget in the viewport.

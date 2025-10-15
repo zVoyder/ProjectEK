@@ -17,7 +17,8 @@ void UCrosshairSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		return;
 	}
 
-	DefaultCrosshairWidgetClass = GetDefault<UCrosshairSystemSettings>()->GetDefaultCrosshairClass();
+	GeneralCrosshairWidgetClass = GetDefault<UCrosshairSystemSettings>()->GetGeneralCrosshairClass();
+	CurrentDefaultCrosshairWidgetClass = GeneralCrosshairWidgetClass;
 	UCrosshairsUtility::Init(this);
 }
 
@@ -34,30 +35,46 @@ void UCrosshairSubsystem::PlayerControllerChanged(APlayerController* NewPlayerCo
 	CurrentCrosshairWidgetClass = nullptr;
 }
 
+void UCrosshairSubsystem::SetGeneralCrosshairInViewport(UObject* Payload, const bool bOverrideDefault)
+{
+	if (!IsValid(GeneralCrosshairWidgetClass))
+	{
+		UE_LOG(LogCrosshairSystem, Warning, TEXT("UCrosshairSubsystem::SetGeneralCrosshairInViewport: General Crosshair Widget Class is not valid."));
+		return;
+	}
+
+	SetCrosshairInViewport(GeneralCrosshairWidgetClass, Payload, bOverrideDefault);
+}
+
 void UCrosshairSubsystem::SetDefaultCrosshairInViewport(UObject* Payload)
 {
-	if (!IsValid(DefaultCrosshairWidgetClass))
+	if (!IsValid(CurrentDefaultCrosshairWidgetClass))
 	{
 		UE_LOG(LogCrosshairSystem, Warning, TEXT("UCrosshairSubsystem::SetDefaultCrosshairInViewport: Default Crosshair Widget Class is not valid."));
 		return;
 	}
 	
-	SetCrosshairInViewport(DefaultCrosshairWidgetClass, Payload);
+	SetCrosshairInViewport(CurrentDefaultCrosshairWidgetClass, Payload);
 }
 
-void UCrosshairSubsystem::SetCrosshairInViewport(const TSubclassOf<UCrosshairWidget> CrosshairWidgetClass, UObject* Payload)
+void UCrosshairSubsystem::SetCrosshairInViewport(const TSubclassOf<UCrosshairWidget> CrosshairWidgetClass, UObject* Payload, const bool bOverrideDefault)
 {
 	if (!IsValid(CrosshairWidgetClass))
 	{
 		SetDefaultCrosshairInViewport();
 		return;
 	}
-	
+
 	if (CrosshairWidgetClass == CurrentCrosshairWidgetClass)
 		return;
 
+	if (bOverrideDefault)
+		CurrentDefaultCrosshairWidgetClass = CrosshairWidgetClass;
+	
 	CurrentCrosshairWidgetClass = CrosshairWidgetClass;
-	CurrentCrosshairPayload = Payload;
+
+	if (IsValid(Payload))
+		CurrentCrosshairPayload = Payload;
 
 	bIsSwitchingCrosshairs = true;
 	if (IsValid(CurrentCrosshairWidget))

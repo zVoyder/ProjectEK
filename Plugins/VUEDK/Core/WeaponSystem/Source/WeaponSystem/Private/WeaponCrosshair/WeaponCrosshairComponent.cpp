@@ -50,7 +50,7 @@ void UWeaponCrosshairComponent::OnWeaponEquipped_Implementation()
 
 void UWeaponCrosshairComponent::OnWeaponUnequipped_Implementation()
 {
-	SetDefaultCrosshair();
+	SetGeneralCrosshair();
 }
 
 bool UWeaponCrosshairComponent::Check() const

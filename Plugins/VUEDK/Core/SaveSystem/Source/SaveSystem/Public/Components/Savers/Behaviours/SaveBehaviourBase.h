@@ -33,7 +33,7 @@ private:
 
 public:
 	USaveBehaviourBase();
-	
+
 	void Init(USaver* OwnerSaver);
 	
 	virtual void BeginPlay();

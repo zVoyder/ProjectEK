@@ -28,8 +28,7 @@ USaveManager::USaveManager() : SaveGameClass(UDefaultSaveGame::StaticClass()),
                                bHasEverSharedLoaded(false),
                                PreviousSlotNameKey(NAME_None),
                                bSaveAsNewGame(false),
-                               bIsNewSaveGame(false),
-                               SaveMasterID(DEFAULT_MASTER_SAVE_ID)
+                               bIsNewSaveGame(false)
 {
 }
 
@@ -221,16 +220,6 @@ void USaveManager::StartTimePlayedTimer()
 	World->GetTimerManager().ClearTimer(TimePlayedTimerHandle);
 	World->GetTimerManager().SetTimer(TimePlayedTimerHandle, this, &USaveManager::UpdateTimePlayed,
 	                                  TIME_PLAYED_TIMER_RATE, true);
-}
-
-void USaveManager::SetSaveMasterID(const FName NewSaveMasterID)
-{
-	SaveMasterID = NewSaveMasterID;
-}
-
-FName USaveManager::GetSaveMasterID() const
-{
-	return SaveMasterID;
 }
 
 void USaveManager::Save(const FString& SaveName, UObject* Instigator, const bool bIsSharedSave)

@@ -6,7 +6,7 @@ UCrosshairSystemSettings::UCrosshairSystemSettings(const FObjectInitializer& Obj
 {
 }
 
-TSubclassOf<UUserWidget> UCrosshairSystemSettings::GetDefaultCrosshairClass() const
+TSubclassOf<UUserWidget> UCrosshairSystemSettings::GetGeneralCrosshairClass() const
 {
-	return DefaultCrosshairWidget.LoadSynchronous();
+	return GeneralCrosshairWidget.LoadSynchronous();
 }

@@ -207,6 +207,7 @@ void AWeaponFirearm::ReloadWithMontage(UAmmoTypeData* AmmoData, const int32 Ammo
 		CharacterPlayRate = FirearmMontagesManager->ReloadMontage.GetCharacterMontage()->GetPlayLength() / GetWeaponReloadTime();
 
 	OnReloadStarted.Broadcast(ReloadEventData);
+	OnReloadStart(ReloadEventData);
 	StartWeaponMontage(
 		FirearmMontagesManager->ReloadMontage,
 		WeaponPlayRate,
@@ -290,6 +291,14 @@ void AWeaponFirearm::DisableAim()
 bool AWeaponFirearm::CanReload_Implementation() const
 {
 	return true;
+}
+
+void AWeaponFirearm::OnReloadStart_Implementation(FReloadEventData ReloadEventData)
+{
+}
+
+void AWeaponFirearm::OnReloadEnd_Implementation()
+{
 }
 
 void AWeaponFirearm::OnReloadSuccess_Implementation(float Remain, float ReloadedAmmo)
@@ -398,6 +407,7 @@ void AWeaponFirearm::OnReloadMontageEnded(const bool bInterrupted)
 {
 	const FReloadEventData EventData = GetReloadPayload();
 	OnReloadEnded.Broadcast();
+	OnReloadEnd();
 
 	if (bInterrupted && !bHasReloadInsertedAmmo)
 	{

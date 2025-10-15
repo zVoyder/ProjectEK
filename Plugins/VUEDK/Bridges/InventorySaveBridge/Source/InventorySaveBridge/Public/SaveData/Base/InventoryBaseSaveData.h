@@ -22,11 +22,10 @@ public:
 	double SavedMaxWeight;
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TMap<TSubclassOf<UItemBase>, TSubclassOf<UItemBaseSaveData>> ItemToSaveDataMap;
 	UPROPERTY()
 	UInventorySaveBehaviour* InventorySaveBehaviour;
-	
-private:
-	TMap<TSubclassOf<UItemBase>, TSubclassOf<UItemBaseSaveData>> ItemToSaveDataMap;
 
 public:
 	void Init(UInventorySaveBehaviour* InInventorySaveBehaviour);
@@ -42,6 +41,7 @@ public:
 	
 	UItemBaseSaveData* CreateItemSaveData(const UItemBase* Item);
 
+	UFUNCTION(BlueprintCallable)
 	void RegisterItemSaveData(TSubclassOf<UItemBase> ItemClass, TSubclassOf<UItemBaseSaveData> ItemSaveDataClass);
 	
 	void SaveItem(UItemBase* Item, UItemBaseSaveData* ItemSaveData);

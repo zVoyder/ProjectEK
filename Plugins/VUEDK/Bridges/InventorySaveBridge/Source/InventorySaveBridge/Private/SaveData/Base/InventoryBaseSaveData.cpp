@@ -79,8 +79,8 @@ bool UInventoryBaseSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
 
 void UInventoryBaseSaveData::RegisterItemsNative()
 {
-	RegisterItems();
 	RegisterItemSaveData(UItemBase::StaticClass(), UItemBaseSaveData::StaticClass());
+	RegisterItems();
 }
 
 UItemBaseSaveData* UInventoryBaseSaveData::CreateItemSaveData(const UItemBase* Item)

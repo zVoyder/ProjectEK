@@ -150,20 +150,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Save System")
 	static bool HasSharedInstanceEverSaved();
 
-	/**
-	 * Sets the master save ID.
-	 * @param SaveMasterID - The master save ID to set.
-	 */
-	UFUNCTION(BlueprintCallable, Category = "Save System")
-	static void SetSaveMasterID(const FName& SaveMasterID);
-	
-	/**
-	 * Gets the master save ID.
-	 * @return The current master save ID.
-	 */
-	UFUNCTION(BlueprintPure, Category = "Save System")
-	static FName GetSaveMasterID();
-	
 private:
 	/**
 	 * Checks if the utility is in a valid state for operations.

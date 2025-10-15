@@ -19,12 +19,15 @@ public:
 	static void Init(UCrosshairSubsystem* InCrosshairSubsystem);
 
 	static void Deinit();
+
+	UFUNCTION(BlueprintCallable, Category = "VUEDK|Crosshair|Utility")
+	static void SetGeneralCrosshairInViewport(UObject* Payload = nullptr, const bool bOverrideDefault = false);
 	
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|Crosshair|Utility")
 	static void SetDefaultCrosshairInViewport(UObject* Payload = nullptr);
 	
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|Crosshair|Utility")
-	static void SetCrosshairInViewport(const TSubclassOf<UCrosshairWidget> CrosshairWidgetClass, UObject* Payload = nullptr);
+	static void SetCrosshairInViewport(const TSubclassOf<UCrosshairWidget> CrosshairWidgetClass, UObject* Payload = nullptr, const bool bOverrideDefault = false);
 
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|Crosshair|Utility")
 	static void OpenCrosshairInViewport();

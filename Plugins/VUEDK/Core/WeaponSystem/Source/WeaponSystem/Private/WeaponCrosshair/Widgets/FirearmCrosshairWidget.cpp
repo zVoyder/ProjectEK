@@ -13,6 +13,10 @@ void UFirearmCrosshairWidget::NativeDestruct()
 
 	Firearm->OnAimEnabled.RemoveDynamic(this, &UFirearmCrosshairWidget::OnAimEnabled);
 	Firearm->OnAimDisabled.RemoveDynamic(this, &UFirearmCrosshairWidget::OnAimDisabled);
+	Firearm->OnReloadStarted.RemoveDynamic(this, &UFirearmCrosshairWidget::OnReloadStarted);
+	Firearm->OnReloadEnded.RemoveDynamic(this, &UFirearmCrosshairWidget::OnReloadEnded);
+	Firearm->OnReloadInterrupted.RemoveDynamic(this, &UFirearmCrosshairWidget::OnReloadFail);
+	Firearm->OnReloadInsertedAmmo.RemoveDynamic(this, &UFirearmCrosshairWidget::OnReloadSuccess);
 }
 
 void UFirearmCrosshairWidget::OnInit_Implementation()
@@ -29,9 +33,13 @@ void UFirearmCrosshairWidget::OnInit_Implementation()
 
 	Firearm->OnAimEnabled.AddDynamic(this, &UFirearmCrosshairWidget::OnAimEnabled);
 	Firearm->OnAimDisabled.AddDynamic(this, &UFirearmCrosshairWidget::OnAimDisabled);
+	Firearm->OnReloadStarted.AddDynamic(this, &UFirearmCrosshairWidget::OnReloadStarted);
+	Firearm->OnReloadEnded.AddDynamic(this, &UFirearmCrosshairWidget::OnReloadEnded);
+	Firearm->OnReloadInterrupted.AddDynamic(this, &UFirearmCrosshairWidget::OnReloadFail);
+	Firearm->OnReloadInsertedAmmo.AddDynamic(this, &UFirearmCrosshairWidget::OnReloadSuccess);
 	if (!IsValid(Firearm->Shooter->ShooterBehaviour))
 		return;
-	
+
 	Firearm->Shooter->ShooterBehaviour->GetSpreadHandler()->OnProcessingSpread.AddDynamic(this, &UFirearmCrosshairWidget::OnSpreadChanged);
 }
 
@@ -44,6 +52,23 @@ void UFirearmCrosshairWidget::OnAimEnabled_Implementation()
 }
 
 void UFirearmCrosshairWidget::OnSpreadChanged_Implementation(float Spread)
+{
+}
+
+void UFirearmCrosshairWidget::OnReloadStarted_Implementation(FReloadEventData ReloadPayload)
+{
+}
+
+void UFirearmCrosshairWidget::OnReloadEnded_Implementation()
+{
+}
+
+
+void UFirearmCrosshairWidget::OnReloadSuccess_Implementation(FReloadEventData ReloadPayload)
+{
+}
+
+void UFirearmCrosshairWidget::OnReloadFail_Implementation(FReloadEventData ReloadPayload)
 {
 }
 

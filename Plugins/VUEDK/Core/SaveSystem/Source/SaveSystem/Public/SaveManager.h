@@ -297,21 +297,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void StartTimePlayedTimer();
-
-	/**
-	 * Sets the SaveMasterID for the save manager.
-	 * @param NewSaveMasterID - The new SaveMasterID to set.
-	 */
-	UFUNCTION(BlueprintCallable)
-	void SetSaveMasterID(const FName NewSaveMasterID);
-
-	/**
-	 * Gets the SaveMasterID for the save manager.
-	 * @return The current SaveMasterID.
-	 */
-	UFUNCTION(BlueprintPure)
-	FName GetSaveMasterID() const;
-
+	
 	/**
 	 * Saves the current game state.
 	 * @param SaveName - The name of the save slot to save to.

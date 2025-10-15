@@ -20,6 +20,14 @@ void UCrosshairsUtility::Deinit()
 	CrosshairSubsystem = nullptr;
 }
 
+void UCrosshairsUtility::SetGeneralCrosshairInViewport(UObject* Payload, const bool bOverrideDefault)
+{
+	if (!Check())
+		return;
+
+	CrosshairSubsystem->SetGeneralCrosshairInViewport(Payload, bOverrideDefault);
+}
+
 void UCrosshairsUtility::SetDefaultCrosshairInViewport(UObject* Payload)
 {
 	if (!Check())
@@ -28,12 +36,12 @@ void UCrosshairsUtility::SetDefaultCrosshairInViewport(UObject* Payload)
 	CrosshairSubsystem->SetDefaultCrosshairInViewport(Payload);
 }
 
-void UCrosshairsUtility::SetCrosshairInViewport(const TSubclassOf<UCrosshairWidget> CrosshairWidgetClass, UObject* Payload)
+void UCrosshairsUtility::SetCrosshairInViewport(const TSubclassOf<UCrosshairWidget> CrosshairWidgetClass, UObject* Payload, const bool bOverrideDefault)
 {
 	if (!Check())
 		return;
 
-	CrosshairSubsystem->SetCrosshairInViewport(CrosshairWidgetClass, Payload);
+	CrosshairSubsystem->SetCrosshairInViewport(CrosshairWidgetClass, Payload, bOverrideDefault);
 }
 
 void UCrosshairsUtility::OpenCrosshairInViewport()

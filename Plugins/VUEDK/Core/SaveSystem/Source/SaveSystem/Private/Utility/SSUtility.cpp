@@ -133,20 +133,6 @@ bool USSUtility::HasSharedInstanceEverSaved()
 	return CurrentSaveManager->HasSharedInstanceEverSaved();
 }
 
-void USSUtility::SetSaveMasterID(const FName& SaveMasterID)
-{
-	if (!Check()) return;
-
-	CurrentSaveManager->SetSaveMasterID(SaveMasterID);
-}
-
-FName USSUtility::GetSaveMasterID()
-{
-	if (!Check()) return NAME_None;
-
-	return CurrentSaveManager->GetSaveMasterID();
-}
-
 bool USSUtility::Check()
 {
 	return CurrentSaveManager != nullptr;

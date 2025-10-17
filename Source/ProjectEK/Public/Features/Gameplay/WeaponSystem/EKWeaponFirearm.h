@@ -23,9 +23,6 @@ public:
 private:
 	UPROPERTY()
 	UEKWeaponFirearmItem* WeaponFirearmItem;
-	UPROPERTY()
-	TMap<UItemBase*, int32> ReloadingItems;
-	bool bIsReloadingWithItemData = false;
 
 public:
 	AEKWeaponFirearm();
@@ -35,9 +32,6 @@ public:
 	UFUNCTION(BlueprintPure)
 	UEKWeaponFirearmItem* GetWeaponFirearmItem() const;
 
-	UFUNCTION(BlueprintCallable)
-	void ReloadWithItemData();
-
 	virtual bool CanReload_Implementation() const override;
 	
 	bool CanReloadWithItemData() const;
@@ -45,6 +39,4 @@ public:
 	virtual void OnCurrentAmmoChanged_Implementation(int32 CurrentAmmo, int32 MagSize) override;
 
 	virtual void OnReloadSuccess_Implementation(float Remain, float ReloadedAmmo) override;
-
-	virtual void OnReloadEnd_Implementation() override;
 };

@@ -31,7 +31,7 @@ bool UQuestSaveData::SaveObjectDataNative(UObject* ObjectToSave)
 	return Super::SaveObjectDataNative(ObjectToSave);
 }
 
-bool UQuestSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
+bool UQuestSaveData::LoadObjectDataNative(UObject* ObjectToLoad)
 {
 	UQuestBase* Quest = Cast<UQuestBase>(ObjectToLoad);
 	
@@ -45,8 +45,8 @@ bool UQuestSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
 		if (!Task)
 			continue;
 		
-		TaskSaveData.Value->LoadObjectDatatNative(Task);
+		TaskSaveData.Value->LoadObjectDataNative(Task);
 	}
 	
-	return Super::LoadObjectDatatNative(ObjectToLoad);
+	return Super::LoadObjectDataNative(ObjectToLoad);
 }

@@ -46,7 +46,7 @@ bool UActorStateSaveData::SaveObjectDataNative(UObject* ObjectToSave)
 	return Super::SaveObjectDataNative(ObjectToSave);
 }
 
-bool UActorStateSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
+bool UActorStateSaveData::LoadObjectDataNative(UObject* ObjectToLoad)
 {
 	if (!Check())
 		return false;
@@ -80,7 +80,7 @@ bool UActorStateSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
 	if (Behaviour->bSaveMass && HasMass())
 		PrimComp->SetMassOverrideInKg(NAME_None, GetMass(), true);
 
-	return Super::LoadObjectDatatNative(ObjectToLoad);
+	return Super::LoadObjectDataNative(ObjectToLoad);
 }
 
 void UActorStateSaveData::SaveLocation(const FVector& InLocation)

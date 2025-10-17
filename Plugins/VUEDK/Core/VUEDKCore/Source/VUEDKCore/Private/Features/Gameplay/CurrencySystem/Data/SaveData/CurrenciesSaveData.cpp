@@ -25,7 +25,7 @@ bool UCurrenciesSaveData::SaveObjectDataNative(UObject* ObjectToSave)
 	return Super::SaveObjectDataNative(ObjectToSave);
 }
 
-bool UCurrenciesSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
+bool UCurrenciesSaveData::LoadObjectDataNative(UObject* ObjectToLoad)
 {
 	const UCurrenciesManager* CurrenciesManager = Cast<UCurrenciesManager>(ObjectToLoad);
 
@@ -51,5 +51,5 @@ bool UCurrenciesSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
 		Currency->SetValue(Pair.Value);
 	}
 	
-	return Super::LoadObjectDatatNative(ObjectToLoad);
+	return Super::LoadObjectDataNative(ObjectToLoad);
 }

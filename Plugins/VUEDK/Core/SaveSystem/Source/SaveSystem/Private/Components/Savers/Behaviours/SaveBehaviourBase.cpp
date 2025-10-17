@@ -34,7 +34,7 @@ USaveDataBase* USaveBehaviourBase::CreateSaveDataInstanceNative()
 
 USaveDataBase* USaveBehaviourBase::CreateSaveDataInstance_Implementation()
 {
-	return NewObject<USaveDataBase>(this, SaveDataClass);
+	return NewObject<USaveDataBase>(this, SaveClass);
 }
 
 void USaveBehaviourBase::PrepareForSerializationNative(USaveDataBase* SaveData)
@@ -82,14 +82,14 @@ FName USaveBehaviourBase::GetCompositeSaveBehaviourID() const
 {
 	if (!Check())
 		return NAME_None;
-	
+
 	const FName UniqueID = FName(*UniqueBehaviourID.ToString());
 	return CachedOwnerSaver->MakeCompositeSaveID(UniqueID);
 }
 
 bool USaveBehaviourBase::Check() const
 {
-	return IsValid(CachedOwnerSaver);
+	return IsValid(CachedOwnerSaver) && SaveClass != nullptr;
 }
 
 #if WITH_ENGINE

@@ -78,14 +78,6 @@ void UMeleeMontagesManager::OnAttackFinishedNotify()
 void UMeleeMontagesManager::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (AttackMontages.IsEmpty())
-	{
-		UE_LOG(LogWeaponSystem, Warning, TEXT("UMeleeMontagesManager::BeginPlay: %s in %s has no attack montages."), *GetName(), *GetOwner()->GetName());
-		UActorComponent::SetActive(false);
-		return;
-	}
-
 	WeaponMelee = Cast<AWeaponMelee>(Weapon);
 
 	if (!IsValid(WeaponMelee))

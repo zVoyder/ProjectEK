@@ -15,7 +15,7 @@ bool USaveComponentBehaviour::Save_Implementation(USaveDataBase* SaveData)
 
 bool USaveComponentBehaviour::Load_Implementation(USaveDataBase* SaveData)
 {
-	return SaveData->LoadObjectDatatNative(CachedComponent);
+	return SaveData->LoadObjectDataNative(CachedComponent);
 }
 
 UActorComponent* USaveComponentBehaviour::FindComponent()

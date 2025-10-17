@@ -106,10 +106,10 @@ bool UStatsContainer::TrySetValue(UStatDataBase* Stat, const float Value, const 
 {
 	if (!HasValue(Stat))
 	{
-		UE_LOG(LogStatsSystem, Warning, TEXT("UStatsContainer::TrySetValue: Stat %s is not found in the container."), *Stat->GetName());
+		UE_LOG(LogStatsSystem, Display, TEXT("UStatsContainer::TrySetValue: Stat %s not found in the container %s."), *Stat->GetName(), *GetName());
 		return false;
 	}
-		
+	
 	const float OldValue = Values[Stat];
 	Values[Stat] = ValidateStatValue(Value, Stat->StatValueRange);
 	if (OldValue == Values[Stat])

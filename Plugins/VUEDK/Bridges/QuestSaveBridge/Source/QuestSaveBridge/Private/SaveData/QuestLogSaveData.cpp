@@ -29,7 +29,7 @@ bool UQuestLogSaveData::SaveObjectDataNative(UObject* ObjectToSave)
 	return Super::SaveObjectDataNative(ObjectToSave);
 }
 
-bool UQuestLogSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
+bool UQuestLogSaveData::LoadObjectDataNative(UObject* ObjectToLoad)
 {
 	UQuestManager* QuestManager = Cast<UQuestManager>(ObjectToLoad);
 	if (!IsValid(QuestManager))
@@ -42,7 +42,7 @@ bool UQuestLogSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
 		if (!Quest)
 			continue; // If the quest is not found, skip it
 
-		SavedQuestTuple.Value->LoadObjectDatatNative(Quest);
+		SavedQuestTuple.Value->LoadObjectDataNative(Quest);
 		
 		switch (SavedQuestTuple.Value->SavedStatus)
 		{
@@ -66,5 +66,5 @@ bool UQuestLogSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
 	if (SavedTrackedQuest != NAME_None)
 		QuestManager->TrackQuestByFName(SavedTrackedQuest);
 
-	return Super::LoadObjectDatatNative(ObjectToLoad);
+	return Super::LoadObjectDataNative(ObjectToLoad);
 }

@@ -6,11 +6,6 @@
 #include "Data/SaveData/ActorStateSaveData.h"
 #include "Utility/SSUtility.h"
 
-UActorStateSaveBehaviour::UActorStateSaveBehaviour()
-{
-	SaveDataClass = UActorStateSaveData::StaticClass();
-}
-
 USaveDataBase* UActorStateSaveBehaviour::CreateSaveDataInstanceNative()
 {
 	UActorStateSaveData* SaveData = Cast<UActorStateSaveData>(Super::CreateSaveDataInstanceNative());
@@ -65,7 +60,7 @@ bool UActorStateSaveBehaviour::Load_Implementation(USaveDataBase* SaveData)
 		return false;
 	}
 	
-	return ActorStateSaveData->LoadObjectDatatNative(GetOwnerActor());
+	return ActorStateSaveData->LoadObjectDataNative(GetOwnerActor());
 }
 
 void UActorStateSaveBehaviour::EndPlay(const EEndPlayReason::Type EndPlayReason)

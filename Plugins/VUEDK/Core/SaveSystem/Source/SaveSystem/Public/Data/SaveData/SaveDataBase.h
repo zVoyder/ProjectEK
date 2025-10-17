@@ -7,7 +7,7 @@
 #include "Utility/SSSerializationUtility.h"
 #include "SaveDataBase.generated.h"
 
-UCLASS(Abstract, Blueprintable, BlueprintType, EditInlineNew)
+UCLASS(Abstract, Blueprintable, BlueprintType)
 class SAVESYSTEM_API USaveDataBase : public UObject
 {
 	GENERATED_BODY()
@@ -19,7 +19,7 @@ protected:
 public:
 	virtual bool SaveObjectDataNative(UObject* ObjectToSave);
 
-	virtual bool LoadObjectDatatNative(UObject* ObjectToLoad);
+	virtual bool LoadObjectDataNative(UObject* ObjectToLoad);
 	
 	UFUNCTION(BlueprintCallable)
 	void SetSaveDataID(const FName NewID);

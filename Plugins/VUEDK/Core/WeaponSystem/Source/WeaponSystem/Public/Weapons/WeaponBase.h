@@ -97,13 +97,13 @@ public:
 	USkeletalMeshComponent* GetWeaponMesh() const;
 	
 	/**
-	 * @brief Sets the weapon in the equipped state.
+	 * @brief Sets the weapon in the equipped state. (NOTE: This is not called internally, it is useful for integration with external systems like inventory systems)
 	 */
 	UFUNCTION(BlueprintCallable)
 	void Equip();
 
 	/**
-	 * @brief Sets the weapon in the unequipped state.
+	 * @brief Sets the weapon in the unequipped state. (NOTE: This is not called internally, it is useful for integration with external systems like inventory systems)
 	 */
 	UFUNCTION(BlueprintCallable)
 	void Unequip();

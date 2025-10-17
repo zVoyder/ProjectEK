@@ -17,7 +17,7 @@ bool UItemBaseSaveData::SaveObjectDataNative(UObject* ObjectToSave)
 	return Super::SaveObjectDataNative(ObjectToSave);
 }
 
-bool UItemBaseSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
+bool UItemBaseSaveData::LoadObjectDataNative(UObject* ObjectToLoad)
 {
 	UItemBase* Item = Cast<UItemBase>(ObjectToLoad);
 
@@ -26,5 +26,15 @@ bool UItemBaseSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
 
 	Item->SetQuantity(SavedQuantity);
 	Item->SetEquipSlotIndex(SavedEquipSlotIndex);
-	return Super::LoadObjectDatatNative(ObjectToLoad);
+	return Super::LoadObjectDataNative(ObjectToLoad);
+}
+
+bool UItemBaseSaveData::PostLoadObjectDataNative(UObject* ObjectToLoad)
+{
+	return PostLoadObjectData(ObjectToLoad);
+}
+
+bool UItemBaseSaveData::PostLoadObjectData_Implementation(UObject* ObjectToLoad)
+{
+	return true;
 }

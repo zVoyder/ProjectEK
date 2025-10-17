@@ -15,7 +15,7 @@ bool UCheckpointsSaveData::SaveObjectDataNative(UObject* ObjectToSave)
 	return Super::SaveObjectDataNative(ObjectToSave);
 }
 
-bool UCheckpointsSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
+bool UCheckpointsSaveData::LoadObjectDataNative(UObject* ObjectToLoad)
 {
 	UCheckpointsManager* CheckpointsManager = Cast<UCheckpointsManager>(ObjectToLoad);
 
@@ -24,5 +24,5 @@ bool UCheckpointsSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
 	
 	CheckpointsManager->SetCheckpointIndex(SavedCheckpointIndex);
 	CheckpointsManager->SetCheckpointsMap(SavedCheckpoints);
-	return Super::LoadObjectDatatNative(ObjectToLoad);
+	return Super::LoadObjectDataNative(ObjectToLoad);
 }

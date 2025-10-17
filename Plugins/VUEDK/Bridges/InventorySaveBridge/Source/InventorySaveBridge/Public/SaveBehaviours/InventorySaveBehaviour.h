@@ -18,8 +18,6 @@ protected:
 	UInventoryBase* Inventory;
 	
 public:
-	UInventorySaveBehaviour();
-	
 	virtual void BeginPlay() override;
 
 	virtual USaveDataBase* CreateSaveDataInstance_Implementation() override;

@@ -53,7 +53,6 @@ public:
 	FOnBegingWithLoadedSharedSaveGame OnBeginWithLoadedSharedSaveGame;
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnBeginWithNewSharedSaveGame OnBeginWithNewSharedSaveGame;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced)
 	TSet<USaveBehaviourBase*> SaveBehaviours;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced)

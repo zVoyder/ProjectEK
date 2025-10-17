@@ -40,7 +40,7 @@ bool UInventoryBaseSaveData::SaveObjectDataNative(UObject* ObjectToSave)
 	return true;
 }
 
-bool UInventoryBaseSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
+bool UInventoryBaseSaveData::LoadObjectDataNative(UObject* ObjectToLoad)
 {
 	UInventoryBase* Inventory = Cast<UInventoryBase>(ObjectToLoad);
 	if (!IsValid(Inventory))
@@ -139,13 +139,14 @@ void UInventoryBaseSaveData::PostSaveItem(UItemBase* Item, UItemBaseSaveData* It
 
 void UInventoryBaseSaveData::LoadItem(UItemBase* Item, UItemBaseSaveData* ItemSaveData)
 {
-	ItemSaveData->LoadObjectDatatNative(Item);
+	ItemSaveData->LoadObjectDataNative(Item);
 	LoadItemNative(Item, ItemSaveData);
 	ReceiveLoadItem(Item, ItemSaveData);
 }
 
 void UInventoryBaseSaveData::PostLoadItem(UItemBase* Item, UItemBaseSaveData* ItemSaveData)
 {
+	ItemSaveData->PostLoadObjectDataNative(Item);
 	PostLoadItemNative(Item, ItemSaveData);
 	ReceivePostLoadItem(Item, ItemSaveData);
 }

@@ -308,12 +308,32 @@ public:
 	void ResetToDefaultShootType() const;
 	
 	/**
-	 * Reloads the weapon using a montage animation.
+	 * Reloads the weapon using the montage animation for the specified ammo type and amount.
 	 * @param AmmoData - The ammo type data to use for reloading.
 	 * @param Ammo - The amount of ammo to reload.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void ReloadWithMontage(UAmmoTypeData* AmmoData, const int32 Ammo);
+	void ReloadOfAmmoType(UAmmoTypeData* AmmoData, const int32 Ammo);
+
+	/**
+	 * Fully reloads the weapon using the montage animation for the specified ammo type.
+	 * @param AmmoData - The ammo type data to use for reloading.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void FullReloadOfAmmoType(UAmmoTypeData* AmmoData);
+
+	/**
+	 * Reloads the weapon using the montage animation for the specified amount of ammo.
+	 * @param Ammo - The amount of ammo to reload.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void Reload(const int32 Ammo);
+
+	/**
+	 * Fully reloads the weapon using the montage animation to fill the magazine.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void FullReload();
 
 	/**
 	 * Interrupts the reload process, optionally specifying blend out times.
@@ -324,7 +344,7 @@ public:
 	void InterruptReload(float CharacterBlendOutTime = 0.0f, float WeaponBlendOutTime = 0.0f);
 
 	/**
-	 * Refills the weapon with the specified amount of ammo.
+	 * Refills the weapon with the specified amount of ammo. (NOTE: This does not play the reload montage, use Reload functions for that)
 	 * @param Ammo - The amount of ammo to refill.
 	 * @return The amount of ammo actually refilled.
 	 */

@@ -33,7 +33,7 @@ void UEKWeaponFirearmItem::NativeOnPostGeneration()
 
 	if (bHasNewMag)
 	{
-	    SetCurrentMagAmmo(GetMagSize());
+	    CurrentMagAmmo = GetMagSize();
 		bHasNewMag = false;
 	}
 }

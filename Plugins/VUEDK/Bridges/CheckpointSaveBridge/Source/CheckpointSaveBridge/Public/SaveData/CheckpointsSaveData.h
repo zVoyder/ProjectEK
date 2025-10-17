@@ -23,5 +23,5 @@ public:
 public:
 	virtual bool SaveObjectDataNative(UObject* ObjectToSave) override;
 
-	virtual bool LoadObjectDatatNative(UObject* ObjectToLoad) override;
+	virtual bool LoadObjectDataNative(UObject* ObjectToLoad) override;
 };

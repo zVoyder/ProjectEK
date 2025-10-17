@@ -25,7 +25,7 @@ bool URPGItemSaveData::SaveObjectDataNative(UObject* ObjectToSave)
 	return Super::SaveObjectDataNative(ObjectToSave);
 }
 
-bool URPGItemSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
+bool URPGItemSaveData::LoadObjectDataNative(UObject* ObjectToLoad)
 {
 	URPGItem* RPGItem = Cast<URPGItem>(ObjectToLoad);
 	if (!IsValid(RPGItem))
@@ -33,5 +33,5 @@ bool URPGItemSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
 	
 	RPGItem->VisualDetails = SavedVisualDetails;
 	RPGItem->RarityLevel = URPGInventoriesUtility::GetItemRarityByID(SavedRarityID);
-	return Super::LoadObjectDatatNative(ObjectToLoad);
+	return Super::LoadObjectDataNative(ObjectToLoad);
 }

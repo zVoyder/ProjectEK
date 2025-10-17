@@ -41,51 +41,6 @@ UEKWeaponFirearmItem* AEKWeaponFirearm::GetWeaponFirearmItem() const
 	return WeaponFirearmItem;
 }
 
-void AEKWeaponFirearm::ReloadWithItemData()
-{
-	if (!IsValid(AmmoItemData))
-	{
-		UE_LOG(LogEKWeapons, Warning, TEXT("AEKWeaponFirearm::ReloadWithItem: AmmoItemData is not valid."));
-		return;
-	}
-
-	const UInventoryBase* MainInventory = UISInventoriesUtility::GetMainInventory();
-	if (!IsValid(MainInventory))
-	{
-		UE_LOG(LogEKWeapons, Warning, TEXT("AEKWeaponFirearm::OnReloadSuccess_Implementation: MainInventory is not valid."));
-		return;
-	}
-
-	bIsReloadingWithItemData = true;
-	const int32 MaxItemStack = AmmoItemData->MaxStackSize;
-	TArray<UItemBase*> FoundItems = MainInventory->FindAll(AmmoItemData);
-	if (FoundItems.Num() == 0)
-		return;
-
-	const int32 InAmount = GetWeaponMagSize() - GetCurrentAmmo();
-	int32 QuantityToReload = InAmount;
-	for (UItemBase* Item : FoundItems)
-	{
-		if (QuantityToReload <= 0)
-			break;
-
-		const int32 ItemQuantity = Item->GetCurrentQuantity();
-		if (QuantityToReload < ItemQuantity)
-		{
-			ReloadingItems.Add(Item, QuantityToReload);
-			QuantityToReload = 0;
-			break;
-		}
-		else
-		{
-			ReloadingItems.Add(Item, ItemQuantity);
-			QuantityToReload -= ItemQuantity;
-		}
-	}
-
-	ReloadWithMontage(GetWeaponAmmoType(), InAmount - QuantityToReload);
-}
-
 bool AEKWeaponFirearm::CanReload_Implementation() const
 {
 	return Super::CanReload_Implementation() && CanReloadWithItemData();
@@ -93,9 +48,6 @@ bool AEKWeaponFirearm::CanReload_Implementation() const
 
 bool AEKWeaponFirearm::CanReloadWithItemData() const
 {
-	if (!bIsReloadingWithItemData)
-		return true;
-	
 	if (!IsValid(AmmoItemData))
 	{
 		UE_LOG(LogEKWeapons, Warning, TEXT("AEKWeaponFirearm::CanReloadWithItemData: AmmoItemData is not valid."));
@@ -125,22 +77,40 @@ void AEKWeaponFirearm::OnCurrentAmmoChanged_Implementation(int32 CurrentAmmo, in
 void AEKWeaponFirearm::OnReloadSuccess_Implementation(float Remain, float ReloadedAmmo)
 {
 	Super::OnReloadSuccess_Implementation(Remain, ReloadedAmmo);
-
-	for (const TPair<UItemBase*, int32>& Pair : ReloadingItems)
+	
+	if (!IsValid(AmmoItemData))
 	{
-		UItemBase* Item = Pair.Key;
-		const int32 Quantity = Pair.Value;
-
-		if (!IsValid(Item))
-			continue;
-
-		Item->DecreaseQuantity(Quantity);
+		UE_LOG(LogEKWeapons, Warning, TEXT("AEKWeaponFirearm::ReloadWithItem: AmmoItemData is not valid."));
+		return;
 	}
-}
 
-void AEKWeaponFirearm::OnReloadEnd_Implementation()
-{
-	Super::OnReloadEnd_Implementation();
-	bIsReloadingWithItemData = false;
-	ReloadingItems.Empty();
+	const UInventoryBase* MainInventory = UISInventoriesUtility::GetMainInventory();
+	if (!IsValid(MainInventory))
+	{
+		UE_LOG(LogEKWeapons, Warning, TEXT("AEKWeaponFirearm::OnReloadSuccess_Implementation: MainInventory is not valid."));
+		return;
+	}
+	
+	const int32 MaxItemStack = AmmoItemData->MaxStackSize;
+	TArray<UItemBase*> FoundItems = MainInventory->FindAll(AmmoItemData);
+	
+	int32 ReloadedAmount = ReloadedAmmo;
+	for (UItemBase* Item : FoundItems)
+	{
+		if (ReloadedAmount <= 0)
+			break;
+
+		const int32 ItemQuantity = Item->GetCurrentQuantity();
+		if (ReloadedAmount < ItemQuantity)
+		{
+			Item->DecreaseQuantity(ReloadedAmount);
+			ReloadedAmount = 0;
+			break;
+		}
+		else
+		{
+			Item->Remove();
+			ReloadedAmount -= ItemQuantity;
+		}
+	}
 }

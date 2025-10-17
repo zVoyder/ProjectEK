@@ -20,7 +20,7 @@ bool UTaskSaveData::SaveObjectDataNative(UObject* ObjectToSave)
 	return Super::SaveObjectDataNative(ObjectToSave);
 }
 
-bool UTaskSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
+bool UTaskSaveData::LoadObjectDataNative(UObject* ObjectToLoad)
 {
 	UTaskBase* Task = Cast<UTaskBase>(ObjectToLoad);
 	if (!IsValid(Task))
@@ -34,5 +34,5 @@ bool UTaskSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
 	if (UCountTask* CountTask = Cast<UCountTask>(Task))
 		CountTask->SetCurrentCount(SavedAchieveCount);
 	
-	return Super::LoadObjectDatatNative(ObjectToLoad);
+	return Super::LoadObjectDataNative(ObjectToLoad);
 }

@@ -180,7 +180,7 @@ void AWeaponFirearm::ResetToDefaultShootType() const
 	SetWeaponShootType(DefaultShootType);
 }
 
-void AWeaponFirearm::ReloadWithMontage(UAmmoTypeData* AmmoData, const int32 Ammo)
+void AWeaponFirearm::ReloadOfAmmoType(UAmmoTypeData* AmmoData, const int32 Ammo)
 {
 	if (IsReloading())
 		return;
@@ -213,6 +213,21 @@ void AWeaponFirearm::ReloadWithMontage(UAmmoTypeData* AmmoData, const int32 Ammo
 		WeaponPlayRate,
 		CharacterPlayRate
 	);
+}
+
+void AWeaponFirearm::FullReloadOfAmmoType(UAmmoTypeData* AmmoData)
+{
+	ReloadOfAmmoType(AmmoData, GetNeededAmmo());
+}
+
+void AWeaponFirearm::Reload(const int32 Ammo)
+{
+	ReloadOfAmmoType(GetWeaponAmmoType(), Ammo);
+}
+
+void AWeaponFirearm::FullReload()
+{
+	FullReloadOfAmmoType(GetWeaponAmmoType());
 }
 
 void AWeaponFirearm::InterruptReload(const float CharacterBlendOutTime, const float WeaponBlendOutTime)

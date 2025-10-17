@@ -2,13 +2,6 @@
 
 #include "SaveBehaviours/InventorySaveBehaviour.h"
 #include "InventorySaveBridge.h"
-#include "Factories/ISFactory.h"
-#include "Utility/ISInventoriesUtility.h"
-
-UInventorySaveBehaviour::UInventorySaveBehaviour()
-{
-	SaveDataClass = UInventoryBaseSaveData::StaticClass();
-}
 
 void UInventorySaveBehaviour::BeginPlay()
 {
@@ -25,13 +18,13 @@ USaveDataBase* UInventorySaveBehaviour::CreateSaveDataInstance_Implementation()
 	if (!Check())
 		return nullptr;
 	
-	if (!SaveDataClass->IsChildOf(UInventoryBaseSaveData::StaticClass()))
+	if (!SaveClass->IsChildOf(UInventoryBaseSaveData::StaticClass()))
 	{
 		UE_LOG(LogInventorySaveBridge, Warning, TEXT("InventorySaveBehaviour: SaveDataClass is not a child of InventoryBaseSaveData."));
 		return nullptr;
 	}
 
-	UInventoryBaseSaveData* InventorySaveData = NewObject<UInventoryBaseSaveData>(this, SaveDataClass);
+	UInventoryBaseSaveData* InventorySaveData = NewObject<UInventoryBaseSaveData>(this, SaveClass);
 	InventorySaveData->Init(this);
 	InventorySaveData->RegisterItemsNative();
 	return InventorySaveData;
@@ -58,7 +51,7 @@ bool UInventorySaveBehaviour::Load_Implementation(USaveDataBase* SaveData)
 	if (!IsValid(InventorySaveData))
 		return false;
 	
-	return InventorySaveData->LoadObjectDatatNative(Inventory);
+	return InventorySaveData->LoadObjectDataNative(Inventory);
 }
 
 bool UInventorySaveBehaviour::Check() const

@@ -22,7 +22,7 @@ bool URPGGearItemSaveData::SaveObjectDataNative(UObject* ObjectToSave)
 	return Super::SaveObjectDataNative(ObjectToSave);
 }
 
-bool URPGGearItemSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
+bool URPGGearItemSaveData::LoadObjectDataNative(UObject* ObjectToLoad)
 {
 	const URPGGearItem* RPGGearItem = Cast<URPGGearItem>(ObjectToLoad);
 	if (!IsValid(RPGGearItem))
@@ -40,5 +40,5 @@ bool URPGGearItemSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
 			UE_LOG(LogInventorySaveBridge, Warning, TEXT("URPGGearItemSaveData::LoadObjectNative: Failed to load RPGGearItem bonus stat with ID: %s"), *Stats.Key.ToString());
 	}
 	
-	return Super::LoadObjectDatatNative(ObjectToLoad);
+	return Super::LoadObjectDataNative(ObjectToLoad);
 }

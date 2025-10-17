@@ -27,8 +27,6 @@ public:
 	bool bSaveMass = false;
 
 public:
-	UActorStateSaveBehaviour();
-	
 	virtual USaveDataBase* CreateSaveDataInstanceNative() override;
 	
 	virtual bool Save_Implementation(USaveDataBase* SaveData) override;

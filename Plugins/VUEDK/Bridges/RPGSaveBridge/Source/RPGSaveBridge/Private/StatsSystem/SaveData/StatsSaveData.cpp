@@ -19,7 +19,7 @@ bool UStatsSaveData::SaveObjectDataNative(UObject* ObjectToSave)
 	return Super::SaveObjectDataNative(ObjectToSave);
 }
 
-bool UStatsSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
+bool UStatsSaveData::LoadObjectDataNative(UObject* ObjectToLoad)
 {
 	const UStatsBridgeBase* StatsBridge = Cast<UStatsBridgeBase>(ObjectToLoad);
 	if (!IsValid(StatsBridge))
@@ -37,5 +37,5 @@ bool UStatsSaveData::LoadObjectDatatNative(UObject* ObjectToLoad)
 			StatsBridge->CoreStatsContainer->AddStat(CoreStatData, Pair.Value);
 	}
 	
-	return Super::LoadObjectDatatNative(ObjectToLoad);
+	return Super::LoadObjectDataNative(ObjectToLoad);
 }

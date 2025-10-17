@@ -9,7 +9,7 @@ bool USaveDataBase::SaveObjectDataNative(UObject* ObjectToSave)
 	return SaveObjectData(ObjectToSave);
 }
 
-bool USaveDataBase::LoadObjectDatatNative(UObject* ObjectToLoad)
+bool USaveDataBase::LoadObjectDataNative(UObject* ObjectToLoad)
 {
 	return LoadObjectData(ObjectToLoad);
 }

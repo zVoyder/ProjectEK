@@ -16,8 +16,10 @@ class SAVESYSTEM_API USaveBehaviourBase : public UObject, public ISaveable
 	friend class USaver;
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<USaveDataBase> SaveDataClass = USaveDataBase::StaticClass();
+	// If the SaveClass CDO fails to save, clear DerivedDataCache, Saved, Intermediate, and Binaries folders,
+	// regenerate project files, recompile, and restart the editor.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<USaveDataBase> SaveClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "If true, the SaveData instance will not be created every time a save/load is performed, but will be preserved between saves/loads."))
 	bool bPreserveSaveDataInstance = false;
 
@@ -35,7 +37,7 @@ public:
 	USaveBehaviourBase();
 
 	void Init(USaver* OwnerSaver);
-	
+
 	virtual void BeginPlay();
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "BeginPlay"))
@@ -47,7 +49,7 @@ public:
 	void ReceiveEndPlay(const EEndPlayReason::Type EndPlayReason);
 
 	virtual USaveDataBase* CreateSaveDataInstanceNative();
-	
+
 	virtual USaveDataBase* CreateSaveDataInstance_Implementation() override;
 
 	virtual void PrepareForSerializationNative(USaveDataBase* SaveData);
@@ -55,7 +57,7 @@ public:
 	virtual void PrepareForSerialization_Implementation(USaveDataBase* SaveData) override;
 
 	virtual void PrepareForDeserializationNative(USaveDataBase* SaveData);
-	
+
 	virtual void PrepareForDeserialization_Implementation(USaveDataBase* SaveData) override;
 
 	virtual bool Save_Implementation(USaveDataBase* SaveData) override;
@@ -64,7 +66,7 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	USaveDataBase* GetSaveDataInstance();
-	
+
 	UFUNCTION(BlueprintPure)
 	FName GetCompositeSaveBehaviourID() const;
 
@@ -82,7 +84,7 @@ public:
 protected:
 	UFUNCTION(BlueprintPure)
 	USaver* GetOwnerSaver();
-	
+
 	UFUNCTION(BlueprintPure)
 	AActor* GetOwnerActor();
 

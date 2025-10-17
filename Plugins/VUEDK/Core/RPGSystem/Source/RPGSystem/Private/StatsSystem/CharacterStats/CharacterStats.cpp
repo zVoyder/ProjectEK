@@ -59,13 +59,6 @@ void UCharacterStats::AddEquippedItemsStats() const
 	if (!Check())
 		return;
 	
-	//  print all full stats values before adding equipped items stats
-	for (auto& Pair : GetFullStatsValues())
-	{
-		UE_LOG(LogStatsSystem, Log, TEXT("UCharacterStats::AddEquippedItemsStats: %s = %f"), *Pair.Key->GetName(), Pair.Value);
-	}
-		
-	
 	for (UItemBase* Item : Equipment->GetEquippedItems())
 	{
 		const URPGGearItem* RPGGearItem = Cast<URPGGearItem>(Item);

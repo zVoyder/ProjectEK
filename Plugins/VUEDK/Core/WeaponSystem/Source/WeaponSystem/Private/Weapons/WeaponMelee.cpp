@@ -12,12 +12,6 @@ AWeaponMelee::AWeaponMelee()
 	DamageHitboxPreview->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-void AWeaponMelee::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-	TraceDamageHitbox();
-}
-
 bool AWeaponMelee::IsWeaponAttacking() const
 {
 	return MeleeMontagesManager->IsMontageAttacking();
@@ -52,26 +46,50 @@ bool AWeaponMelee::StopDefense()
 	return true;
 }
 
-void AWeaponMelee::EnableDamageHitbox()
+void AWeaponMelee::EnableDamageHitbox() const
 {
-	if (bIsHitboxEnabled)
+	if (!IsValid(MeleeHitboxesManager))
+	{
+		UE_LOG(LogWeaponSystem, Warning, TEXT("AWeaponMelee::EnableDamageHitbox: MeleeHitboxesManager is not valid."));
 		return;
-
-	bIsHitboxEnabled = true;
-	ClearHitActors();
+	}
+	
+	MeleeHitboxesManager->SetTracingHitboxes(true);
 }
 
-void AWeaponMelee::DisableDamageHitbox()
+void AWeaponMelee::DisableDamageHitbox() const
 {
-	if (!bIsHitboxEnabled)
+	if (!IsValid(MeleeHitboxesManager))
+	{
+		UE_LOG(LogWeaponSystem, Warning, TEXT("AWeaponMelee::DisableDamageHitbox: MeleeHitboxesManager is not valid."));
 		return;
-
-	bIsHitboxEnabled = false;
+	}
+	
+	MeleeHitboxesManager->SetTracingHitboxes(false);
 }
 
 void AWeaponMelee::SetBlockActive(const bool bActive)
 {
 	bIsBlockActive = bActive;
+}
+
+void AWeaponMelee::InterruptWeaponAttack()
+{
+	OnWeaponAttackInterrupt.Broadcast();
+	OnWeaponAttackInterrupted();
+}
+
+void AWeaponMelee::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (!IsValid(MeleeHitboxesManager))
+	{
+		UE_LOG(LogWeaponSystem, Warning, TEXT("AWeaponMelee::BeginPlay: MeleeHitboxesManager is not valid."));
+		return;
+	}
+	
+	MeleeHitboxesManager->Init(this);
 }
 
 bool AWeaponMelee::NativeDeployWeaponAttack()
@@ -93,100 +111,4 @@ bool AWeaponMelee::NativeDeployWeaponAttack()
 
 void AWeaponMelee::OnWeaponAttackInterrupted_Implementation()
 {
-}
-
-void AWeaponMelee::TraceDamageHitbox()
-{
-	if (!bIsHitboxEnabled)
-		return;
-
-	const UWorld* World = GetWorld();
-
-	if (!IsValid(World))
-	{
-		UE_LOG(LogWeaponSystem, Warning, TEXT("AWeaponMelee::TraceHitbox: World is not valid."));
-		return;
-	}
-
-	TArray<FHitResult> HitResults;
-	FCollisionQueryParams Params;
-	Params.bTraceComplex = true;
-	Params.AddIgnoredActor(GetOwner());
-	Params.AddIgnoredActor(this);
-
-	World->SweepMultiByChannel(
-		HitResults,
-		DamageHitboxPreview->GetComponentLocation(),
-		DamageHitboxPreview->GetComponentLocation(),
-		DamageHitboxPreview->GetComponentRotation().Quaternion(),
-		WeaponMeleeData.DamageHitBoxChannel,
-		FCollisionShape::MakeCapsule(DamageHitboxPreview->GetScaledCapsuleRadius(), DamageHitboxPreview->GetScaledCapsuleHalfHeight()),
-		Params
-	);
-
-	HandleHitActors(HitResults);
-
-#if WITH_EDITORONLY_DATA
-	if (bDebug)
-	{
-		DrawDebugCapsule(
-			World,
-			DamageHitboxPreview->GetComponentLocation(),
-			DamageHitboxPreview->GetScaledCapsuleHalfHeight(),
-			DamageHitboxPreview->GetScaledCapsuleRadius(),
-			DamageHitboxPreview->GetComponentRotation().Quaternion(),
-			ActorsCurrentlyInHitbox.IsEmpty() ? FColor::Green : FColor::Red,
-			false,
-			0.1f
-		);
-	}
-#endif
-}
-
-void AWeaponMelee::HandleHitActors(TArray<FHitResult> HitResults)
-{
-	TSet<AActor*> NewActorsInHitbox;
-	
-	for (const FHitResult& HitResult : HitResults)
-	{
-		AActor* HitActor = HitResult.GetActor();
-		if (!IsValid(HitActor) || NewActorsInHitbox.Contains(HitActor))
-			continue;
-
-		if (WeaponMeleeData.AttackInterruptors.Contains(HitResult.Component->GetCollisionObjectType()))
-		{
-			OnWeaponAttackInterrupt.Broadcast();
-			OnWeaponAttackInterrupted();
-			return;
-		}
-
-		NewActorsInHitbox.Add(HitActor);
-		if (!ActorsCurrentlyInHitbox.Contains(HitActor))
-		{
-			UGameplayStatics::ApplyPointDamage(
-				HitActor,
-				GetWeaponDamage(),
-				HitResult.ImpactNormal,
-				HitResult,
-				GetInstigatorController(),
-				GetOwner(),
-				WeaponMeleeData.DamageTypeClass
-			);
-		}
-	}
-	
-	for (const AActor* PrevActor : ActorsCurrentlyInHitbox)
-	{
-		if (!NewActorsInHitbox.Contains(PrevActor))
-		{
-			// Actor was in hitbox but is no longer in it, handle any logic here if needed
-		}
-	}
-
-	ActorsCurrentlyInHitbox = NewActorsInHitbox;
-}
-
-void AWeaponMelee::ClearHitActors()
-{
-	ActorsCurrentlyInHitbox.Empty();
 }

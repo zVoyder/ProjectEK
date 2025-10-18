@@ -6,6 +6,7 @@
 #include "WeaponBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/WeaponMeleeData.h"
+#include "Hitbox/MeleeHitboxesManager.h"
 #include "Montages/MeleeMontagesManager.h"
 #include "WeaponMelee.generated.h"
 
@@ -25,6 +26,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
 	FWeaponMeleeData WeaponMeleeData;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UMeleeHitboxesManager* MeleeHitboxesManager;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UMeleeMontagesManager* MeleeMontagesManager;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UCapsuleComponent* DamageHitboxPreview;
@@ -35,15 +38,12 @@ public:
 #endif
 
 private:
-	bool bIsHitboxEnabled = false;
 	bool bIsBlockActive = false;
 	UPROPERTY()
 	TSet<AActor*> ActorsCurrentlyInHitbox;
 
 public:
 	AWeaponMelee();
-	
-	virtual void Tick(float DeltaSeconds) override;
 	
 	virtual bool IsWeaponAttacking() const override;
 
@@ -79,13 +79,13 @@ public:
 	 * Enables the damage hitbox for the weapon.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void EnableDamageHitbox();
+	void EnableDamageHitbox() const;
 
 	/**
 	 * Disables the damage hitbox for the weapon.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void DisableDamageHitbox();
+	void DisableDamageHitbox() const;
 
 	/**
 	 * Sets the block state of the weapon.
@@ -93,7 +93,11 @@ public:
 	 */
 	void SetBlockActive(const bool bActive);
 
+	void InterruptWeaponAttack();
+
 protected:
+	virtual void BeginPlay() override;
+	
 	virtual bool NativeDeployWeaponAttack() override;
 
 	/**
@@ -101,21 +105,4 @@ protected:
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnWeaponAttackInterrupted();
-
-private:
-	/**
-	 * Traces the damage hitbox to detect hits.
-	 */
-	void TraceDamageHitbox();
-
-	/**
-	 * Handles the actors hit by the damage hitbox.
-	 * @param HitResults - The array of hit results.
-	 */
-	void HandleHitActors(TArray<FHitResult> HitResults);
-
-	/**
-	 * Clears the list of hit actors.
-	 */
-	void ClearHitActors();
 };

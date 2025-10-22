@@ -4,14 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "WeaponBase.h"
-#include "Components/CapsuleComponent.h"
 #include "Data/WeaponMeleeData.h"
 #include "Hitbox/MeleeHitboxesManager.h"
 #include "Montages/MeleeMontagesManager.h"
 #include "WeaponMelee.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(
-	FOnWeaponAttackInterrupt
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+	FOnWeaponAttackHit,
+	UMeleeHitbox*, Hitbox,
+	FHitResult, HitResult,
+	float, Damage
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnWeaponAttackInterrupt,
+	UMeleeHitbox*, Hitbox,
+	FHitResult, HitResult
 );
 
 UCLASS()
@@ -22,19 +30,21 @@ class WEAPONSYSTEM_API AWeaponMelee : public AWeaponBase
 public:
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnWeaponAttackInterrupt OnWeaponAttackInterrupt;
-	
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnWeaponAttackHit OnWeaponAttackHit;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
 	FWeaponMeleeData WeaponMeleeData;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UMeleeHitboxesManager* MeleeHitboxesManager;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UMeleeMontagesManager* MeleeMontagesManager;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UCapsuleComponent* DamageHitboxPreview;
 
 #if WITH_EDITORONLY_DATA
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Debug")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Debug", meta = (Tooltip = "Enables debug draws"))
 	bool bDebug = false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Debug", meta = (EditCondition = "bDebug"))
+	float DebugDrawDuration = 0.0f;
 #endif
 
 private:
@@ -44,7 +54,7 @@ private:
 
 public:
 	AWeaponMelee();
-	
+
 	virtual bool IsWeaponAttacking() const override;
 
 	/**
@@ -93,16 +103,43 @@ public:
 	 */
 	void SetBlockActive(const bool bActive);
 
-	void InterruptWeaponAttack();
+	/** 
+	 * Gets the current attack montage data.
+	 * @return The current UWeaponMeleeAttackMontageData instance.
+	 */
+	UFUNCTION(BlueprintPure)
+	UWeaponMeleeAttackData* GetCurrentAttack() const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetAttackSpeedMultiplier(const float NewMultiplier) const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetDefenseSpeedMultiplier(const float NewMultiplier) const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetInterruptSpeedMultiplier(const float NewMultiplier) const;
+
+	UFUNCTION(BlueprintPure)
+	float GetAttackSpeedMultiplier() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetDefenseSpeedMultiplier() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetInterruptSpeedMultiplier() const;
+
+	void CallHitEvent(UMeleeHitbox* Hitbox, const FHitResult& HitResult, float Damage);
+
+	void CallInterruptEvent(UMeleeHitbox* Hitbox, const FHitResult& HitResult);
 
 protected:
 	virtual void BeginPlay() override;
-	
+
 	virtual bool NativeDeployWeaponAttack() override;
 
-	/**
-	 * Called when the weapon attack is interrupted (can be overridden in Blueprints).
-	 */
 	UFUNCTION(BlueprintNativeEvent)
-	void OnWeaponAttackInterrupted();
+	void OnAttackHit(UMeleeHitbox* Hitbox, FHitResult HitResult, float Damage);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnAttackInterrupted(UMeleeHitbox* Hitbox, FHitResult HitResult);
 };

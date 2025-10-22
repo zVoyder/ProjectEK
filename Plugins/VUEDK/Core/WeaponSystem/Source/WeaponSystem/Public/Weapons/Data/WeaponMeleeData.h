@@ -15,7 +15,7 @@ struct WEAPONSYSTEM_API FWeaponMeleeData
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UDamageType> DamageTypeClass = UDamageType::StaticClass();
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "List of collision channels that, if hit during the attack, will interrupt or play the weapon's attack interrupt animation."))
-	TArray<TEnumAsByte<ECollisionChannel>> AttackInterruptors =
+	TArray<TEnumAsByte<ECollisionChannel>> AttackInterruptChannels =
 	{
 		ECC_Visibility,
 		ECC_WorldStatic,

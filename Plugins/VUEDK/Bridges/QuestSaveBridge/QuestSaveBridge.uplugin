@@ -20,5 +20,14 @@
 			"LoadingPhase": "Default"
 		}
 	],
-	"SupportURL": ""
+	"Plugins": [
+		{
+			"Name": "SaveSystem",
+			"Enabled": true
+		},
+		{
+			"Name": "QuestSystem",
+			"Enabled": true
+		}
+	]
 }

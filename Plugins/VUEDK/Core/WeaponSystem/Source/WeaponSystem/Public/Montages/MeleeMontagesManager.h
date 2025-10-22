@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Base/WeaponMontagesManagerBase.h"
-#include "Data/WeaponMeleeAttackMontageData.h"
+#include "Data/WeaponMeleeAttackData.h"
+#include "Hitbox/MeleeHitbox.h"
 #include "MeleeMontagesManager.generated.h"
 
 class AWeaponMelee;
@@ -15,19 +16,27 @@ class WEAPONSYSTEM_API UMeleeMontagesManager : public UWeaponMontagesManagerBase
 	GENERATED_BODY()
 
 public:
-	// -- Montages --
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Defense", meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float DefenseCooldown = 1.0f;
+	float DefenseCooldown = .5f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Defense", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float BaseDefenseSpeed = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Defense")
 	FWeaponMontageData DefensiveMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks")
+	float BaseAttackSpeed = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks")
+	TArray<UWeaponMeleeAttackData*> Attacks;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Interrupt")
+	float BaseInterruptSpeed = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks|Blends")
 	FAlphaBlendArgs StartBlendIn;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks|Blends")
 	FAlphaBlendArgs StopBlendOut;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks")
-	TArray<UWeaponMeleeAttackMontageData*> AttackMontages;
 
 private:
+	float AttackSpeedMultiplier = 1.0f;
+	float DefenseSpeedMultiplier = 1.0f;
+	float InterruptSpeedMultiplier = 1.0f;
 	UPROPERTY()
 	AWeaponMelee* WeaponMelee;
 	int32 CurrentAttackIndex = 0;
@@ -41,7 +50,7 @@ private:
 	bool bIsInterrupting = false;
 	FTimerHandle DefenseCooldownTimer;
 	UPROPERTY()
-	UWeaponMeleeAttackMontageData* CurrentAttackMontage = nullptr;
+	UWeaponMeleeAttackData* CurrentAttackMontage = nullptr;
 
 public:
 	UMeleeMontagesManager();
@@ -50,12 +59,46 @@ public:
 
 	virtual bool IsBusy_Implementation() const override;
 
+	UFUNCTION(BlueprintCallable)
+	void SetAttackSpeedMultiplier(const float Multiplier);
+
+	UFUNCTION(BlueprintCallable)
+	void SetDefenseSpeedMultiplier(const float Multiplier);
+
+	UFUNCTION(BlueprintCallable)
+	void SetInterruptSpeedMultiplier(const float Multiplier);
+
+	UFUNCTION(BlueprintCallable)
+	float GetAttackSpeedMultiplier() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetDefenseSpeedMultiplier() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetInterruptSpeedMultiplier() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetAttackSpeed() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetDefenseSpeed() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetInterruptSpeed() const;
+
 	/**
 	 * Gets the current attack index.
 	 * @return The index of the current attack in the attack montage array.
 	 */
 	UFUNCTION(BlueprintPure)
 	int32 GetAttackIndex() const;
+
+	/**
+	 * Gets the current attack montage data.
+	 * @return The current attack montage data.
+	 */
+	UFUNCTION(BlueprintPure)
+	UWeaponMeleeAttackData* GetCurrentAttackMontage() const;
 
 	/**
 	 * Checks if the current montage is interrupting.
@@ -119,12 +162,9 @@ protected:
 	 * Called when a weapon attack ends.
 	 */
 	virtual void OnWeaponEndAttack() override;
-
-	/**
-	 * Called when a weapon attack is interrupted.
-	 */
+	
 	UFUNCTION()
-	void OnWeaponAttackInterrupted();
+	void OnWeaponAttackInterrupted(UMeleeHitbox* Hitbox, FHitResult HitResult);
 
 	/**
 	 * Called when an attack interrupt finishes.
@@ -163,7 +203,7 @@ protected:
 	 * Plays the specified attack montage.
 	 * @param AttackMontage - The attack montage data to play.
 	 */
-	void PlayAttackMontage(UWeaponMeleeAttackMontageData* AttackMontage);
+	void PlayAttackMontage(UWeaponMeleeAttackData* AttackMontage);
 
 	/**
 	 * Ends the current attack sequence.
@@ -190,6 +230,8 @@ protected:
 	 */
 	void StartDefenseCooldownTimer();
 
+	void StopDefenseCooldownTimer();
+	
 	/**
 	 * Resets the defense cooldown state.
 	 */

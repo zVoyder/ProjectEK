@@ -20,7 +20,7 @@ void UMeleeHitboxesManager::Init(AWeaponMelee* InWeaponMelee)
 		return;
 	}
 	WeaponMelee = InWeaponMelee;
-	
+
 	WeaponMelee->GetComponents<UMeleeHitbox>(MeleeHitboxes);
 	if (MeleeHitboxes.IsEmpty())
 	{
@@ -44,20 +44,33 @@ void UMeleeHitboxesManager::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 void UMeleeHitboxesManager::SetTracingHitboxes(const bool bEnableTrace)
 {
-	ClearHitActors();
 	bIsTracingHitboxes = bEnableTrace;
+
+	if (bEnableTrace)
+	{
+		const UWeaponMeleeAttackData* CurrentAttack = WeaponMelee->GetCurrentAttack();
+		if (!IsValid(CurrentAttack))
+			return;
+
+		if (CurrentAttack->bAllowsMultipleHits && CurrentAttack->AttackTickRate > 0.f)
+			StartTraceTimer(CurrentAttack->AttackTickRate);
+	}
+	else
+	{
+		StopTraceTimer();
+		ClearHitActors();
+	}
 }
 
 void UMeleeHitboxesManager::TraceDamageHitbox()
 {
 	if (!bIsTracingHitboxes)
 		return;
-	
+
 	if (!Check())
 		return;
-	
-	TMap<UMeleeHitbox*, TArray<FHitResult>> HitMap = TMap<UMeleeHitbox*, TArray<FHitResult>>();
 
+	TMap<UMeleeHitbox*, TArray<FHitResult>> HitMap = TMap<UMeleeHitbox*, TArray<FHitResult>>();
 	for (UMeleeHitbox* MeleeHitbox : MeleeHitboxes)
 	{
 		if (!IsValid(MeleeHitbox))
@@ -69,62 +82,133 @@ void UMeleeHitboxesManager::TraceDamageHitbox()
 			HitMap.Add(MeleeHitbox, HitboxHitResults);
 	}
 
+	if (CheckInterruptCollisions(HitMap))
+		return;
+
 	HandleHitActors(HitMap);
 }
 
 void UMeleeHitboxesManager::HandleHitActors(TMap<UMeleeHitbox*, TArray<FHitResult>> HitboxesHitResults)
 {
-	TSet<AActor*> NewActorsInHitbox;
+    const UWeaponMeleeAttackData* CurrentAttack = WeaponMelee->GetCurrentAttack();
+    if (!IsValid(CurrentAttack))
+        return;
 
+    const bool bAllowsMultipleHits = CurrentAttack->bAllowsMultipleHits;
+    const int32 MaxHits = CurrentAttack->MaxHits;
+    TSet<AActor*> ActorsInThisTick;
+    const FWeaponMeleeData& WeaponMeleeData = WeaponMelee->WeaponMeleeData;
+
+    for (auto& HitboxResults : HitboxesHitResults)
+    {
+        UMeleeHitbox* MeleeHitbox = HitboxResults.Key;
+        TArray<FHitResult>& HitResults = HitboxResults.Value;
+
+        for (const FHitResult& HitResult : HitResults)
+        {
+            AActor* HitActor = HitResult.GetActor();
+            if (!IsValid(HitActor))
+                continue;
+        	
+            ActorsInThisTick.Add(HitActor);
+            const bool bWasInsideLastTick = ActorsCurrentlyInside.Contains(HitActor);
+
+            if (!bAllowsMultipleHits)
+            {
+                const int32* ExistingCount = ActorsHitCounts.Find(HitActor);
+                if (ExistingCount && *ExistingCount > 0)
+                    continue;
+            }
+
+            const int32 CurrentCount = ActorsHitCounts.Contains(HitActor) ? ActorsHitCounts[HitActor] : 0;
+            bool bShouldApplyDamage = false;
+            if (CurrentCount == 0 && !bWasInsideLastTick)
+            {
+                bShouldApplyDamage = true;
+            }
+            else if (bAllowsMultipleHits)
+            {
+                if (!bWasInsideLastTick)
+                {
+                    if (MaxHits == 0 || CurrentCount < MaxHits)
+                        bShouldApplyDamage = true;
+                }
+            }
+
+            if (bShouldApplyDamage)
+            {
+                UGameplayStatics::ApplyPointDamage(
+                    HitActor,
+                    MeleeHitbox->GetProcessedDamage(),
+                    HitResult.ImpactNormal,
+                    HitResult,
+                    WeaponMelee->GetInstigatorController(),
+                    WeaponMelee->GetOwner(),
+                    WeaponMeleeData.DamageTypeClass
+                );
+
+                int32& RefCount = ActorsHitCounts.FindOrAdd(HitActor);
+                ++RefCount;
+
+            	WeaponMelee->CallHitEvent(MeleeHitbox, HitResult, MeleeHitbox->GetProcessedDamage());
+            }
+        }
+    }
+	
+    ActorsCurrentlyInside = MoveTemp(ActorsInThisTick);
+}
+
+bool UMeleeHitboxesManager::CheckInterruptCollisions(TMap<UMeleeHitbox*, TArray<FHitResult>> HitboxesHitResults) const
+{
 	for (auto& HitboxResults : HitboxesHitResults)
 	{
-		UMeleeHitbox* MeleeHitbox = HitboxResults.Key;
 		TArray<FHitResult>& HitResults = HitboxResults.Value;
 
 		for (const FHitResult& HitResult : HitResults)
 		{
-			AActor* HitActor = HitResult.GetActor();
-			if (!IsValid(HitActor) || NewActorsInHitbox.Contains(HitActor))
-				continue;
-
 			FWeaponMeleeData& WeaponMeleeData = WeaponMelee->WeaponMeleeData;
-
-			if (WeaponMeleeData.AttackInterruptors.Contains(HitResult.Component->GetCollisionObjectType()))
+			if (WeaponMeleeData.AttackInterruptChannels.Contains(HitResult.Component->GetCollisionObjectType()))
 			{
-				WeaponMelee->InterruptWeaponAttack();
-				return;
-			}
-
-			NewActorsInHitbox.Add(HitActor);
-			if (!ActorsCurrentlyInHitbox.Contains(HitActor))
-			{
-				UGameplayStatics::ApplyPointDamage(
-					HitActor,
-					MeleeHitbox->GetProcessedDamage(),
-					HitResult.ImpactNormal,
-					HitResult,
-					WeaponMelee->GetInstigatorController(),
-					WeaponMelee->GetOwner(),
-					WeaponMeleeData.DamageTypeClass
-				);
+				WeaponMelee->CallInterruptEvent(HitboxResults.Key, HitResult);
+				return true;
 			}
 		}
 	}
 
-	for (const AActor* PrevActor : ActorsCurrentlyInHitbox)
-	{
-		if (!NewActorsInHitbox.Contains(PrevActor))
-		{
-			// Actor was in hitbox but is no longer in it, handle any logic here if needed
-		}
-	}
-
-	ActorsCurrentlyInHitbox = NewActorsInHitbox;
+	return false;
 }
 
 void UMeleeHitboxesManager::ClearHitActors()
 {
-	ActorsCurrentlyInHitbox.Empty();
+	ActorsCurrentlyInside.Empty();
+	ActorsHitCounts.Empty();
+}
+
+void UMeleeHitboxesManager::StartTraceTimer(const float IntervalSeconds)
+{
+	if (!GetWorld())
+		return;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		TraceTimer,
+		this,
+		&UMeleeHitboxesManager::OnTraceTimerTick,
+		IntervalSeconds,
+		true
+	);
+}
+
+void UMeleeHitboxesManager::StopTraceTimer()
+{
+	if (!GetWorld())
+		return;
+
+	GetWorld()->GetTimerManager().ClearTimer(TraceTimer);
+}
+
+void UMeleeHitboxesManager::OnTraceTimerTick()
+{
+	ClearHitActors();
 }
 
 bool UMeleeHitboxesManager::Check() const

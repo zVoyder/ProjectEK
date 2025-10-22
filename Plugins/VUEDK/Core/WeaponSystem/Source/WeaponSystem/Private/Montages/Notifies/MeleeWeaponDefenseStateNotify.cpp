@@ -8,7 +8,6 @@ void UMeleeWeaponDefenseStateNotify::OnWeaponNotifyBegin(USkeletalMeshComponent*
 	Super::OnWeaponNotifyBegin(MeshComp, Animation, TotalDuration, Weapon);
 
 	AWeaponMelee* MeleeWeapon = Cast<AWeaponMelee>(Weapon);
-
 	if (!IsValid(MeleeWeapon))
 		return;
 
@@ -19,13 +18,12 @@ void UMeleeWeaponDefenseStateNotify::OnWeaponNotifyEnd(USkeletalMeshComponent* M
 {
 	Super::OnWeaponNotifyEnd(MeshComp, Animation, EventReference, Weapon);
 
-	if (bDisableBlockOnExit)
-		return;
-	
 	AWeaponMelee* MeleeWeapon = Cast<AWeaponMelee>(Weapon);
-
 	if (!IsValid(MeleeWeapon))
 		return;
-
-	MeleeWeapon->SetBlockActive(false);
+	
+	if (bDisableBlockOnExit)
+	{
+		MeleeWeapon->SetBlockActive(false);
+	}
 }

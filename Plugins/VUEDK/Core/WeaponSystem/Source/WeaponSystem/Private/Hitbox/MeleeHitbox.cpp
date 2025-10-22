@@ -2,12 +2,26 @@
 
 #include "Hitbox/MeleeHitbox.h"
 #include "WeaponSystem.h"
+#include "Hitbox/Tracers/MeleeHitboxCapsuleTracer.h"
+#include "Hitbox/Tracers/MeleeHitboxCubeTracer.h"
+#include "Hitbox/Tracers/MeleeHitboxSphereTracer.h"
 #include "Hitbox/Tracers/MeleeHitboxTracerBase.h"
 #include "Weapons/WeaponMelee.h"
 
 UMeleeHitbox::UMeleeHitbox()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	DamageProcessor = CreateDefaultSubobject<UMeleeHitboxDamageProcessor>(TEXT("DamageProcessor"));
+}
+
+void UMeleeHitbox::OnRegister()
+{
+	Super::OnRegister();
+
+	if (IsValid(HitboxTracer))
+	{
+		HitboxTracer->DrawHitboxPreview(GetComponentTransform());
+	}
 }
 
 void UMeleeHitbox::Init(AWeaponMelee* InWeaponMelee)
@@ -41,7 +55,7 @@ float UMeleeHitbox::GetProcessedDamage()
 	if (!Check())
 		return 0.0f;
 
-	return DamageProcessor->ProcessDamage(WeaponMelee->GetWeaponDamage(), this, GetWeaponMelee());
+	return DamageProcessor->ProcessDamageNative(WeaponMelee->GetWeaponDamage(), this, GetWeaponMelee());
 }
 
 AWeaponMelee* UMeleeHitbox::GetWeaponMelee() const

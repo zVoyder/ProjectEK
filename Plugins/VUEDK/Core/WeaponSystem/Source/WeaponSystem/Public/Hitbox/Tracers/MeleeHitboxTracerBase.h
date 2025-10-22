@@ -7,11 +7,17 @@
 #include "UObject/Object.h"
 #include "MeleeHitboxTracerBase.generated.h"
 
-UCLASS(Abstract, Blueprintable, BlueprintType, EditInlineNew)
+UCLASS(Abstract, BlueprintType, EditInlineNew)
 class WEAPONSYSTEM_API UMeleeHitboxTracerBase : public UObject
 {
 	GENERATED_BODY()
 
+public:
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditDefaultsOnly, Category = "Hitbox")
+	FColor HitboxColor = FColor::Red;
+#endif
+	
 protected:
 	UPROPERTY()
 	UMeleeHitbox* MeleeHitbox;
@@ -23,6 +29,12 @@ public:
 	
 	TArray<FHitResult> TraceHitbox();
 
+#if WITH_EDITOR
+	virtual void DrawHitboxPreview(const FTransform& HitboxTransform);
+
+	virtual void DrawDebugHitboxTrace(const AWeaponMelee* WeaponMelee, const FTransform& HitboxTransform);
+#endif
+	
 protected:
 	virtual FCollisionShape CreateCollisionShape();
 	

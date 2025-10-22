@@ -16,17 +16,19 @@ class WEAPONSYSTEM_API UMeleeHitbox : public USceneComponent
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Hitbox")
 	UMeleeHitboxTracerBase* HitboxTracer;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Hitbox")
 	UMeleeHitboxDamageProcessor* DamageProcessor;
-	
+
 private:
 	UPROPERTY()
 	AWeaponMelee* WeaponMelee;
 
 public:
 	UMeleeHitbox();
+
+	virtual void OnRegister() override;
 
 	void Init(AWeaponMelee* InWeaponMelee);
 

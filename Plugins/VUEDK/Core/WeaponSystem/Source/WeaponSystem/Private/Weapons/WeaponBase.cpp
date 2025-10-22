@@ -187,9 +187,6 @@ void AWeaponBase::StartWeaponMontageWithBlends(FWeaponMontageData WeaponMontageD
 
 void AWeaponBase::StopWeaponMontage(const FWeaponMontageData WeaponMontageData)
 {
-	if (!PlayingMontages.Contains(WeaponMontageData.GetWeaponMontage()) && !PlayingMontages.Contains(WeaponMontageData.GetCharacterMontage()))
-		return;
-
 	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
 	if (IsValid(AnimInstance))
 		AnimInstance->Montage_Stop(0.f, WeaponMontageData.GetCharacterMontage());
@@ -204,9 +201,6 @@ void AWeaponBase::StopWeaponMontage(const FWeaponMontageData WeaponMontageData)
 
 void AWeaponBase::StopWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut)
 {
-	if (!PlayingMontages.Contains(WeaponMontageData.GetWeaponMontage()) && !PlayingMontages.Contains(WeaponMontageData.GetCharacterMontage()))
-		return;
-
 	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
 	if (IsValid(AnimInstance))
 		AnimInstance->Montage_StopWithBlendOut(CharacterBlendOut, WeaponMontageData.GetCharacterMontage());

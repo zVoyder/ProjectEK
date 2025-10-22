@@ -4,7 +4,7 @@
 #include "WeaponSystem.h"
 #include "Weapons/WeaponMelee.h"
 
-UMeleeMontagesManager::UMeleeMontagesManager(): WeaponMelee(nullptr)
+UMeleeMontagesManager::UMeleeMontagesManager() : WeaponMelee(nullptr)
 {
 }
 
@@ -19,9 +19,59 @@ bool UMeleeMontagesManager::IsBusy_Implementation() const
 	return Super::IsBusy_Implementation() || IsMontageDefending() || IsMontageInterrupting();
 }
 
+void UMeleeMontagesManager::SetAttackSpeedMultiplier(const float Multiplier)
+{
+	AttackSpeedMultiplier = FMath::Clamp(Multiplier, 0.0f, 1.0f);
+}
+
+void UMeleeMontagesManager::SetDefenseSpeedMultiplier(const float Multiplier)
+{
+	DefenseSpeedMultiplier = FMath::Clamp(Multiplier, 0.0f, 1.0f);
+}
+
+void UMeleeMontagesManager::SetInterruptSpeedMultiplier(const float Multiplier)
+{
+	InterruptSpeedMultiplier = FMath::Clamp(Multiplier, 0.0f, 1.0f);
+}
+
+float UMeleeMontagesManager::GetAttackSpeedMultiplier() const
+{
+	return AttackSpeedMultiplier;
+}
+
+float UMeleeMontagesManager::GetDefenseSpeedMultiplier() const
+{
+	return DefenseSpeedMultiplier;
+}
+
+float UMeleeMontagesManager::GetInterruptSpeedMultiplier() const
+{
+	return InterruptSpeedMultiplier;
+}
+
+float UMeleeMontagesManager::GetAttackSpeed() const
+{
+	return BaseAttackSpeed * AttackSpeedMultiplier;
+}
+
+float UMeleeMontagesManager::GetDefenseSpeed() const
+{
+	return BaseDefenseSpeed * DefenseSpeedMultiplier;
+}
+
+float UMeleeMontagesManager::GetInterruptSpeed() const
+{
+	return BaseInterruptSpeed * InterruptSpeedMultiplier;
+}
+
 int32 UMeleeMontagesManager::GetAttackIndex() const
 {
 	return CurrentAttackIndex;
+}
+
+UWeaponMeleeAttackData* UMeleeMontagesManager::GetCurrentAttackMontage() const
+{
+	return CurrentAttackMontage;
 }
 
 bool UMeleeMontagesManager::IsMontageInterrupting() const
@@ -109,22 +159,22 @@ void UMeleeMontagesManager::OnWeaponEndAttack()
 	bEndAttack = true;
 }
 
-void UMeleeMontagesManager::OnWeaponAttackInterrupted()
+void UMeleeMontagesManager::OnWeaponAttackInterrupted(UMeleeHitbox* Hitbox, FHitResult HitResult)
 {
 	if (CurrentAttackMontage == nullptr)
 		return;
-	
+
 	if (!IsValid(CurrentAttackMontage->AttackInterruptMontage.GetCharacterMontage()))
 		return;
 
-	UWeaponMeleeAttackMontageData* WeaponMontage = CurrentAttackMontage;
+	UWeaponMeleeAttackData* WeaponMontage = CurrentAttackMontage;
 	bIsInterrupting = true;
 	EndAttackSequence();
 	WeaponMontage->AttackInterruptMontage.OnMontageFinished.AddUniqueDynamic(this, &UMeleeMontagesManager::OnAttackInterruptFinished);
 	StartWeaponMontage(
 		WeaponMontage->AttackInterruptMontage,
-		1.0f,
-		1.0f
+		GetInterruptSpeed(),
+		GetInterruptSpeed()
 	);
 }
 
@@ -135,14 +185,14 @@ void UMeleeMontagesManager::OnAttackInterruptFinished(bool bInterrupted)
 
 void UMeleeMontagesManager::StartComboAttack()
 {
-	if (AttackMontages.IsEmpty())
+	if (Attacks.IsEmpty())
 	{
 		UE_LOG(LogWeaponSystem, Warning, TEXT("UMeleeMontagesManager::StartComboAttack: %s in %s has no attack montages."), *GetName(), *GetOwner()->GetName());
 		return;
 	}
 
 	ResetComboAttack();
-	UWeaponMeleeAttackMontageData* AttackMontage = AttackMontages[0];
+	UWeaponMeleeAttackData* AttackMontage = Attacks[0];
 
 	if (!IsValid(AttackMontage))
 		return;
@@ -154,8 +204,8 @@ void UMeleeMontagesManager::StartComboAttack()
 	CurrentAttackMontage = AttackMontage;
 	StartWeaponMontageWithBlends(
 		AttackMontage->AttackMontage,
-		1.0f, // Use the default play rate, since it can be set in the montage itself
-		1.0f,
+		GetAttackSpeed(),
+		GetAttackSpeed(),
 		WeaponBlendArgs,
 		StartBlendIn
 	);
@@ -187,30 +237,30 @@ void UMeleeMontagesManager::ResetComboAttack()
 void UMeleeMontagesManager::PlayNextAttackMontage()
 {
 	CurrentAttackIndex++;
-	CurrentAttackIndex %= AttackMontages.Num();
+	CurrentAttackIndex %= Attacks.Num();
 	PlayAttackMontageAt(CurrentAttackIndex);
 }
 
 void UMeleeMontagesManager::PlayAttackMontageAt(const int32 AttackIndex)
 {
-	if (!AttackMontages.IsValidIndex(AttackIndex))
+	if (!Attacks.IsValidIndex(AttackIndex))
 	{
 		UE_LOG(LogWeaponSystem, Error, TEXT("UMeleeMontagesManager::PlayAttackMontageAt: Invalid index %d for attack montage in %s."), AttackIndex, *GetName());
 		return;
 	}
 
-	UWeaponMeleeAttackMontageData* AttackMontage = AttackMontages[AttackIndex];
+	UWeaponMeleeAttackData* AttackMontage = Attacks[AttackIndex];
 	PlayAttackMontage(AttackMontage);
 }
 
-void UMeleeMontagesManager::PlayAttackMontage(UWeaponMeleeAttackMontageData* AttackMontage)
+void UMeleeMontagesManager::PlayAttackMontage(UWeaponMeleeAttackData* AttackMontage)
 {
 	CurrentAttackMontage = AttackMontage;
 
 	StartWeaponMontage(
 		AttackMontage->AttackMontage,
-		1.0f,
-		1.0f
+		GetAttackSpeed(),
+		GetAttackSpeed()
 	);
 }
 
@@ -231,12 +281,12 @@ void UMeleeMontagesManager::PlayDefensiveMontage()
 
 	if (!IsValid(DefensiveMontage.GetCharacterMontage()))
 		return;
-
+	
 	bIsDefending = true;
 	StartWeaponMontage(
 		DefensiveMontage,
-		1.0f,
-		1.0f
+		GetDefenseSpeed(),
+		GetDefenseSpeed()
 	);
 
 	StartDefenseCooldownTimer();
@@ -246,7 +296,7 @@ void UMeleeMontagesManager::StopDefensiveMontage()
 {
 	if (!IsMontageDefending())
 		return;
-
+	
 	if (!IsValid(DefensiveMontage.GetCharacterMontage()))
 		return;
 
@@ -272,11 +322,7 @@ void UMeleeMontagesManager::ProcessDefense()
 
 void UMeleeMontagesManager::StartDefenseCooldownTimer()
 {
-	if (DefenseCooldown <= 0.0f)
-		return;
-
 	const UWorld* World = GetWorld();
-
 	if (!IsValid(World))
 	{
 		UE_LOG(LogWeaponSystem, Warning, TEXT("UMeleeMontagesManager::StartDefenseCooldownTimer: World is not valid."));
@@ -292,6 +338,20 @@ void UMeleeMontagesManager::StartDefenseCooldownTimer()
 		DefenseCooldown,
 		false
 	);
+}
+
+void UMeleeMontagesManager::StopDefenseCooldownTimer()
+{
+	const UWorld* World = GetWorld();
+	if (!IsValid(World))
+	{
+		UE_LOG(LogWeaponSystem, Warning, TEXT("UMeleeMontagesManager::StopDefensiveMontage: World is not valid."));
+		return;
+	}
+
+	bIsDefenseInCooldown = false;
+	FTimerManager& TimerManager = World->GetTimerManager();
+	TimerManager.ClearTimer(DefenseCooldownTimer);
 }
 
 void UMeleeMontagesManager::ResetDefenseCooldown()

@@ -48,8 +48,24 @@ TArray<FHitResult> UMeleeHitboxTracerBase::TraceHitbox()
 		CreateCollisionParams()
 	);
 
+#if WITH_EDITOR
+	const AWeaponMelee* WeaponMelee = MeleeHitbox->GetWeaponMelee();
+	if (IsValid(WeaponMelee) && WeaponMelee->bDebug)
+		DrawDebugHitboxTrace(WeaponMelee, MeleeHitbox->GetComponentTransform());
+#endif
+
 	return HitResults;
 }
+
+#if WITH_EDITOR
+void UMeleeHitboxTracerBase::DrawHitboxPreview(const FTransform& HitboxTransform)
+{
+}
+
+void UMeleeHitboxTracerBase::DrawDebugHitboxTrace(const AWeaponMelee* WeaponMelee, const FTransform& HitboxTransform)
+{
+}
+#endif
 
 FCollisionShape UMeleeHitboxTracerBase::CreateCollisionShape()
 {

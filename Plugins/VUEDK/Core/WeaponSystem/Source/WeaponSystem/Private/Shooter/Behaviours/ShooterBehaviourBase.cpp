@@ -5,34 +5,44 @@
 #include "Shooter/Shooter.h"
 #include "Kismet/GameplayStatics.h"
 
-void UShooterBehaviourBase::Init(UShooter* InShooter, const FShootData InShootData, UShootBarrel* InShootBarrel)
+void UShooterBehaviourBase::Init(UShooter* InShooter)
 {
 	if (!IsValid(InShooter))
 	{
-		UE_LOG(LogShooter, Error, TEXT("Shooter in %s is null."), *GetName());
+		UE_LOG(LogShooter, Error, TEXT("UShooterBehaviourBase::Init: Shooter in %s is null."), *GetName());
 		return;
 	}
 
-	if (!IsValid(InShootBarrel))
+	if (!IsValid(ShootData))
 	{
-		UE_LOG(LogShooter, Error, TEXT("ShootBarrel in %s is null."), *GetName());
+		UE_LOG(LogShooter, Error, TEXT("UShooterBehaviourBase::Init: ShootData in %s is null."), *GetName());
 		return;
 	}
 
-	ShootData = InShootData;
 	Shooter = InShooter;
-	ShootBarrel = InShootBarrel;
 	ShootPoints = ShootBarrel->GetShootPointsChildren();
+	ResetAll();
 	CreateHandlers();
 	EnableBehaviour();
 	OnInit();
 }
 
+void UShooterBehaviourBase::SetupShootBarrel(UShootBarrel* InShootBarrel)
+{
+	if (!IsValid(InShootBarrel))
+	{
+		UE_LOG(LogShooter, Error, TEXT("SetupShootBarrel: InShootBarrel in %s is null."), *GetName());
+		return;
+	}
+
+	ShootBarrel = InShootBarrel;
+}
+
 void UShooterBehaviourBase::CreateHandlers()
 {
-	RecoilHandler = UHandlersFactory::CreateRecoilHandler(this, ShootData);
-	CooldownHandler = UHandlersFactory::CreateCooldownHandler(this, ShootData);
-	SpreadHandler = UHandlersFactory::CreateSpreadHandler(this, ShootData);
+	RecoilHandler = UHandlersFactory::CreateRecoilHandler(this);
+	CooldownHandler = UHandlersFactory::CreateCooldownHandler(this);
+	SpreadHandler = UHandlersFactory::CreateSpreadHandler(this);
 }
 
 void UShooterBehaviourBase::SetOwner(APawn* InOwner)
@@ -127,9 +137,10 @@ void UShooterBehaviourBase::ResetCooldown() const
 
 void UShooterBehaviourBase::EndShootSequence()
 {
-	if (ShotsFired <= 0)
+	if (ShotsFired <= 0 || !bIsShooting)
 		return;
-	
+
+	bIsShooting = false;
 	ShotsFired = 0;
 	OnEndShootSequence.Broadcast();
 }
@@ -139,17 +150,31 @@ void UShooterBehaviourBase::ResetSpread(const float ChangeRate) const
 	SpreadHandler->ResetSpread(ChangeRate);
 }
 
-int32 UShooterBehaviourBase::Refill(const int32 Ammo)
+int32 UShooterBehaviourBase::RefillMagazine(const int32 Ammo, int32& OutRemainingAmmo) const
 {
-	ModifyCurrentAmmo(Ammo);
-	OnRefill();
-	OnBehaviourRefill.Broadcast(CurrentAmmo);
-	return FMath::Abs(CurrentAmmo - Ammo);
+	UMagazine* RelatedMagazine = GetRelatedMagazine();
+	if (!IsValid(RelatedMagazine))
+		return 0;
+	
+	return RelatedMagazine->Refill(Ammo, OutRemainingAmmo);
 }
 
-void UShooterBehaviourBase::RefillAllMagazine()
+void UShooterBehaviourBase::RefillAllMagazine() const
 {
-	Refill(GetMagSize());
+	UMagazine* RelatedMagazine = GetRelatedMagazine();
+	if (!IsValid(RelatedMagazine))
+		return;
+
+	RelatedMagazine->RefillAllMagazine();
+}
+
+int32 UShooterBehaviourBase::RefillWithAmmoType(UAmmoTypeData* AmmoType, const int32 Ammo, int32& OutRemainingAmmo) const
+{
+	UMagazine* RelatedMagazine = GetRelatedMagazine();
+	if (!IsValid(RelatedMagazine))
+		return 0;
+
+	return RelatedMagazine->RefillWithAmmoType(AmmoType, Ammo, OutRemainingAmmo);
 }
 
 void UShooterBehaviourBase::AddDynamicSpread(const float AddSpread, const float ChangeRate, const float RecoveryRate) const
@@ -169,28 +194,31 @@ void UShooterBehaviourBase::SetShootParams(const float NewDamage, const float Ne
 
 void UShooterBehaviourBase::SetDamage(const float NewDamage)
 {
-	ShootData.Damage = FMath::Clamp(NewDamage, 0.f, MAX_FLT);
+	CurrentDamage = FMath::Clamp(NewDamage, 0.f, MAX_FLT);
 }
 
 void UShooterBehaviourBase::SetFireRate(const float NewFireRate)
 {
-	ShootData.FireRate = FMath::Clamp(NewFireRate, 0.f, MAX_FLT);
+	CurrentFireRate = FMath::Clamp(NewFireRate, 0.f, MAX_FLT);
 }
 
 void UShooterBehaviourBase::SetMaxRange(const float NewRange)
 {
-	ShootData.MaxRange = FMath::Clamp(NewRange, 0.f, MAX_FLT);
+	CurrentMaxRange = FMath::Clamp(NewRange, 0.f, MAX_FLT);
 }
 
-void UShooterBehaviourBase::SetMagSize(const int32 NewMagSize)
+void UShooterBehaviourBase::SetMagSize(const int32 NewMagSize) const
 {
-	ShootData.MagSize = FMath::Clamp(NewMagSize, 0, MAX_int32);
+	UMagazine* RelatedMagazine = GetRelatedMagazine();
+	if (!IsValid(RelatedMagazine))
+		return;
+
+	RelatedMagazine->SetMagazineSize(NewMagSize);
 }
 
-void UShooterBehaviourBase::SetRecoilStrength(float NewRecoilStrength)
+void UShooterBehaviourBase::SetRecoilStrength(const float NewRecoilStrength)
 {
-	NewRecoilStrength = FMath::Clamp(NewRecoilStrength, 0.f, 1.f);
-	ShootData.RecoilStrength = NewRecoilStrength;
+	CurrentRecoilStrength = FMath::Clamp(NewRecoilStrength, 0.f, 1.f);
 }
 
 void UShooterBehaviourBase::InstantSetSpread(const float InSpread, const bool bOverrideDefault) const
@@ -203,21 +231,30 @@ void UShooterBehaviourBase::SetSpread(const float NewSpread, const float NewSpre
 	SpreadHandler->SetSpread(NewSpread, NewSpreadChangeRate, bOverrideDefault);
 }
 
-void UShooterBehaviourBase::SetShootType(const EShootType NewShootType)
+void UShooterBehaviourBase::SetDefaultSpread(const float NewDefaultSpread)
 {
-	ShootData.ShootType = NewShootType;
+	CurrentDefaultSpread = NewDefaultSpread;
 }
 
-void UShooterBehaviourBase::SetCurrentAmmo(const int32 NewAmmo)
+void UShooterBehaviourBase::SetInfiniteAmmo(const bool bEnabled)
 {
-	const int32 MagSize = GetMagSize();
-	CurrentAmmo = FMath::Clamp(NewAmmo, 0, MagSize);
-	OnCurrentAmmoChanged.Broadcast(CurrentAmmo, MagSize);
+	bCurrentInfiniteAmmo = bEnabled;
 }
 
-void UShooterBehaviourBase::ModifyCurrentAmmo(const int32 AmmoValue)
+void UShooterBehaviourBase::ChangeShootType(const EShootType NewShootType)
 {
-	SetCurrentAmmo(CurrentAmmo + AmmoValue);
+	CurrentShootType = NewShootType;
+}
+
+void UShooterBehaviourBase::ChangeMagazine(const FGameplayTag& NewMagazineTag)
+{
+	UMagazine* OldMagazine = GetRelatedMagazine();
+	UnbindMagazineEvents(OldMagazine);
+	
+	CurrentMagazineTag = NewMagazineTag;
+	UMagazine* NewMagazine = GetRelatedMagazine();
+	
+	BindMagazineEvents(NewMagazine);
 }
 
 bool UShooterBehaviourBase::IsBehaviourActive() const
@@ -225,14 +262,41 @@ bool UShooterBehaviourBase::IsBehaviourActive() const
 	return bIsBehaviourActive;
 }
 
+bool UShooterBehaviourBase::IsShooting() const
+{
+	return bIsShooting;
+}
+
 bool UShooterBehaviourBase::IsMagEmpty() const
 {
-	return CurrentAmmo <= 0;
+	const UMagazine* RelatedMagazine = GetRelatedMagazine();
+	if (!IsValid(RelatedMagazine))
+		return false;
+
+	return RelatedMagazine->IsEmpty();
 }
 
 bool UShooterBehaviourBase::IsMagFull() const
 {
-	return CurrentAmmo >= GetMagSize();
+	const UMagazine* RelatedMagazine = GetRelatedMagazine();
+	if (!IsValid(RelatedMagazine))
+		return false;
+
+	return RelatedMagazine->IsFull();
+}
+
+bool UShooterBehaviourBase::UsesAmmoOfType(const UAmmoTypeData* InAmmoType) const
+{
+	const UMagazine* RelatedMagazine = GetRelatedMagazine();
+	if (!IsValid(RelatedMagazine))
+		return false;
+
+	return RelatedMagazine->IsOfAmmoType(InAmmoType);
+}
+
+bool UShooterBehaviourBase::HasInfiniteAmmo() const
+{
+	return bCurrentInfiniteAmmo;
 }
 
 APawn* UShooterBehaviourBase::GetOwner() const
@@ -240,34 +304,43 @@ APawn* UShooterBehaviourBase::GetOwner() const
 	return Owner;
 }
 
-float UShooterBehaviourBase::GetMaxRange_Implementation() const
+float UShooterBehaviourBase::GetDamage() const
 {
-	return ShootData.MaxRange;
+	return CurrentDamage;
 }
 
-float UShooterBehaviourBase::GetFireRate_Implementation() const
+float UShooterBehaviourBase::GetMaxRange() const
 {
-	return ShootData.FireRate;
+	return CurrentMaxRange;
 }
 
-float UShooterBehaviourBase::GetDamage_Implementation() const
+float UShooterBehaviourBase::GetFireRate() const
 {
-	return ShootData.Damage;
+	return CurrentFireRate;
 }
 
-int32 UShooterBehaviourBase::GetMagSize_Implementation() const
+int32 UShooterBehaviourBase::GetMagSize() const
 {
-	return ShootData.MagSize;
+	const UMagazine* RelatedMagazine = GetRelatedMagazine();
+	if (!IsValid(RelatedMagazine))
+		return 0;
+
+	return RelatedMagazine->GetMagazineSize();
 }
 
-float UShooterBehaviourBase::GetRecoilStrength_Implementation() const
+float UShooterBehaviourBase::GetRecoilStrength() const
 {
-	return ShootData.RecoilStrength;
+	return CurrentRecoilStrength;
 }
 
 float UShooterBehaviourBase::GetSpread() const
 {
 	return SpreadHandler->GetSpread();
+}
+
+float UShooterBehaviourBase::GetDefaultSpread() const
+{
+	return CurrentDefaultSpread;
 }
 
 UShootBarrel* UShooterBehaviourBase::GetShootBarrel() const
@@ -277,22 +350,45 @@ UShootBarrel* UShooterBehaviourBase::GetShootBarrel() const
 
 EShootType UShooterBehaviourBase::GetShootType() const
 {
-	return ShootData.ShootType;
+	return CurrentShootType;
+}
+
+TEnumAsByte<ECollisionChannel> UShooterBehaviourBase::GetSightTraceChannel() const
+{
+	if (!IsValid(ShootData))
+	{
+		UE_LOG(LogShooter, Error, TEXT("UShooterBehaviourBase::GetSightTraceChannel: ShootData in %s is null."), *GetName());
+		return ECollisionChannel::ECC_Visibility;
+	}
+
+	return ShootData->SightTraceChannel;
+}
+
+TSubclassOf<UDamageType> UShooterBehaviourBase::GetDamageTypeClass() const
+{
+	if (!IsValid(ShootData))
+	{
+		UE_LOG(LogShooter, Error, TEXT("UShooterBehaviourBase::GetDamageTypeClass: ShootData in %s is null."), *GetName());
+		return UDamageType::StaticClass();
+	}
+
+	return ShootData->DamageTypeClass;
+}
+
+UMagazine* UShooterBehaviourBase::GetRelatedMagazine() const
+{
+	if (!IsValid(Shooter))
+	{
+		UE_LOG(LogShooter, Error, TEXT("UShooterBehaviourBase::GetRelatedMagazine: Shooter in %s is null."), *GetName());
+		return nullptr;
+	}
+
+	return Shooter->GetMagazineByTag(CurrentMagazineTag);
 }
 
 int32 UShooterBehaviourBase::GetShotsFired() const
 {
 	return ShotsFired;
-}
-
-int32 UShooterBehaviourBase::GetCurrentAmmo() const
-{
-	return CurrentAmmo;
-}
-
-int32 UShooterBehaviourBase::GetAmmoToConsume() const
-{
-	return AmmoToConsumePerShot;
 }
 
 UCooldownHandler* UShooterBehaviourBase::GetCooldownHandler() const
@@ -310,9 +406,59 @@ USpreadHandler* UShooterBehaviourBase::GetSpreadHandler() const
 	return SpreadHandler;
 }
 
-bool UShooterBehaviourBase::HasJustShot() const
+void UShooterBehaviourBase::ResetAll()
 {
-	return bHasJustShot;
+	ResetDamage();
+	ResetFireRate();
+	ResetMaxRange();
+	ResetRecoilStrength();
+	ResetDefaultSpread();
+	ResetInfiniteAmmo();
+	ResetShootType();
+	ResetMagazineTag();
+}
+
+void UShooterBehaviourBase::ResetDamage()
+{
+	CurrentDamage = ShootData->Damage;
+}
+
+void UShooterBehaviourBase::ResetFireRate()
+{
+	CurrentFireRate = ShootData->FireRate;
+}
+
+void UShooterBehaviourBase::ResetMaxRange()
+{
+	CurrentMaxRange = ShootData->MaxRange;
+}
+
+void UShooterBehaviourBase::ResetRecoilStrength()
+{
+	CurrentRecoilStrength = ShootData->RecoilStrength;
+}
+
+void UShooterBehaviourBase::ResetDefaultSpread()
+{
+	if (!Check())
+		return;
+
+	CurrentDefaultSpread = ShootData->DefaultSpread;
+}
+
+void UShooterBehaviourBase::ResetInfiniteAmmo()
+{
+	bCurrentInfiniteAmmo = ShootData->bHasInfiniteAmmo;
+}
+
+void UShooterBehaviourBase::ResetShootType()
+{
+	CurrentShootType = ShootData->ShootType;
+}
+
+void UShooterBehaviourBase::ResetMagazineTag()
+{
+	ChangeMagazine(ShootData->MagazineTag);
 }
 
 UWorld* UShooterBehaviourBase::GetWorld() const
@@ -330,6 +476,65 @@ bool UShooterBehaviourBase::ImplementsGetWorld() const
 	return true;
 }
 #endif
+
+bool UShooterBehaviourBase::TryGetCameraPoints(FVector& OutStartPoint, FVector& OutEndPoint, FVector& OutHitPoint, FRotator& OutRotation, const FVector StartPointOffset) const
+{
+	if (!Check())
+	{
+		UE_LOG(LogShooter, Error, TEXT("ShooterBehaviour TryGetCameraPoints() failed check in %s."), *GetName());
+		return false;
+	}
+
+	const UWorld* World = Shooter->GetWorld();
+
+	if (!IsValid(World))
+	{
+		UE_LOG(LogShooter, Error, TEXT("ShooterBehaviour LineTraceFromCamera(), World is invalid in %s."), *GetName());
+		return false;
+	}
+
+	const APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(World, 0);
+	if (!IsValid(CameraManager))
+	{
+		UE_LOG(LogShooter, Error, TEXT("ShooterBehaviour LineTraceFromCamera(), CameraManager is null in %s."), *GetName());
+		return false;
+	}
+
+	const FVector CameraLocation = CameraManager->GetCameraCacheView().Location;
+	OutRotation = CameraManager->GetCameraCacheView().Rotation;
+
+	const FVector WorldOffset = OutRotation.RotateVector(StartPointOffset);
+	OutStartPoint = CameraLocation + WorldOffset;
+	OutEndPoint = OutStartPoint + OutRotation.Vector() * GetMaxRange();
+	OutHitPoint = OutEndPoint;
+
+	if (FHitResult HitResult; World->LineTraceSingleByChannel(HitResult, OutStartPoint, OutEndPoint, GetSightTraceChannel()))
+		OutHitPoint = HitResult.ImpactPoint;
+
+	return true;
+}
+
+bool UShooterBehaviourBase::IsInLineOfSight(const FVector& StartPoint, const FVector& TargetPoint, const float Tolerance) const
+{
+	if (!Check())
+	{
+		UE_LOG(LogShooter, Error, TEXT("ShooterBehaviour IsInLineOfSight() failed check in %s."), *GetName());
+		return false;
+	}
+
+	const UWorld* World = GetWorld();
+
+	if (!IsValid(World))
+	{
+		UE_LOG(LogShooter, Error, TEXT("ShooterBehaviour IsInLineOfSight(), World is invalid in %s."), *GetName());
+		return false;
+	}
+
+	if (FHitResult HitResult; World->LineTraceSingleByChannel(HitResult, StartPoint, TargetPoint, GetSightTraceChannel()))
+		return HitResult.ImpactPoint.Equals(TargetPoint, Tolerance);
+
+	return true;
+}
 
 void UShooterBehaviourBase::HandleShoot()
 {
@@ -366,18 +571,38 @@ void UShooterBehaviourBase::ShootSuccess()
 		return;
 	}
 
+	bIsShooting = true;
 	OnShootSuccess(ShootBarrel);
 	OnBehaviourShootSuccess.Broadcast(ShootBarrel, ShotsFired);
 	CooldownHandler->StartCooldown();
 	RecoilHandler->ApplyRecoilImpulse();
 	SpreadHandler->AddDynamicSpreadWithCurve();
 	ShotsFired++;
-	CheckMagEmpty();
-	TriggerHasJustShot();
 }
 
 void UShooterBehaviourBase::ShootFail(const EShootFailReason FailReason)
 {
+	switch (FailReason)
+	{
+	case EShootFailReason::Error:
+		bIsShooting = false;
+		break;
+	case EShootFailReason::CoolDown:
+		break;
+	case EShootFailReason::NoAmmo:
+		bIsShooting = false;
+		break;
+	case EShootFailReason::Condition:
+		break;
+	case EShootFailReason::NoShootPoints:
+		bIsShooting = false;
+		break;
+	case EShootFailReason::Disabled:
+		bIsShooting = false;
+		break;
+	default: ;
+	}
+	
 	OnShootFail(FailReason);
 	OnBehaviourShootFail.Broadcast();
 }
@@ -403,6 +628,15 @@ void UShooterBehaviourBase::OnDisabled_Implementation()
 {
 }
 
+FVector UShooterBehaviourBase::GetShooterTargetLocation_Implementation() const
+{
+	FRotator Rotation;
+	if (FVector CameraStartPoint, CameraEndPoint, CameraHitPoint; TryGetCameraPoints(CameraStartPoint, CameraEndPoint, CameraHitPoint, Rotation))
+		return CameraHitPoint;
+
+	return FVector::ZeroVector;
+}
+
 void UShooterBehaviourBase::OnDeployShoot_Implementation(UShootPoint* ShootPoint, const FVector& TargetLocation, const FVector& DirectionToTarget, const FVector& DirectionToTargetSpreaded) const
 {
 }
@@ -420,74 +654,43 @@ bool UShooterBehaviourBase::OnShootCondition_Implementation(UShootBarrel* OutSho
 	return true;
 }
 
-void UShooterBehaviourBase::OnRefill_Implementation()
+void UShooterBehaviourBase::OnMagazineAmmoChange_Implementation(int32 CurrentAmmo, int32 MagSize)
 {
 }
 
-
-void UShooterBehaviourBase::OnMagEmptied_Implementation()
+void UShooterBehaviourBase::OnMagazineRefill_Implementation(int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
 {
 }
 
-FVector UShooterBehaviourBase::GetShooterTargetLocation_Implementation() const
+void UShooterBehaviourBase::OnMagazineFull_Implementation()
 {
-	FRotator Rotation;
-	if (FVector CameraStartPoint, CameraEndPoint, CameraHitPoint; TryGetCameraPoints(CameraStartPoint, CameraEndPoint, CameraHitPoint, Rotation))
-		return CameraHitPoint;
-
-	return FVector::ZeroVector;
 }
 
-bool UShooterBehaviourBase::TryGetCameraPoints(FVector& OutStartPoint, FVector& OutEndPoint, FVector& OutHitPoint, FRotator& OutRotation, const FVector StartPointOffset) const
+void UShooterBehaviourBase::OnMagazineEmpty_Implementation()
 {
-	const UWorld* World = Shooter->GetWorld();
-
-	if (!IsValid(World))
-	{
-		UE_LOG(LogShooter, Error, TEXT("ShooterBehaviour LineTraceFromCamera(), World is invalid in %s."), *GetName());
-		return false;
-	}
-
-	const APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(World, 0);
-	if (!IsValid(CameraManager))
-	{
-		UE_LOG(LogShooter, Error, TEXT("ShooterBehaviour LineTraceFromCamera(), CameraManager is null in %s."), *GetName());
-		return false;
-	}
-
-	const FVector CameraLocation = CameraManager->GetCameraCacheView().Location;
-	OutRotation = CameraManager->GetCameraCacheView().Rotation;
-
-	const FVector WorldOffset = OutRotation.RotateVector(StartPointOffset);
-	OutStartPoint = CameraLocation + WorldOffset;
-	OutEndPoint = OutStartPoint + OutRotation.Vector() * GetMaxRange();
-	OutHitPoint = OutEndPoint;
-
-	if (FHitResult HitResult; World->LineTraceSingleByChannel(HitResult, OutStartPoint, OutEndPoint, SightTraceChannel))
-		OutHitPoint = HitResult.ImpactPoint;
-
-	return true;
-}
-
-bool UShooterBehaviourBase::IsInLineOfSight(const FVector& StartPoint, const FVector& TargetPoint, const float Tolerance) const
-{
-	const UWorld* World = GetWorld();
-
-	if (!IsValid(World))
-	{
-		UE_LOG(LogShooter, Error, TEXT("ShooterBehaviour IsInLineOfSight(), World is invalid in %s."), *GetName());
-		return false;
-	}
-
-	if (FHitResult HitResult; World->LineTraceSingleByChannel(HitResult, StartPoint, TargetPoint, SightTraceChannel))
-		return HitResult.ImpactPoint.Equals(TargetPoint, Tolerance);
-
-	return true;
 }
 
 bool UShooterBehaviourBase::Check() const
 {
-	return IsValid(Shooter) && IsValid(ShootBarrel);
+	if (!IsValid(Shooter))
+	{
+		UE_LOG(LogShooter, Error, TEXT("UShooterBehaviourBase::Check: ShooterBehaviour %s has null Shooter."), *GetName());
+		return false;
+	}
+
+	if (!IsValid(ShootData))
+	{
+		UE_LOG(LogShooter, Error, TEXT("UShooterBehaviourBase::Check: ShooterBehaviour %s has null ShootData."), *GetName());
+		return false;
+	}
+
+	if (!IsValid(ShootBarrel))
+	{
+		UE_LOG(LogShooter, Error, TEXT("UShooterBehaviourBase::Check: ShooterBehaviour %s has not setup a ShootBarrel."), *GetName());
+		return false;
+	}
+
+	return IsValid(CooldownHandler) && IsValid(RecoilHandler) && IsValid(SpreadHandler);
 }
 
 void UShooterBehaviourBase::HandleSimultaneousShoot()
@@ -530,52 +733,40 @@ int32 UShooterBehaviourBase::NextShootPointIndex()
 	return CurrentShootPointIndex;
 }
 
-bool UShooterBehaviourBase::TryConsumeAmmoForShoot()
+bool UShooterBehaviourBase::TryConsumeAmmoForShoot() const
 {
-	if (!HasEnoughAmmoToShoot())
+	if (HasInfiniteAmmo())
+		return true;
+
+	if (!Check())
 		return false;
 
-	ModifyCurrentAmmo(-GetAmmoToConsume());
-	return true;
+	UMagazine* RelatedMagazine = GetRelatedMagazine();
+	if (!IsValid(RelatedMagazine))
+		return false;
+
+	const int32 AmmoPerShot = ShootData->AmmoToConsumePerShot;
+	return RelatedMagazine->TryConsumeAmmo(AmmoPerShot);
 }
 
-bool UShooterBehaviourBase::HasEnoughAmmoToShoot() const
+void UShooterBehaviourBase::BindMagazineEvents(UMagazine* Magazine)
 {
-	return bHasInfiniteAmmo || CurrentAmmo - GetAmmoToConsume() >= 0;
+	if (!IsValid(Magazine))
+		return;
+	
+	Magazine->OnAmmoChanged.AddDynamic(this, &UShooterBehaviourBase::OnMagazineAmmoChange);
+	Magazine->OnMagazineRefilled.AddDynamic(this, &UShooterBehaviourBase::OnMagazineRefill);
+	Magazine->OnMagazineFull.AddDynamic(this, &UShooterBehaviourBase::OnMagazineFull);
+	Magazine->OnMagazineEmpty.AddDynamic(this, &UShooterBehaviourBase::OnMagazineEmpty);
 }
 
-void UShooterBehaviourBase::CheckMagEmpty()
+void UShooterBehaviourBase::UnbindMagazineEvents(UMagazine* Magazine)
 {
-	if (!HasEnoughAmmoToShoot())
-	{
-		OnMagEmptied();
-		OnMagEmpty.Broadcast();
-	}
-}
-
-void UShooterBehaviourBase::TriggerHasJustShot()
-{
-	if (bHasJustShot)
+	if (!IsValid(Magazine))
 		return;
 
-	bHasJustShot = true;
-	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &UShooterBehaviourBase::NextTickHasJustShot);
-}
-
-void UShooterBehaviourBase::NextTickHasJustShot()
-{
-	if (HasJustShotTickCount >= HasJustShootTicks)
-	{
-		ResetHasJustShot();
-		return;
-	}
-
-	HasJustShotTickCount++;
-	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &UShooterBehaviourBase::NextTickHasJustShot);
-}
-
-void UShooterBehaviourBase::ResetHasJustShot()
-{
-	bHasJustShot = false;
-	HasJustShotTickCount = 0;
+	Magazine->OnAmmoChanged.RemoveDynamic(this, &UShooterBehaviourBase::OnMagazineAmmoChange);
+	Magazine->OnMagazineRefilled.RemoveDynamic(this, &UShooterBehaviourBase::OnMagazineRefill);
+	Magazine->OnMagazineFull.RemoveDynamic(this, &UShooterBehaviourBase::OnMagazineFull);
+	Magazine->OnMagazineEmpty.RemoveDynamic(this, &UShooterBehaviourBase::OnMagazineEmpty);
 }

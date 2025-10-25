@@ -274,13 +274,13 @@ void UInputsHandlerSubsystem::SetModeUI()
 	{
 	case EContextsBehaviour::Switch:
 		{
-			AddUIContexts(InputsHandlerSystemSettings->UIContextsPriority);
+			AddUIContexts();
 			RemoveGameplayContexts();
 			break;
 		}
 	case EContextsBehaviour::Priority:
 		{
-			AddUIContexts(InputsHandlerSystemSettings->UIContextsPriority);
+			AddUIContexts();
 			RemoveExcludedContexts();
 			break;
 		}
@@ -397,13 +397,13 @@ void UInputsHandlerSubsystem::SetInputModeUI() const
 void UInputsHandlerSubsystem::AddCommonContexts() const
 {
 	for (const auto Context : CommonMappingContexts)
-		EnhancedInputSubsystem->AddMappingContext(Context, 0);
+		EnhancedInputSubsystem->AddMappingContext(Context, InputsHandlerSystemSettings->CommonContextsPriority);
 }
 
 void UInputsHandlerSubsystem::AddGameplayContexts() const
 {
 	for (const auto Context : GameplayMappingContexts)
-		EnhancedInputSubsystem->AddMappingContext(Context, 0);
+		EnhancedInputSubsystem->AddMappingContext(Context, InputsHandlerSystemSettings->GameplayContextsPriority);
 }
 
 void UInputsHandlerSubsystem::RemoveGameplayContexts() const
@@ -412,10 +412,10 @@ void UInputsHandlerSubsystem::RemoveGameplayContexts() const
 		EnhancedInputSubsystem->RemoveMappingContext(Context);
 }
 
-void UInputsHandlerSubsystem::AddUIContexts(const int32 Priority) const
+void UInputsHandlerSubsystem::AddUIContexts() const
 {
 	for (const auto Context : UIMappingContexts)
-		EnhancedInputSubsystem->AddMappingContext(Context, Priority);
+		EnhancedInputSubsystem->AddMappingContext(Context, InputsHandlerSystemSettings->UIContextsPriority);
 }
 
 void UInputsHandlerSubsystem::RemoveUIContexts() const

@@ -47,17 +47,15 @@ public:
 	FOnWeaponUnequipped OnWeaponUnequippedEvent;
 
 protected:
-	// -- Data --
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	FWeaponData WeaponData;
-
+	
 	// -- Montages --
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
 	bool bUseTag;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages", meta = (ToolTip = "Used to find the anim instance of the owner's mesh if it is not a character"))
 	FName AnimInstanceMeshTag = TEXT("AnimInstanceMesh"); // Use a tag to be more flexible
 
-	// -- Mesh --
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USceneComponent* WeaponRoot;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

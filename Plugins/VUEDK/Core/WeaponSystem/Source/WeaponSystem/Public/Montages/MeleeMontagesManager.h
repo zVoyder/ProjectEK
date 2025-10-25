@@ -50,7 +50,7 @@ private:
 	bool bIsInterrupting = false;
 	FTimerHandle DefenseCooldownTimer;
 	UPROPERTY()
-	UWeaponMeleeAttackData* CurrentAttackMontage = nullptr;
+	UWeaponMeleeAttackData* CurrentAttack = nullptr;
 
 public:
 	UMeleeMontagesManager();
@@ -201,9 +201,9 @@ protected:
 
 	/**
 	 * Plays the specified attack montage.
-	 * @param AttackMontage - The attack montage data to play.
+	 * @param Attack - The attack montage data to play.
 	 */
-	void PlayAttackMontage(UWeaponMeleeAttackData* AttackMontage);
+	void PlayAttackMontage(UWeaponMeleeAttackData* Attack);
 
 	/**
 	 * Ends the current attack sequence.

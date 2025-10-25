@@ -7,6 +7,7 @@
 #include "Behaviours/ShooterBehaviourBase.h"
 #include "Components/ActorComponent.h"
 #include "Data/ShootData.h"
+#include "Managers/Magazine/MagazinesManager.h"
 #include "Shooter.generated.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogShooter, All, All);
@@ -18,61 +19,46 @@ class WEAPONSYSTEM_API UShooter : public UActorComponent
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced)
-	UShooterBehaviourBase* ShooterBehaviour;
+	TArray<UShooterBehaviourBase*> ShooterBehaviours;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ToolTip = "If true, allows multiple shooter behaviours to shoot at the same time."))
+	bool bCanShootInParallel = false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UMagazinesManager* MagazinesManager;
 
-private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	FShootData ShootData;
-	
 public:
 	UShooter();
 
-	/**
-	 * Initializes the shooter with the specified shoot barrel.
-	 * @param InShootBarrel - The shoot barrel to use for shooting.
-	 */
 	UFUNCTION(BlueprintCallable)
-	void Init(UShootBarrel* InShootBarrel);
+	void Init(APawn* InOwner);
 
-	/**
-	 * Sets the owner pawn for the shooter.
-	 * @param InOwner - The pawn to set as the owner.
-	 */
-	UFUNCTION(BlueprintCallable)
-	void SetOwner(APawn* InOwner) const;
-
-	/**
-	 * Executes the shoot action.
-	 * @return true if the shoot was successful, false otherwise.
-	 */
-	UFUNCTION(BlueprintCallable, BlueprintPure = false)
-	bool Shoot() const;
-	
-	/**
-	 * Gets the shoot data for this shooter.
-	 * @return The FShootData struct containing shoot configuration.
-	 */
-	UFUNCTION(BlueprintPure)
-	FShootData GetShootData() const;
-
-	/**
-	 * Called when the component ends play. Used for cleanup logic.
-	 * @param EndPlayReason - The reason the component is ending play.
-	 */
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	/**
-	 * Called every frame to update the shooter component.
-	 * @param DeltaTime - The time elapsed since the last tick.
-	 * @param TickType - The type of tick this is.
-	 * @param ThisTickFunction - The tick function struct.
-	 */
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
+	UFUNCTION(BlueprintCallable)
+	void SetupShootBarrel(UShootBarrel* InShootBarrel, const int32 BehaviourIndex = 0) const;
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure = false)
+	bool Shoot(const int32 BehaviourIndex = 0) const;
+
+	UFUNCTION(BlueprintCallable)
+	void EndShootSequence(const int32 BehaviourIndex = 0) const;
+	
+	UFUNCTION(BlueprintCallable)
+	void EnableAllBehaviours() const;
+
+	UFUNCTION(BlueprintCallable)
+	void DisableAllBehaviours() const;
+
+	UFUNCTION(BlueprintPure)
+	UShooterBehaviourBase* GetShooterBehaviour(const int32 BehaviourIndex = 0) const;
+	
+	UFUNCTION(BlueprintPure)
+	UMagazine* GetMagazineByTag(const FGameplayTag& MagazineTag) const;
+
+	UFUNCTION(BlueprintPure)
+	bool IsAnyBehaviourShooting() const;
 
 private:
-	/**
-	 * Checks if the shooter is valid and ready for operations.
-	 * @return true if valid, false otherwise.
-	 */
-	bool Check() const;
+	void TickBehaviours(const float DeltaTime) const;
 };

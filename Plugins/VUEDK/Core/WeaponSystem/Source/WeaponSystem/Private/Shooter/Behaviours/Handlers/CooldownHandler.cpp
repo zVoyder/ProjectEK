@@ -1,7 +1,6 @@
 // Copyright VUEDK, Inc. All Rights Reserved.
 
-#include "Shooter/Handlers/CooldownHandler.h"
-
+#include "Shooter/Behaviours/Handlers/CooldownHandler.h"
 #include "Shooter/Shooter.h"
 #include "Shooter/Behaviours/ShooterBehaviourBase.h"
 

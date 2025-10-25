@@ -9,10 +9,10 @@ UShooterPhysicProjectileBehaviour::UShooterPhysicProjectileBehaviour(): Projecti
 {
 }
 
-void UShooterPhysicProjectileBehaviour::Init(UShooter* InShooter, const FShootData InShootData, UShootBarrel* InShootBarrel)
+void UShooterPhysicProjectileBehaviour::Init(UShooter* InShooter)
 {
 	ProjectilePool = UPoolsUtility::GetPool(ProjectilesPoolTag);
-	Super::Init(InShooter, InShootData, InShootBarrel);
+	Super::Init(InShooter);
 }
 
 void UShooterPhysicProjectileBehaviour::SetProjectilesPool(const FGameplayTag InProjectilesPoolTag)
@@ -43,6 +43,6 @@ void UShooterPhysicProjectileBehaviour::SpawnProjectile(const UShootPoint* Shoot
 
 	AProjectileBase* Projectile = Cast<AProjectileBase>(ActorPrj);
 	Projectile->SetActorLocation(ShootPoint->GetShootPointLocation());
-	Projectile->Init(Shooter->GetOwner(), DamageTypeClass, GetDamage(), GetMaxRange(), ProjectileSpeed, DirectionToTarget);
+	Projectile->Init(Shooter->GetOwner(), GetDamageTypeClass(), GetDamage(), GetMaxRange(), ProjectileSpeed, DirectionToTarget);
 	OnProjectileSpawned.Broadcast(Projectile);
 }

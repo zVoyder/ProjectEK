@@ -136,6 +136,24 @@ float AWeaponMelee::GetInterruptSpeedMultiplier() const
 	return MeleeMontagesManager->GetInterruptSpeedMultiplier();
 }
 
+void AWeaponMelee::CallComboStartedEvent(UWeaponMeleeAttackData* AttackData)
+{
+	OnWeaponComboStart.Broadcast(AttackData);
+	OnComboStarted(AttackData);
+}
+
+void AWeaponMelee::CallComboEndedEvent(UWeaponMeleeAttackData* AttackData)
+{
+	OnWeaponComboEnd.Broadcast(AttackData);
+	OnComboEnded(AttackData);
+}
+
+void AWeaponMelee::CallAttackStartedEvent(UWeaponMeleeAttackData* AttackData, int32 AttackIndex)
+{
+	OnWeaponAttackStart.Broadcast(AttackData, AttackIndex);
+	OnAttackStarted(AttackData, AttackIndex);
+}
+
 void AWeaponMelee::CallHitEvent(UMeleeHitbox* Hitbox, const FHitResult& HitResult, float Damage)
 {
 	OnWeaponAttackHit.Broadcast(Hitbox, HitResult, Damage);
@@ -176,6 +194,18 @@ bool AWeaponMelee::NativeDeployWeaponAttack()
 		return false;
 
 	return true;
+}
+
+void AWeaponMelee::OnComboStarted_Implementation(UWeaponMeleeAttackData* AttackData)
+{
+}
+
+void AWeaponMelee::OnComboEnded_Implementation(UWeaponMeleeAttackData* AttackData)
+{
+}
+
+void AWeaponMelee::OnAttackStarted_Implementation(UWeaponMeleeAttackData* AttackData, int32 AttackIndex)
+{
 }
 
 void AWeaponMelee::OnAttackHit_Implementation(UMeleeHitbox* Hitbox, FHitResult HitResult, float Damage)

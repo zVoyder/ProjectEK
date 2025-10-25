@@ -1,7 +1,6 @@
 // Copyright VUEDK, Inc. All Rights Reserved.
 
-#include "Shooter/Handlers/SpreadHandler.h"
-
+#include "Shooter/Behaviours/Handlers/SpreadHandler.h"
 #include "Shooter/Behaviours/ShooterBehaviourBase.h"
 
 void USpreadHandler::Tick(float DeltaTime)
@@ -26,6 +25,10 @@ void USpreadHandler::Tick(float DeltaTime)
 
 void USpreadHandler::AddDynamicSpread(float AddSpread, const float ChangeRate, const float RecoveryRate)
 {
+	const UShootData* ShootData = GetShootData();
+	if (!IsValid(ShootData))
+		return;
+	
 	if (!ShootData->bHasSpread)
 		return;
 	
@@ -40,11 +43,15 @@ void USpreadHandler::AddDynamicSpread(float AddSpread, const float ChangeRate, c
 	DynamicSpreadRecoveryRate = RecoveryRate;
 	DynamicSpreadDir = TargetDynamicSpread > DynamicSpread ? 1.f : -1.f;
 	TransitionToDynamicAddState();
-	OnStartedChangeSpread.Broadcast(ShootData->DefaultSpread, GetSpread());
+	OnStartedChangeSpread.Broadcast(GetDefaultSpread(), GetSpread());
 }
 
 void USpreadHandler::AddDynamicSpreadWithCurve()
 {
+	const UShootData* ShootData = GetShootData();
+	if (!IsValid(ShootData))
+		return;
+	
 	if (!ShootData->bHasSpread)
 		return;
 	
@@ -60,17 +67,25 @@ void USpreadHandler::AddDynamicSpreadWithCurve()
 
 void USpreadHandler::InstantSetSpread(const float InSpread, const bool bOverrideDefault)
 {
+	const UShootData* ShootData = GetShootData();
+	if (!IsValid(ShootData))
+		return;
+	
 	if (!ShootData->bHasSpread)
 		return;
 	
 	if (bOverrideDefault)
-		ShootData->DefaultSpread = InSpread;
+		Behaviour->SetDefaultSpread(InSpread);
 
 	BaseSpread = InSpread;
 }
 
 void USpreadHandler::SetSpread(float InSpread, const float ChangeRate, const bool bOverrideDefault)
 {
+	const UShootData* ShootData = GetShootData();
+	if (!IsValid(ShootData))
+		return;
+	
 	if (!ShootData->bHasSpread)
 		return;
 	
@@ -82,17 +97,24 @@ void USpreadHandler::SetSpread(float InSpread, const float ChangeRate, const boo
 	SpreadChangeRate = ChangeRate;
 	SpreadDir = TargetSpread > BaseSpread ? 1.f : -1.f;
 	bIsProcessingSpread = true;
-	OnStartedChangeSpread.Broadcast(ShootData->DefaultSpread, GetSpread());
+	OnStartedChangeSpread.Broadcast(GetDefaultSpread(), GetSpread());
 }
 
 void USpreadHandler::ResetSpread(const float ChangeRate)
 {
-	SetSpread(ShootData->DefaultSpread, ChangeRate);
+	if (!Check())
+		return;
+	
+	SetSpread(Behaviour->GetDefaultSpread(), ChangeRate);
 }
 
 float USpreadHandler::GetSpread() const
 {
 	if (!Check())
+		return 0.f;
+
+	const UShootData* ShootData = GetShootData();
+	if (!IsValid(ShootData))
 		return 0.f;
 	
 	return FMath::Clamp(BaseSpread + DynamicSpread, 0.f, ShootData->MaxSpread);
@@ -105,7 +127,27 @@ bool USpreadHandler::IsProcessingSpread() const
 
 void USpreadHandler::OnInit()
 {
+	const UShootData* ShootData = GetShootData();
+	if (!IsValid(ShootData))
+		return;
+	
 	BaseSpread = ShootData->DefaultSpread;
+}
+
+void USpreadHandler::SetDefaultSpread(float NewDefaultSpread) const
+{
+	if (!Check())
+		return;
+
+	Behaviour->SetDefaultSpread(BaseSpread);
+}
+
+float USpreadHandler::GetDefaultSpread() const
+{
+	if (!Check())
+		return 0.f;
+
+	return Behaviour->GetDefaultSpread();
 }
 
 void USpreadHandler::ProcessSpread(const float DeltaTime)
@@ -117,7 +159,7 @@ void USpreadHandler::ProcessSpread(const float DeltaTime)
 	BaseSpread += Step * SpreadDir;
 
 	if (bOverrideDefaultSpread)
-		ShootData->DefaultSpread = BaseSpread;
+		SetDefaultSpread(BaseSpread);
 
 	if (SpreadDir > 0.f)
 	{
@@ -172,11 +214,11 @@ void USpreadHandler::EndSpreadChange()
 
 	if (bOverrideDefaultSpread)
 	{
-		ShootData->DefaultSpread = BaseSpread;
+		SetDefaultSpread(BaseSpread);
 		bOverrideDefaultSpread = false;
 	}
 	
-	OnCompletedChangeSpread.Broadcast(ShootData->DefaultSpread, GetSpread());
+	OnCompletedChangeSpread.Broadcast(GetDefaultSpread(), GetSpread());
 }
 
 void USpreadHandler::EndDynamicAddSpreadChange()
@@ -189,7 +231,7 @@ void USpreadHandler::EndDynamicRecoverSpreadChange()
 {
 	DynamicSpread = 0.f;
 	TransitionToDynamicIdleState();
-	OnCompletedChangeSpread.Broadcast(ShootData->DefaultSpread, GetSpread());
+	OnCompletedChangeSpread.Broadcast(GetDefaultSpread(), GetSpread());
 }
 
 void USpreadHandler::TransitionToDynamicIdleState()

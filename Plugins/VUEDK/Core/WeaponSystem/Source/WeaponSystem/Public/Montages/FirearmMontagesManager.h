@@ -14,12 +14,14 @@ class WEAPONSYSTEM_API UFirearmMontagesManager : public UWeaponMontagesManagerBa
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions")
-	FWeaponMontageData ReloadMontage;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions|Shoot")
 	FWeaponMontageData ShootMontage;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions|Shoot")
 	FWeaponMontageData FailShootMontage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions|Reload")
+	FWeaponMontageData MainReloadMontage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions|Reload")
+	TArray<FWeaponMontageData> SecondaryReloadMontages;
 
 protected:
 	UPROPERTY()
@@ -34,16 +36,23 @@ public:
 	 * Checks if the shooting animation is currently playing.
 	 * @return true if the shooting animation is playing, false otherwise.
 	 */
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	bool IsAnimShooting() const;
 
 	/**
 	 * Checks if the fail shooting animation is currently playing.
 	 * @return true if the fail shooting animation is playing, false otherwise.
 	 */
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	bool IsAnimFailShooting() const;
 
+	/**
+	 * Checks if the reloading animation is currently playing.
+	 * @return true if the reloading animation is playing, false otherwise.
+	 */
+	UFUNCTION(BlueprintPure)
+	bool IsAnimReloading() const;
+	
 protected:
 	/**
 	 * Called when the component begins play. Used for initialization logic.

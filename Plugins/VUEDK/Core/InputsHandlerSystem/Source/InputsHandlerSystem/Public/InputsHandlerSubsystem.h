@@ -235,9 +235,8 @@ private:
 
 	/**
 	 * Adds UI-specific input contexts with the given priority.
-	 * @param Priority The priority for the UI contexts.
 	 */
-	void AddUIContexts(int32 Priority) const;
+	void AddUIContexts() const;
 
 	/**
 	 * Removes UI-specific input contexts.

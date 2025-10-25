@@ -64,24 +64,16 @@ public:
 	UShooter* Shooter;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UFirearmMontagesManager* FirearmMontagesManager;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UShootBarrel* MainShootBarrel;
 
 protected:
-	// -- Data --
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	FWeaponFirearmData WeaponFirearmData;
-
-	// -- Configuration --
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Configuration")
-	EShootType DefaultShootType;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Configuration")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	FName ShootBarrelSocketName;
-
-	// -- Advanced --
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Advanced")
 	bool bCanDeployAttackIfReloading = false;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UShootBarrel* ShootBarrel;
 
 private:
 	bool bIsAimingDownSight;
@@ -100,71 +92,56 @@ public:
 
 	/**
 	 * Initializes the weapon with the given owner and optional payload.
+	 * It sets up the first shooter behaviour with the main shoot barrel.
 	 * @param InOwner - The pawn that owns this weapon.
 	 * @param InPayload - Optional payload data for initialization.
 	 */
 	virtual void Init(APawn* InOwner, UObject* InPayload = nullptr) override;
 
-	UFUNCTION(BlueprintPure)
-	bool IsMagEmpty() const;
+	UFUNCTION(BlueprintCallable)
+	bool Shoot(const int32 BehaviourIndex = 0) const;
 
+	UFUNCTION(BlueprintCallable)
+	void EndShootSequence(const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintPure)
-	bool IsMagFull() const;
+	bool IsMagFull(const int32 BehaviourIndex = 0) const;
+	
+	UFUNCTION(BlueprintPure)
+	bool IsMagEmpty(const int32 BehaviourIndex = 0) const;
 
 	/**
 	 * Adds dynamic spread to the weapon, affecting aim stability.
 	 * @param AddSpread - The amount of spread to add.
 	 * @param ChangeRate - The rate at which the spread changes.
 	 * @param RecoveryRate - The rate at which the spread recovers.
+	 * @param BehaviourIndex - The index of the shooter behaviour to apply the spread to.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void AddWeaponDynamicSpread(const float AddSpread, const float ChangeRate = 1.0f, const float RecoveryRate = 1.0f) const;
-
-	/**
-	 * Resets the weapon's cooldown, allowing immediate use.
-	 */
+	void AddWeaponDynamicSpread(const float AddSpread, const float ChangeRate = 1.0f, const float RecoveryRate = 1.0f, const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintCallable)
-	void ResetCooldown() const;
-
-	/**
-	 * Resets the weapon's spread to its default value.
-	 */
+	void ResetCooldown(const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintCallable)
-	void ResetSpread() const;
-
-	/**
-	 * Sets the damage dealt by the weapon.
-	 * @param NewDamage - The new damage value.
-	 */
+	void ResetSpread(const int32 BehaviourIndex = 0) const;
+	
 	virtual void SetWeaponDamage(const float NewDamage) override;
 
-	/**
-	 * Sets the fire rate of the weapon.
-	 * @param NewFireRate - The new fire rate value.
-	 */
 	UFUNCTION(BlueprintCallable)
-	void SetWeaponFireRate(const float NewFireRate) const;
-
-	/**
-	 * Sets the magazine size of the weapon.
-	 * @param NewMagSize - The new magazine size.
-	 */
+	void SetDamage(const float NewDamage, const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintCallable)
-	void SetWeaponMagSize(const int32 NewMagSize) const;
-
-	/**
-	 * Sets the maximum range of the weapon.
-	 * @param NewRange - The new maximum range.
-	 */
+	void SetWeaponFireRate(const float NewFireRate, const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintCallable)
-	void SetWeaponMaxRange(const float NewRange) const;
-
-	/**
-	 * Sets the recoil strength of the weapon.
-	 * @param NewRecoilStrength - The new recoil strength.
-	 */
+	void SetWeaponMagazineSize(const int32 NewSize, const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintCallable)
-	void SetWeaponRecoilStrength(const float NewRecoilStrength) const;
+	void SetWeaponMaxRange(const float NewRange, const int32 BehaviourIndex = 0) const;
+	
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponRecoilStrength(const float NewRecoilStrength, const int32 BehaviourIndex = 0) const;
 
 	/**
 	 * Sets the reload time of the weapon.
@@ -172,43 +149,24 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetWeaponReloadTime(const float NewReloadTime);
-
-	/**
-	 * Sets the current ammo count of the weapon.
-	 * @param NewAmmo - The new ammo count.
-	 */
+	
 	UFUNCTION(BlueprintCallable)
-	void SetCurrentAmmo(const int32 NewAmmo) const;
-
-	/**
-	 * Sets the ammo type of the weapon.
-	 * @param NewAmmoType - Pointer to the new ammo type data.
-	 */
+	void SetCurrentAmmo(const int32 NewAmmo, const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintCallable)
-	void SetWeaponAmmoType(UAmmoTypeData* NewAmmoType);
-
-	/**
-	 * Sets the shoot type of the weapon.
-	 * @param NewShootType - The new shoot type.
-	 */
+	void SetWeaponShootType(const EShootType NewShootType, const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintCallable)
-	void SetWeaponShootType(const EShootType NewShootType) const;
-
-	/**
-	 * Instantly sets the spread of the weapon.
-	 * @param InSpread - The new spread value.
-	 * @param bOverrideDefault - Whether to override the default spread.
-	 */
+	void InstantSetSpread(const float InSpread, const bool bOverrideDefault = true, const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintCallable)
-	void InstantSetSpread(const float InSpread, const bool bOverrideDefault = true) const;
+	void SetWeaponSpread(const float InSpread, const bool bOverrideDefault = true, const int32 BehaviourIndex = 0) const;
 
-	/**
-	 * Sets the weapon's spread, with an option to override the default value.
-	 * @param InSpread - The new spread value.
-	 * @param bOverrideDefault - Whether to override the default spread.
-	 */
-	UFUNCTION(BlueprintCallable)
-	void SetWeaponSpread(const float InSpread, const bool bOverrideDefault = true) const;
+	UFUNCTION(BlueprintPure)
+	UShooterBehaviourBase* GetShooterBehaviour(const int32 BehaviourIndex) const;
+
+	UFUNCTION(BlueprintPure)
+	UMagazine* GetWeaponMagazineByTag(FGameplayTag MagazineTag) const;
 
 	/**
 	 * Gets the firearm data structure containing various weapon properties.
@@ -216,111 +174,62 @@ public:
 	 */
 	UFUNCTION(BlueprintPure)
 	FWeaponFirearmData GetWeaponFirearmData() const;
-
-	/**
-	 * Gets the current fire rate of the weapon.
-	 * @return The fire rate as a float.
-	 */
+	
 	UFUNCTION(BlueprintPure)
-	float GetWeaponFireRate() const;
-
-	/**
-	 * Gets the current magazine size of the weapon.
-	 * @return The magazine size as an integer.
-	 */
+	float GetWeaponFireRate(const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintPure)
-	float GetWeaponMagSize() const;
+	float GetWeaponMagSize(const int32 BehaviourIndex = 0) const;
 
-	/**
-	 * Gets the maximum range of the weapon.
-	 * @return The maximum range as a float.
-	 */
 	UFUNCTION(BlueprintPure)
-	float GetWeaponMaxRange() const;
-
-	/**
-	 * Gets the recoil strength of the weapon.
-	 * @return The recoil strength as a float.
-	 */
+	float GetWeaponMaxRange(const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintPure)
-	float GetWeaponRecoilStrength() const;
-
-	/**
-	 * Gets the current reload time of the weapon.
-	 * @return The reload time as a float.
-	 */
+	float GetWeaponRecoilStrength(const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintPure)
 	float GetWeaponReloadTime() const;
-
-	/**
-	 * Gets the current ammo count of the weapon.
-	 * @return The current ammo as an integer.
-	 */
+	
 	UFUNCTION(BlueprintPure)
-	int32 GetCurrentAmmo() const;
-
-	/**
-	 * Gets the amount of ammo needed to fully reload the weapon.
-	 * @return The needed ammo as an integer.
-	 */
+	int32 GetCurrentAmmo(const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintPure)
-	int32 GetNeededAmmo() const;
-
-	/**
-	 * Gets the ammo type data used by this weapon.
-	 * @return Pointer to the UAmmoTypeData instance.
-	 */
+	int32 GetNeededAmmo(const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintPure)
-	UAmmoTypeData* GetWeaponAmmoType() const;
-
-	/**
-	 * Gets the shoot type of the weapon (e.g., single, burst, auto).
-	 * @return The EShootType enum value.
-	 */
+	UAmmoTypeData* GetWeaponAmmoType(const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintPure)
-	EShootType GetWeaponShootType() const;
+	EShootType GetWeaponShootType(const int32 BehaviourIndex = 0) const;
 
-	/**
-	 * Gets the maximum possible spread for this weapon.
-	 * @return The max spread as a float.
-	 */
 	UFUNCTION(BlueprintPure)
-	float GetWeaponMaxSpread() const;
-
-	/**
-	 * Gets the default spread value for this weapon.
-	 * @return The default spread as a float.
-	 */
+	float GetWeaponMaxSpread(const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintPure)
-	float GetDefaultSpread() const;
-
-	/**
-	 * Gets the current spread value for this weapon.
-	 * @return The current spread as a float.
-	 */
+	float GetDefaultSpread(const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintPure)
-	float GetWeaponSpread() const;
-
-	/**
-	 * Resets the weapon's shoot type to its default value.
-	 */
+	float GetWeaponSpread(const int32 BehaviourIndex = 0) const;
+	
 	UFUNCTION(BlueprintCallable)
-	void ResetToDefaultShootType() const;
+	void ResetToDefaultShootType(const int32 BehaviourIndex = 0) const;
 	
 	/**
 	 * Reloads the weapon using the montage animation for the specified ammo type and amount.
-	 * @param AmmoData - The ammo type data to use for reloading.
+	 * @param InAmmoType - The ammo type data to use for reloading.
 	 * @param Ammo - The amount of ammo to reload.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void ReloadOfAmmoType(UAmmoTypeData* AmmoData, const int32 Ammo);
+	void ReloadOfAmmoType(UAmmoTypeData* InAmmoType, const int32 Ammo);
+
+	void ReloadShooterBehaviourOfAmmoType(UAmmoTypeData* InAmmoType, const int32 Ammo, int32 BehaviourIndex);
 
 	/**
 	 * Fully reloads the weapon using the montage animation for the specified ammo type.
-	 * @param AmmoData - The ammo type data to use for reloading.
+	 * @param InAmmoType - The ammo type data to use for reloading.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void FullReloadOfAmmoType(UAmmoTypeData* AmmoData);
+	void FullReloadOfAmmoType(UAmmoTypeData* InAmmoType);
 
 	/**
 	 * Reloads the weapon using the montage animation for the specified amount of ammo.
@@ -342,27 +251,9 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void InterruptReload(float CharacterBlendOutTime = 0.0f, float WeaponBlendOutTime = 0.0f);
-
-	/**
-	 * Refills the weapon with the specified amount of ammo. (NOTE: This does not play the reload montage, use Reload functions for that)
-	 * @param Ammo - The amount of ammo to refill.
-	 * @return The amount of ammo actually refilled.
-	 */
-	UFUNCTION(BlueprintCallable, BlueprintPure = false)
-	int32 Refill(int32 Ammo) const;
-
-	/**
-	 * Refills all magazines of the weapon.
-	 */
+	
 	UFUNCTION(BlueprintCallable)
-	void RefillAllMagazine() const;
-
-	/**
-	 * Sets the aim state of the weapon.
-	 * @param bIsEnabled - True to enable aiming, false to disable.
-	 */
-	UFUNCTION(BlueprintCallable)
-	void SetAim(bool bIsEnabled);
+	void SetAim(const bool bIsEnabled, const int32 BehaviourIndex = 0);
 
 	/**
 	 * Checks if the weapon is currently aiming.
@@ -370,13 +261,6 @@ public:
 	 */
 	UFUNCTION(BlueprintPure)
 	bool IsAiming() const;
-
-	/**
-	 * Checks if the weapon has just shot.
-	 * @return true if the weapon has just shot, false otherwise.
-	 */
-	UFUNCTION(BlueprintPure)
-	bool HasJustShot() const;
 
 	/**
 	 * Checks if the weapon is currently reloading.
@@ -390,15 +274,15 @@ protected:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	/**
-	 * Sets the weapon in the aim state, adjusting spread and recoil.
-	 */
-	virtual void EnableAim();
-
-	/**
-	 * Disables the aim state, resetting spread and recoil.
-	 */
-	virtual void DisableAim();
+	virtual bool CanShoot();
+	
+	virtual bool NativeDeployWeaponAttack() override;
+	
+	virtual void OnEndWeaponAttack_Implementation() override;
+	
+	virtual void EnableAim(int32 BehaviourIndex = 0);
+	
+	virtual void DisableAim(int32 BehaviourIndex = 0);
 	
 	/**
 	 * Checks if the weapon can reload.
@@ -445,36 +329,12 @@ protected:
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDisableAim();
-
-	/**
-	 * Called when the current ammo count changes.
-	 * @param CurrentAmmo - The current ammo count.
-	 * @param MagSize - The size of the magazine.
-	 */
-	UFUNCTION(BlueprintNativeEvent)
-	void OnCurrentAmmoChanged(int32 CurrentAmmo, int32 MagSize);
-
-	/**
-	 * Called when the shoot sequence ends, allowing for cleanup or state reset.
-	 */
-	UFUNCTION(BlueprintNativeEvent)
-	void OnEndShootSequence();
-
-	/**
-	 * Called when the last round is fired and the magazine is depleted.
-	 */
-	UFUNCTION(BlueprintNativeEvent)
-	void OnMagEmpty();
-
+	
 	/**
 	 * Gets the payload data for the reload event.
 	 * @return The reload event data containing ammo type and amount.
 	 */
 	FReloadEventData GetReloadPayload() const;
-	
-	virtual bool NativeDeployWeaponAttack() override;
-	
-	virtual void OnEndWeaponAttack_Implementation() override;
 
 private:
 	/**
@@ -504,36 +364,14 @@ private:
 	 */
 	UFUNCTION()
 	void OnReloadMontageEnded(const bool bInterrupted);
-
-	/**
-	 * Sets the aim spread modifier based on the weapon's aim precision increase.
-	 */
-	void SetAimSpreadModifier();
-
-	/**
-	 * Sets the aim recoil modifier based on the weapon's aim recoil control increase.
-	 */
-	void SetAimRecoilModifier();
-
-	/**
-	 * Attaches the shoot barrel to the specified socket on the weapon mesh.
-	 */
+	
+	void SetAimSpreadModifier(const int32 BehaviourIndex = 0);
+	
+	void SetAimRecoilModifier(const int32 BehaviourIndex = 0);
+	
+	void ResetAimWeaponRecoil(const int32 BehaviourIndex = 0) const;
+	
+	void ResetAimWeaponSpread(const int32 BehaviourIndex = 0) const;
+	
 	void AttachBarrelToSocket() const;
-
-	/**
-	 * Checks if the given ammo type matches the weapon's current ammo type.
-	 * @param AmmoData - Pointer to the ammo type data to compare against.
-	 * @return True if the ammo types match, false otherwise.
-	 */
-	bool IsSameAmmoType(const UAmmoTypeData* AmmoData) const;
-
-	/**
-	 * Resets the recoil of the weapon to its default strength.
-	 */
-	void ResetAimWeaponRecoil() const;
-
-	/**
-	 * Resets the aim weapon spread to its default value.
-	 */
-	void ResetAimWeaponSpread() const;
 };

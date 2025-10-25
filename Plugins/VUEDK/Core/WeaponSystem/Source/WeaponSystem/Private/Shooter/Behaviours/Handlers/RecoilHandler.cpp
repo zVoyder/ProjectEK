@@ -1,6 +1,6 @@
 // Copyright VUEDK, Inc. All Rights Reserved.
 
-#include "Shooter/Handlers/RecoilHandler.h"
+#include "Shooter/Behaviours/Handlers/RecoilHandler.h"
 #include "Shooter/Shooter.h"
 #include "Shooter/Behaviours/ShooterBehaviourBase.h"
 
@@ -16,6 +16,10 @@ void URecoilHandler::ApplyRecoilImpulse()
 		UE_LOG(LogShooter, Warning, TEXT("URecoilHandler::ApplyRecoilImpulse: Could not apply recoil to %s, Check failed."), *GetName());
 		return;
 	}
+
+	const UShootData* ShootData = GetShootData();
+	if (!IsValid(ShootData))
+		return;
 	
 	if (!ShootData->bHasRecoil || !IsValid(ShootData->RecoilCurve))
 		return;
@@ -29,6 +33,16 @@ void URecoilHandler::ApplyRecoilImpulse()
 void URecoilHandler::ProcessRecoilImpulseRotation(const float DeltaTime)
 {
 	if (RecoilRemaining <= 0.0f)
+		return;
+
+	if (!Check())
+	{
+		UE_LOG(LogShooter, Warning, TEXT("URecoilHandler::ApplyRecoilImpulse: Could not apply recoil to %s, Check failed."), *GetName());
+		return;
+	}
+	
+	const UShootData* ShootData = GetShootData();
+	if (!IsValid(ShootData))
 		return;
 	
 	const float NormalizedTime = FMath::Clamp(RecoilRemaining / ShootData->RecoilDuration, -1.f, 1.f);

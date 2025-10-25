@@ -35,7 +35,7 @@ private:
 public:
 	UShooterPhysicProjectileBehaviour();
 
-	virtual void Init(UShooter* InShooter, const FShootData InShootData, UShootBarrel* InShootBarrel) override;
+	virtual void Init(UShooter* InShooter) override;
 
 	/**
 	 * Sets the pool of projectiles to be used by this shooter behaviour.

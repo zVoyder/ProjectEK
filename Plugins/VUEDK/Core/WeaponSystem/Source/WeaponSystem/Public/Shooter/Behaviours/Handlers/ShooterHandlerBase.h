@@ -18,7 +18,6 @@ class WEAPONSYSTEM_API UShooterHandlerBase : public UObject, public FTickableGam
 protected:
 	UPROPERTY()
 	UShooterBehaviourBase* Behaviour;
-	FShootData* ShootData;
 
 private:
 	bool bIsInitialized = false;
@@ -27,9 +26,8 @@ public:
 	/**
 	 * Initializes the shooter handler with the specified behaviour and shoot data.
 	 * @param InBehaviour - The shooter behaviour to associate with this handler.
-	 * @param InShootData - The shoot data to use for initialization.
 	 */
-	void Init(UShooterBehaviourBase* InBehaviour, FShootData& InShootData);
+	void Init(UShooterBehaviourBase* InBehaviour);
 	
 	virtual void Tick(float DeltaTime) override;
 	
@@ -73,6 +71,8 @@ protected:
 	 */
 	UFUNCTION()
 	virtual void OnBehaviourShootFail();
+
+	UShootData* GetShootData() const;
 
 	/**
 	 * Checks if the handler is valid and ready for operations.

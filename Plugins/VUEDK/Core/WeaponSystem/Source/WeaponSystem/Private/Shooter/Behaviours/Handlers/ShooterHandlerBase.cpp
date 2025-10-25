@@ -1,22 +1,15 @@
 // Copyright VUEDK, Inc. All Rights Reserved.
 
-#include "Shooter/Handlers/ShooterHandlerBase.h"
+#include "Shooter/Behaviours/Handlers/ShooterHandlerBase.h"
 #include "Shooter/Shooter.h"
 
-void UShooterHandlerBase::Init(UShooterBehaviourBase* InBehaviour, FShootData& InShootData)
+void UShooterHandlerBase::Init(UShooterBehaviourBase* InBehaviour)
 {
 	Behaviour = InBehaviour;
-	ShootData = &InShootData;
 
 	if (!IsValid(Behaviour))
 	{
 		UE_LOG(LogShooter, Error, TEXT("UShooterHandlerBase::Init: ShooterBehaviour in %s is null."), *GetName());
-		return;
-	}
-
-	if (ShootData == nullptr)
-	{
-		UE_LOG(LogShooter, Error, TEXT("UShooterHandlerBase::Init: ShootData in %s is null."), *GetName());
 		return;
 	}
 	
@@ -65,6 +58,17 @@ void UShooterHandlerBase::OnBehaviourShootSuccess(UShootBarrel* ShootBarrel, int
 
 void UShooterHandlerBase::OnBehaviourShootFail()
 {
+}
+
+UShootData* UShooterHandlerBase::GetShootData() const
+{
+	if (!Check())
+	{
+		UE_LOG(LogShooter, Warning, TEXT("UShooterHandlerBase::GetShootData: Could not get ShootData from %s, Check failed."), *GetName());
+		return nullptr;
+	}
+
+	return Behaviour->ShootData;
 }
 
 bool UShooterHandlerBase::Check() const

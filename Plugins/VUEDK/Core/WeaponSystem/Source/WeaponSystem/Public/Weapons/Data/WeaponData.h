@@ -10,12 +10,6 @@ USTRUCT(BlueprintType)
 struct WEAPONSYSTEM_API FWeaponData
 {
 	GENERATED_BODY()
-
-	// -- Information --
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Info")
-	FName WeaponName;
-
-	// -- Stats --
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Stats")
 	float Damage;
 	

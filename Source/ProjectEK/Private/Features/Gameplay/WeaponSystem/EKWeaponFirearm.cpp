@@ -1,7 +1,6 @@
 // Copyright zVoyder, Inc. All Rights Reserved.
 
 #include "Features/Gameplay/WeaponSystem/EKWeaponFirearm.h"
-
 #include "Utility/ISInventoriesUtility.h"
 
 AEKWeaponFirearm::AEKWeaponFirearm() : WeaponFirearmItem(nullptr)

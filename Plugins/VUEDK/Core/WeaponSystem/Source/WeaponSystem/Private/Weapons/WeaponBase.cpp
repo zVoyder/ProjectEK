@@ -37,6 +37,7 @@ void AWeaponBase::Init(APawn* InOwner, UObject* InPayload)
 	SetOwner(InOwner);
 	SetInstigator(InOwner);
 	SetOwnerAnimInstance();
+	SetWeaponDamage(GetWeaponDamage());
 }
 
 USkeletalMeshComponent* AWeaponBase::GetWeaponMesh() const

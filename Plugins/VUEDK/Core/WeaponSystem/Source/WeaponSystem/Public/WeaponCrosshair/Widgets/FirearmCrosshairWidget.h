@@ -12,6 +12,10 @@ class WEAPONSYSTEM_API UFirearmCrosshairWidget : public UWeaponCrosshairWidget
 {
 	GENERATED_BODY()
 
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Index of the firearm behaviour to monitor."), Category = "Firearm Crosshair")
+	int32 FirearmBehaviourIndex = 0;
+	
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	AWeaponFirearm* Firearm;

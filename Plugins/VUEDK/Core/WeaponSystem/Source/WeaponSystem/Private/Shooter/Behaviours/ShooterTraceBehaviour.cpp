@@ -135,7 +135,7 @@ void UShooterTraceBehaviour::LineTraceDamage(const UWorld* World, const FVector&
 			PenetrationCount++;
 			FDamageEvent DamageEvent;
 			DamageEvent.DamageTypeClass = UDamageType::StaticClass();
-			UGameplayStatics::ApplyPointDamage(HitActor, GetDamage(), HitResult.ImpactNormal, HitResult, Shooter->GetOwner()->GetInstigatorController(), Shooter->GetOwner(), DamageTypeClass);
+			UGameplayStatics::ApplyPointDamage(HitActor, GetDamage(), HitResult.ImpactNormal, HitResult, Shooter->GetOwner()->GetInstigatorController(), Shooter->GetOwner(), GetDamageTypeClass());
 
 #if WITH_EDITORONLY_DATA
 			if (bDrawDebugTraceLines)

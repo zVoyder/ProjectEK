@@ -9,6 +9,22 @@
 #include "Montages/MeleeMontagesManager.h"
 #include "WeaponMelee.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnWeaponComboStart,
+	UWeaponMeleeAttackData*, AttackData
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnWeaponComboEnd,
+	UWeaponMeleeAttackData*, AttackData
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnWeaponAttackStart,
+	UWeaponMeleeAttackData*, AttackData,
+	int32, AttackIndex
+);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	FOnWeaponAttackHit,
 	UMeleeHitbox*, Hitbox,
@@ -29,24 +45,30 @@ class WEAPONSYSTEM_API AWeaponMelee : public AWeaponBase
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnWeaponAttackInterrupt OnWeaponAttackInterrupt;
+	FOnWeaponComboStart OnWeaponComboStart;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnWeaponComboEnd OnWeaponComboEnd;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnWeaponAttackStart OnWeaponAttackStart;
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnWeaponAttackHit OnWeaponAttackHit;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
-	FWeaponMeleeData WeaponMeleeData;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnWeaponAttackInterrupt OnWeaponAttackInterrupt;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UMeleeHitboxesManager* MeleeHitboxesManager;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UMeleeMontagesManager* MeleeMontagesManager;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	FWeaponMeleeData WeaponMeleeData;
+	
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Debug", meta = (Tooltip = "Enables debug draws"))
 	bool bDebug = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Debug", meta = (EditCondition = "bDebug"))
 	float DebugDrawDuration = 0.0f;
 #endif
-
+	
 private:
 	bool bIsBlockActive = false;
 	UPROPERTY()
@@ -128,6 +150,12 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetInterruptSpeedMultiplier() const;
 
+	void CallComboStartedEvent(UWeaponMeleeAttackData* AttackData);
+
+	void CallComboEndedEvent(UWeaponMeleeAttackData* AttackData);
+	
+	void CallAttackStartedEvent(UWeaponMeleeAttackData* AttackData, int32 AttackIndex);
+
 	void CallHitEvent(UMeleeHitbox* Hitbox, const FHitResult& HitResult, float Damage);
 
 	void CallInterruptEvent(UMeleeHitbox* Hitbox, const FHitResult& HitResult);
@@ -136,6 +164,15 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual bool NativeDeployWeaponAttack() override;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnComboStarted(UWeaponMeleeAttackData* AttackData);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnComboEnded(UWeaponMeleeAttackData* AttackData);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnAttackStarted(UWeaponMeleeAttackData* AttackData, int32 AttackIndex);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnAttackHit(UMeleeHitbox* Hitbox, FHitResult HitResult, float Damage);

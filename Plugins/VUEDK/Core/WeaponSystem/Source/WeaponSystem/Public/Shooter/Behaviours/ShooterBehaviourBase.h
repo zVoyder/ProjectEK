@@ -7,11 +7,12 @@
 #include "Shooter/ShootPoint.h"
 #include "Shooter/Data/ShootData.h"
 #include "Shooter/Data/ShootFailReason.h"
-#include "Shooter/Handlers/CooldownHandler.h"
-#include "Shooter/Handlers/RecoilHandler.h"
-#include "Shooter/Handlers/SpreadHandler.h"
-#include "Shooter/Interfaces/ShooterBehaviour.h"
+#include "Shooter/Behaviours/Handlers/CooldownHandler.h"
+#include "Shooter/Behaviours/Handlers/RecoilHandler.h"
+#include "Shooter/Behaviours/Handlers/SpreadHandler.h"
+#include "Shooter/Managers/Magazine/Magazine.h"
 #include "UObject/Object.h"
+#include "Weapons/Data/AmmoTypeData.h"
 #include "ShooterBehaviourBase.generated.h"
 
 class UShooter;
@@ -39,26 +40,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(
 	FOnEndShootSequence
 );
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FOnBehaviourRefill,
-	int32, CurrentAmmo
-);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-	FOnCurrentAmmoChanged,
-	int32, CurrentAmmo,
-	int32, MagSize
-);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(
-	FOnMagEmpty
-);
-
 constexpr int32 HasJustShootTicks = 2;
 constexpr float RecoilStrengthMultiplier = 100.f;
 
 UCLASS(Abstract, Blueprintable, BlueprintType, EditInlineNew)
-class WEAPONSYSTEM_API UShooterBehaviourBase : public UObject, public IShooterBehaviour
+class WEAPONSYSTEM_API UShooterBehaviourBase : public UObject
 {
 	GENERATED_BODY()
 
@@ -75,22 +61,9 @@ public:
 	FOnBehaviourShootFail OnBehaviourShootFail;
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnEndShootSequence OnEndShootSequence;
-	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnBehaviourRefill OnBehaviourRefill;
-	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnCurrentAmmoChanged OnCurrentAmmoChanged;
-	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnMagEmpty OnMagEmpty;
 
-	// -- Configuration --
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Shooter|Configuration")
-	TEnumAsByte<ECollisionChannel> SightTraceChannel = ECollisionChannel::ECC_Visibility;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Shooter|Configuration")
-	TSubclassOf<UDamageType> DamageTypeClass = UDamageType::StaticClass();
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shooter|Configuration")
-	bool bHasInfiniteAmmo = false;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0, UIMin = 0), Category = "Shooter|Configuration")
-	int32 AmmoToConsumePerShot = 1;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UShootData* ShootData;
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
@@ -109,33 +82,29 @@ private:
 	USpreadHandler* SpreadHandler;
 	UPROPERTY()
 	UShootBarrel* ShootBarrel;
-	FShootData ShootData;
-	int32 CurrentAmmo;
 	int32 ShotsFired;
 	int32 CurrentShootPointIndex;
-	int32 HasJustShotTickCount;
 	bool bIsBehaviourActive;
-	bool bHasJustShot;
-	FRotator BaselineControlRotation;
+	bool bIsShooting;
+	
+	// Cached Stats
+	float CurrentDamage;
+	float CurrentFireRate;
+	float CurrentMaxRange;
+	float CurrentRecoilStrength;
+	float CurrentDefaultSpread;
+	bool bCurrentInfiniteAmmo;
+	EShootType CurrentShootType;
+	FGameplayTag CurrentMagazineTag;
 
 public:
-	/**
-	 * Initializes the shooter behaviour with the given shooter, shoot data, and shoot barrel.
-	 * @param InShooter - The shooter component using this behaviour.
-	 * @param InShootData - The shoot data containing configuration for shooting.
-	 * @param InShootBarrel - The shoot barrel associated with this behaviour.
-	 */
-	virtual void Init(UShooter* InShooter, const FShootData InShootData, UShootBarrel* InShootBarrel);
+	virtual void Init(UShooter* InShooter);
 
-	/**
-	 * Creates the necessary handlers for the shooter behaviour.
-	 */
+	UFUNCTION(BlueprintCallable)
+	void SetupShootBarrel(UShootBarrel* InShootBarrel);
+
 	void CreateHandlers();
-
-	/**
-	 * Sets the owner of the shooter behaviour.
-	 * @param InOwner - The pawn that owns this shooter behaviour.
-	 */
+	
 	void SetOwner(APawn* InOwner);
 
 	/**
@@ -150,7 +119,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void EnableBehaviour();
-
+	
 	/**
 	 * Disables the shooter behaviour.
 	 */
@@ -162,7 +131,7 @@ public:
 	 * @return True if the shoot was successful, false otherwise.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
-	virtual bool Shoot() override;
+	bool Shoot();
 
 	/**
 	 * Resets the cooldown of the shooter behaviour.
@@ -184,18 +153,32 @@ public:
 	void ResetSpread(const float ChangeRate = 1.f) const;
 
 	/**
-	 * Refills the ammo of the shooter behaviour.
-	 * @param Ammo - The amount of ammo to refill.
-	 * @return The actual amount of ammo refilled.
+	 * Refills the associated magazine with the specified amount of ammo.
+	 * (NOTE: Prefer using the UMagazine versions to avoid duplicate calls when shared across multiple behaviours).
+	 * @param Ammo - The amount of ammo to add.
+	 * @param OutRemainingAmmo - The amount of ammo that could not be added (excess).
+	 * @return The amount of ammo actually added to the magazine.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
-	virtual int32 Refill(const int32 Ammo) override;
+	int32 RefillMagazine(const int32 Ammo, int32& OutRemainingAmmo) const;
 
 	/**
-	 * Refills all magazines of the shooter behaviour.
+	 * Refills the associated magazine to its maximum capacity.
+	 * (NOTE: Prefer using the UMagazine versions to avoid duplicate calls when shared across multiple behaviours).
 	 */
 	UFUNCTION(BlueprintCallable)
-	virtual void RefillAllMagazine() override;
+	void RefillAllMagazine() const;
+
+	/**
+	 * Refills the associated magazine with a specific type of ammo to check compatibility.
+	 * (NOTE: Prefer using the UMagazine versions to avoid duplicate calls when shared across multiple behaviours).
+	 * @param AmmoType - The type of ammo to use for refilling.
+	 * @param Ammo - The amount of ammo to add.
+	 * @param OutRemainingAmmo - The amount of ammo that could not be added (excess).
+	 * @return The amount of ammo actually added to the magazine.
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintPure = false)
+	int32 RefillWithAmmoType(UAmmoTypeData* AmmoType, const int32 Ammo, int32& OutRemainingAmmo) const;
 
 	/**
 	 * Adds dynamic spread to the shooter behaviour.
@@ -240,18 +223,18 @@ public:
 	void SetMaxRange(const float NewRange);
 
 	/**
-	 * Sets the magazine size of the shooter behaviour.
+	 * Sets the size of the magazine associated with this shooter behaviour.
 	 * @param NewMagSize - The new magazine size.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void SetMagSize(const int32 NewMagSize);
+	void SetMagSize(const int32 NewMagSize) const;
 
 	/**
 	 * Sets the recoil strength of the shooter behaviour.
 	 * @param NewRecoilStrength - The new recoil strength.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void SetRecoilStrength(float NewRecoilStrength);
+	void SetRecoilStrength(const float NewRecoilStrength);
 
 	/**
 	 * Instantly sets the spread of the shooter behaviour.
@@ -270,44 +253,36 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetSpread(const float NewSpread, const float NewSpreadChangeRate = 1.0f, const bool bOverrideDefault = false) const;
 
-	/**
-	 * Sets the shoot type of the shooter behaviour.
-	 * @param NewShootType - The new shoot type.
-	 */
 	UFUNCTION(BlueprintCallable)
-	void SetShootType(const EShootType NewShootType);
+	void SetDefaultSpread(const float NewDefaultSpread);
 
-	/**
-	 * Sets the current ammo of the shooter behaviour.
-	 * @param NewAmmo - The new current ammo value.
-	 */
 	UFUNCTION(BlueprintCallable)
-	void SetCurrentAmmo(const int32 NewAmmo);
-
-	/**
-	 * Modifies the current ammo of the shooter behaviour.
-	 * @param AmmoValue - The value to modify the current ammo by.
-	 */
+	void SetInfiniteAmmo(const bool bEnabled);
+	
 	UFUNCTION(BlueprintCallable)
-	void ModifyCurrentAmmo(const int32 AmmoValue);
+	void ChangeShootType(const EShootType NewShootType);
 
-	/**
-	 * Checks if the shooter behaviour is active.
-	 * @return True if active, false otherwise.
-	 */
+	UFUNCTION(BlueprintCallable)
+	void ChangeMagazine(const FGameplayTag& NewMagazineTag);
+	
 	UFUNCTION(BlueprintPure)
 	bool IsBehaviourActive() const;
 
+	UFUNCTION(BlueprintPure)
+	bool IsShooting() const;
+	
 	UFUNCTION(BlueprintPure)
 	bool IsMagEmpty() const;
 
 	UFUNCTION(BlueprintPure)
 	bool IsMagFull() const;
 
-	/**
-	 * Gets the owner of the shooter behaviour.
-	 * @return The pawn that owns this shooter behaviour.
-	 */
+	UFUNCTION(BlueprintPure)
+	bool UsesAmmoOfType(const UAmmoTypeData* InAmmoType) const;
+
+	UFUNCTION(BlueprintPure)
+	bool HasInfiniteAmmo() const;
+	
 	UFUNCTION(BlueprintPure)
 	APawn* GetOwner() const;
 
@@ -315,35 +290,35 @@ public:
 	 * Gets the damage of the shooter behaviour.
 	 * @return The damage value.
 	 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintPure)
+	UFUNCTION(BlueprintPure)
 	float GetDamage() const;
 
 	/**
 	 * Gets the fire rate of the shooter (rounds per minute).
 	 * @return The fire rate in rounds per minute.
 	 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintPure)
+	UFUNCTION(BlueprintPure)
 	float GetFireRate() const;
 
 	/**
 	 * Gets the maximum range of the shooter behaviour.
 	 * @return The maximum range value.
 	 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintPure)
+	UFUNCTION(BlueprintPure)
 	float GetMaxRange() const;
 
 	/**
-	 * Gets the magazine size of the shooter behaviour.
+	 * Gets the size of the magazine associated with this shooter behaviour.
 	 * @return The magazine size.
 	 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintPure)
+	UFUNCTION(BlueprintPure)
 	int32 GetMagSize() const;
 
 	/**
 	 * Gets the recoil strength of the shooter behaviour.
 	 * @return The recoil strength.
 	 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintPure)
+	UFUNCTION(BlueprintPure)
 	float GetRecoilStrength() const;
 
 	/**
@@ -352,6 +327,9 @@ public:
 	 */
 	UFUNCTION(BlueprintPure)
 	float GetSpread() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetDefaultSpread() const;
 
 	/**
 	 * Gets the shoot barrel associated with the shooter behaviour.
@@ -367,59 +345,58 @@ public:
 	UFUNCTION(BlueprintPure)
 	EShootType GetShootType() const;
 
+	UFUNCTION(BlueprintPure)
+	TEnumAsByte<ECollisionChannel> GetSightTraceChannel() const;
+
+	UFUNCTION(BlueprintPure)
+	TSubclassOf<UDamageType> GetDamageTypeClass() const;
+
+	UFUNCTION(BlueprintPure)
+	UMagazine* GetRelatedMagazine() const;
+	
 	/**
 	 * Gets the number of shots fired by the shooter behaviour.
 	 * @return The number of shots fired.
 	 */
 	UFUNCTION(BlueprintPure)
 	int32 GetShotsFired() const;
-
-	/**
-	 * Gets the current ammo of the shooter behaviour.
-	 * @return The current ammo value.
-	 */
-	UFUNCTION(BlueprintPure)
-	int32 GetCurrentAmmo() const;
-
-	/**
-	 * Gets the amount of ammo to consume per shot.
-	 * @return The ammo consumption value.
-	 */
-	UFUNCTION(BlueprintPure)
-	int32 GetAmmoToConsume() const;
-
-	/**
-	 * Gets the cooldown handler of the shooter behaviour.
-	 * @return The cooldown handler.
-	 */
+	
 	UFUNCTION(BlueprintPure)
 	UCooldownHandler* GetCooldownHandler() const;
-
-	/**
-	 * Gets the recoil handler of the shooter behaviour.
-	 * @return The recoil handler.
-	 */
+	
 	UFUNCTION(BlueprintPure)
 	URecoilHandler* GetRecoilHandler() const;
-
-	/**
-	 * Gets the spread handler of the shooter behaviour.
-	 * @return The spread handler.
-	 */
+	
 	UFUNCTION(BlueprintPure)
 	USpreadHandler* GetSpreadHandler() const;
 
-	/**
-	 * Checks if the shooter has just shot.
-	 * @return True if the shooter has just shot, false otherwise.
-	 */
-	UFUNCTION(BlueprintPure)
-	bool HasJustShot() const;
+	UFUNCTION(BlueprintCallable)
+	void ResetAll();
 
-	/**
-	 * Gets the world context.
-	 * @return The world context.
-	 */
+	UFUNCTION(BlueprintCallable)
+	void ResetDamage();
+
+	UFUNCTION(BlueprintCallable)
+	void ResetFireRate();
+
+	UFUNCTION(BlueprintCallable)
+	void ResetMaxRange();
+
+	UFUNCTION(BlueprintCallable)
+	void ResetRecoilStrength();
+	
+	UFUNCTION(BlueprintCallable)
+	void ResetDefaultSpread();
+	
+	UFUNCTION(BlueprintCallable)
+	void ResetInfiniteAmmo();
+	
+	UFUNCTION(BlueprintCallable)
+	void ResetShootType();
+
+	UFUNCTION(BlueprintCallable)
+	void ResetMagazineTag();
+	
 	virtual UWorld* GetWorld() const override;
 
 #if WITH_EDITOR
@@ -427,6 +404,28 @@ public:
 #endif
 
 protected:
+	/**
+ 	 * Tries to get the camera start, end, and hit points, as well as the rotation.
+ 	 * @param OutStartPoint - Output parameter for the camera start point.
+ 	 * @param OutEndPoint - Output parameter for the camera end point.
+ 	 * @param OutHitPoint - Output parameter for the camera hit point.
+ 	 * @param OutRotation - Output parameter for the camera rotation.
+ 	 * @param StartPointOffset - Optional offset to apply to the start point.
+ 	 * @return true if the points were successfully retrieved, false otherwise.
+ 	*/
+	UFUNCTION(BlueprintCallable)
+	bool TryGetCameraPoints(FVector& OutStartPoint, FVector& OutEndPoint, FVector& OutHitPoint, FRotator& OutRotation, FVector StartPointOffset = FVector::ZeroVector) const;
+
+	/**
+	 * Checks if the target point is in line of sight from the start point within a given tolerance.
+	 * @param StartPoint - The starting point for the line of sight check.
+	 * @param TargetPoint - The target point to check visibility to.
+	 * @param Tolerance - The allowed tolerance for the check (default: 50.0f).
+	 * @return true if the target is in line of sight, false otherwise.
+	 */
+	UFUNCTION(BlueprintPure)
+	bool IsInLineOfSight(const FVector& StartPoint, const FVector& TargetPoint, const float Tolerance = 50.0f) const;
+	
 	/**
 	 * Handles the shoot logic of the shooter behaviour.
 	 */
@@ -473,6 +472,13 @@ protected:
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDisabled();
+	
+	/**
+	 * Gets the location of the target the shooter is aiming at. By default, it returns the location of the camera hit point.
+	 * @return The location of the target the shooter is aiming at.
+	 */
+	UFUNCTION(BlueprintNativeEvent, meta = (ToolTip = "Get the location of the target the shooter is aiming at. By default, it returns the location of the camera hit point."))
+	FVector GetShooterTargetLocation() const;
 
 	/**
 	 * Called when the shoot is deployed.
@@ -500,56 +506,41 @@ protected:
 
 	/**
 	 * Additional condition to check before shooting.
-	 * @return True if the condition is met, false otherwise.
+	 * @return Return true if the shoot can proceed, false otherwise.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	bool OnShootCondition(UShootBarrel* OutShootBarrel) const;
-
-	/**
-	 * Called when the shooter refills its magazine or ammo.
-	 */
-	UFUNCTION(BlueprintNativeEvent)
-	void OnRefill();
-
-	/**
-	 * Called when the magazine is emptied.
-	 */
-	UFUNCTION(BlueprintNativeEvent)
-	void OnMagEmptied();
-
-	/**
-	 * Gets the location of the target the shooter is aiming at. By default, it returns the location of the camera hit point.
-	 * @return The location of the target the shooter is aiming at.
-	 */
-	UFUNCTION(BlueprintNativeEvent, meta = (ToolTip = "Get the location of the target the shooter is aiming at. By default, it returns the location of the camera hit point."))
-	FVector GetShooterTargetLocation() const;
 	
 	/**
-	 * Tries to get the camera start, end, and hit points, as well as the rotation.
-	 * @param OutStartPoint - Output parameter for the camera start point.
-	 * @param OutEndPoint - Output parameter for the camera end point.
-	 * @param OutHitPoint - Output parameter for the camera hit point.
-	 * @param OutRotation - Output parameter for the camera rotation.
-	 * @param StartPointOffset - Optional offset to apply to the start point.
-	 * @return true if the points were successfully retrieved, false otherwise.
+	 * Called when the magazine ammo changes.
+	 * (NOTE: Prefer using the UMagazine versions to avoid duplicate calls when shared across multiple behaviours).
+	 * @param CurrentAmmo - The current ammo count.
+	 * @param MagSize - The magazine size.
 	 */
-	UFUNCTION(BlueprintCallable)
-	bool TryGetCameraPoints(FVector& OutStartPoint, FVector& OutEndPoint, FVector& OutHitPoint, FRotator& OutRotation, FVector StartPointOffset = FVector::ZeroVector) const;
+	UFUNCTION(BlueprintNativeEvent)
+	void OnMagazineAmmoChange(int32 CurrentAmmo, int32 MagSize);
 
 	/**
-	 * Checks if the target point is in line of sight from the start point within a given tolerance.
-	 * @param StartPoint - The starting point for the line of sight check.
-	 * @param TargetPoint - The target point to check visibility to.
-	 * @param Tolerance - The allowed tolerance for the check (default: 50.0f).
-	 * @return true if the target is in line of sight, false otherwise.
+	 * Called when the magazine is refilled.
+	 * (NOTE: Prefer using the UMagazine versions to avoid duplicate calls when shared across multiple behaviours).
 	 */
-	UFUNCTION(BlueprintPure)
-	bool IsInLineOfSight(const FVector& StartPoint, const FVector& TargetPoint, const float Tolerance = 50.0f) const;
+	UFUNCTION(BlueprintNativeEvent)
+	void OnMagazineRefill(int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
 
 	/**
-	 * Checks if the shooter behaviour is valid and ready for operations.
-	 * @return true if valid, false otherwise.
+	 * Called when the magazine is refilled to its maximum capacity.
+	 * (NOTE: Prefer using the UMagazine versions to avoid duplicate calls when shared across multiple behaviours).
 	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnMagazineFull();
+
+	/**
+	 * Called when the magazine ammo count reaches zero.
+	 * (NOTE: Prefer using the UMagazine versions to avoid duplicate calls when shared across multiple behaviours).
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnMagazineEmpty();
+	
 	virtual bool Check() const;
 
 private:
@@ -574,38 +565,10 @@ private:
 	 * @return The index of the next shoot point.
 	 */
 	int32 NextShootPointIndex();
+	
+	bool TryConsumeAmmoForShoot() const;
 
-	/**
-	 * Tries to consume ammo for a shoot action.
-	 * @return true if ammo was consumed, false otherwise.
-	 */
-	bool TryConsumeAmmoForShoot();
+	void BindMagazineEvents(UMagazine* Magazine);
 
-	/**
-	 * Checks if there is enough ammo to perform a shoot action.
-	 * @return true if there is enough ammo, false otherwise.
-	 */
-	bool HasEnoughAmmoToShoot() const;
-
-	/**
-	 * Checks if the magazine is empty and triggers related logic.
-	 */
-	void CheckMagEmpty();
-
-	/**
-	 * Triggers the logic for when a shot has just been fired.
-	 */
-	void TriggerHasJustShot();
-
-	/**
-	 * Called on the next tick to update the has-just-shot state.
-	 */
-	UFUNCTION()
-	void NextTickHasJustShot();
-
-	/**
-	 * Resets the has-just-shot state.
-	 */
-	UFUNCTION()
-	void ResetHasJustShot();
+	void UnbindMagazineEvents(UMagazine* Magazine);
 };

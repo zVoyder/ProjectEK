@@ -35,6 +35,23 @@ bool UFirearmMontagesManager::IsAnimFailShooting() const
 	return WeaponFirearm->IsPlayingWeaponMontage(FailShootMontage);
 }
 
+bool UFirearmMontagesManager::IsAnimReloading() const
+{
+	if (!Check())
+		return false;
+
+	if (WeaponFirearm->IsPlayingWeaponMontage(MainReloadMontage))
+		return true;
+
+	for (const FWeaponMontageData& SecondaryReloadMontage : SecondaryReloadMontages)
+	{
+		if (WeaponFirearm->IsPlayingWeaponMontage(SecondaryReloadMontage))
+			return true;
+	}
+
+	return false;
+}
+
 void UFirearmMontagesManager::BeginPlay()
 {
 	Super::BeginPlay();

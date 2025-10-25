@@ -1,10 +1,13 @@
-// Copyright zVoyder, Inc. All Rights Reserved.
+// Copyright VUEDK, Inc. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ReloadRequest.h"
 #include "UObject/Object.h"
 #include "ReloadEventData.generated.h"
+
+class UAmmoTypeData;
 
 USTRUCT(BlueprintType)
 struct WEAPONSYSTEM_API FReloadEventData
@@ -12,13 +15,7 @@ struct WEAPONSYSTEM_API FReloadEventData
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	int32 AmmoToReload;
-
-	FReloadEventData(): AmmoToReload(0)
-	{
-	}
-
-	explicit FReloadEventData(const int32 InAmmo): AmmoToReload(InAmmo)
-	{
-	}
+	FReloadRequest Request;
+	UPROPERTY(BlueprintReadOnly)
+	TMap<UAmmoTypeData*, int32> AmmoPerType;
 };

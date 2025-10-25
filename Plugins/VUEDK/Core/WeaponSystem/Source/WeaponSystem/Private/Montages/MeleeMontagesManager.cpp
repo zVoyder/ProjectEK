@@ -71,7 +71,7 @@ int32 UMeleeMontagesManager::GetAttackIndex() const
 
 UWeaponMeleeAttackData* UMeleeMontagesManager::GetCurrentAttackMontage() const
 {
-	return CurrentAttackMontage;
+	return CurrentAttack;
 }
 
 bool UMeleeMontagesManager::IsMontageInterrupting() const
@@ -161,13 +161,13 @@ void UMeleeMontagesManager::OnWeaponEndAttack()
 
 void UMeleeMontagesManager::OnWeaponAttackInterrupted(UMeleeHitbox* Hitbox, FHitResult HitResult)
 {
-	if (CurrentAttackMontage == nullptr)
+	if (CurrentAttack == nullptr)
 		return;
 
-	if (!IsValid(CurrentAttackMontage->AttackInterruptMontage.GetCharacterMontage()))
+	if (!IsValid(CurrentAttack->AttackInterruptMontage.GetCharacterMontage()))
 		return;
 
-	UWeaponMeleeAttackData* WeaponMontage = CurrentAttackMontage;
+	UWeaponMeleeAttackData* WeaponMontage = CurrentAttack;
 	bIsInterrupting = true;
 	EndAttackSequence();
 	WeaponMontage->AttackInterruptMontage.OnMontageFinished.AddUniqueDynamic(this, &UMeleeMontagesManager::OnAttackInterruptFinished);
@@ -192,28 +192,31 @@ void UMeleeMontagesManager::StartComboAttack()
 	}
 
 	ResetComboAttack();
-	UWeaponMeleeAttackData* AttackMontage = Attacks[0];
+	UWeaponMeleeAttackData* Attack = Attacks[0];
 
-	if (!IsValid(AttackMontage))
+	if (!IsValid(Attack))
 		return;
 
 	FAlphaBlendArgs WeaponBlendArgs;
 	if (IsValid(DefensiveMontage.GetWeaponMontage()))
 		WeaponBlendArgs = DefensiveMontage.GetWeaponMontage()->BlendOut;
 
-	CurrentAttackMontage = AttackMontage;
+	CurrentAttack = Attack;
 	StartWeaponMontageWithBlends(
-		AttackMontage->AttackMontage,
+		Attack->AttackMontage,
 		GetAttackSpeed(),
 		GetAttackSpeed(),
 		WeaponBlendArgs,
 		StartBlendIn
 	);
+
+	WeaponMelee->CallComboStartedEvent(Attack);
+	WeaponMelee->CallAttackStartedEvent(Attack, CurrentAttackIndex);
 }
 
 void UMeleeMontagesManager::EndComboAttack() const
 {
-	if (CurrentAttackMontage == nullptr || !IsValid(CurrentAttackMontage->AttackMontage.GetCharacterMontage()))
+	if (CurrentAttack == nullptr || !IsValid(CurrentAttack->AttackMontage.GetCharacterMontage()))
 		return;
 
 	FAlphaBlendArgs WeaponBlendArgs;
@@ -221,10 +224,12 @@ void UMeleeMontagesManager::EndComboAttack() const
 		WeaponBlendArgs = DefensiveMontage.GetWeaponMontage()->BlendOut;
 
 	StopWeaponMontageWithBlends(
-		CurrentAttackMontage->AttackMontage,
+		CurrentAttack->AttackMontage,
 		WeaponBlendArgs,
 		StopBlendOut
 	);
+
+	WeaponMelee->CallComboEndedEvent(CurrentAttack);
 }
 
 void UMeleeMontagesManager::ResetComboAttack()
@@ -253,22 +258,24 @@ void UMeleeMontagesManager::PlayAttackMontageAt(const int32 AttackIndex)
 	PlayAttackMontage(AttackMontage);
 }
 
-void UMeleeMontagesManager::PlayAttackMontage(UWeaponMeleeAttackData* AttackMontage)
+void UMeleeMontagesManager::PlayAttackMontage(UWeaponMeleeAttackData* Attack)
 {
-	CurrentAttackMontage = AttackMontage;
+	CurrentAttack = Attack;
 
 	StartWeaponMontage(
-		AttackMontage->AttackMontage,
+		Attack->AttackMontage,
 		GetAttackSpeed(),
 		GetAttackSpeed()
 	);
+
+	WeaponMelee->CallAttackStartedEvent(Attack, CurrentAttackIndex);
 }
 
 void UMeleeMontagesManager::EndAttackSequence()
 {
 	EndComboAttack();
 	ResetComboAttack();
-	CurrentAttackMontage = nullptr;
+	CurrentAttack = nullptr;
 }
 
 void UMeleeMontagesManager::PlayDefensiveMontage()

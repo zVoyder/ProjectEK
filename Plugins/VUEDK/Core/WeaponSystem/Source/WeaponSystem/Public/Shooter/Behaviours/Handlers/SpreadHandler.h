@@ -114,6 +114,10 @@ protected:
 	virtual void OnInit() override;
 
 private:
+	void SetDefaultSpread(float NewDefaultSpread) const;
+	
+	float GetDefaultSpread() const;
+	
 	/**
 	 * Processes the spread logic each frame.
 	 * @param DeltaTime - The time elapsed since the last tick.

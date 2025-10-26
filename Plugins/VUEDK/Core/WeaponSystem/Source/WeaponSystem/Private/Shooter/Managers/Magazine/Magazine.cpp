@@ -12,48 +12,48 @@ void UMagazine::Init()
 		CurrentAmmoCount = 0;
 }
 
-void UMagazine::SetCurrentAmmo(const int32 NewAmmo)
+void UMagazine::SetCurrentAmmo(const int32 NewAmmo, const UObject* Instigator)
 {
 	const int32 MagSize = GetMagazineSize();
 	CurrentAmmoCount = FMath::Clamp(NewAmmo, 0, MagSize);
-	CallAmmoChangeEvent(MagSize);
+	CallAmmoChangeEvent(MagSize, Instigator);
 
 	if (IsEmpty())
-		CallMagEmptyEvent();
+		CallMagEmptyEvent(Instigator);
 	else if (IsFull())
-		CallMagFullEvent();
+		CallMagFullEvent(Instigator);
 }
 
-void UMagazine::ModifyCurrentAmmo(const int32 Ammo)
+void UMagazine::ModifyCurrentAmmo(const int32 Ammo, const UObject* Instigator)
 {
-	SetCurrentAmmo(CurrentAmmoCount + Ammo);
+	SetCurrentAmmo(CurrentAmmoCount + Ammo, Instigator);
 }
 
-bool UMagazine::TryConsumeAmmo(const int32 Ammo)
+bool UMagazine::TryConsumeAmmo(const int32 Ammo, const UObject* Instigator)
 {
 	if (!CanConsumeAmmo(Ammo))
 		return false;
 
-	ModifyCurrentAmmo(-Ammo);
+	ModifyCurrentAmmo(-Ammo, Instigator);
 	return true;
 }
 
-int32 UMagazine::Refill(const int32 Ammo, int32& OutRemainingAmmo)
+int32 UMagazine::Refill(const int32 Ammo, int32& OutRemainingAmmo, const UObject* Instigator)
 {
-	ModifyCurrentAmmo(Ammo);
+	ModifyCurrentAmmo(Ammo, Instigator);
 	OutRemainingAmmo = FMath::Abs(CurrentAmmoCount - Ammo);
 	const int32 RefilledAmmo = Ammo - OutRemainingAmmo;
 	CallRefillEvent(OutRemainingAmmo, RefilledAmmo);
 	return RefilledAmmo;
 }
 
-void UMagazine::RefillAllMagazine()
+void UMagazine::RefillAllMagazine(const UObject* Instigator)
 {
 	int32 RemainingAmmo = 0;
-	Refill(GetNeededAmmoToFull(), RemainingAmmo);
+	Refill(GetNeededAmmoToFull(), RemainingAmmo, Instigator);
 }
 
-int32 UMagazine::RefillWithAmmoType(UAmmoTypeData* AmmoType, const int32 Ammo, int32& OutRemainingAmmo)
+int32 UMagazine::RefillWithAmmoType(UAmmoTypeData* AmmoType, const int32 Ammo, int32& OutRemainingAmmo, const UObject* Instigator)
 {
 	if (!IsOfAmmoType(AmmoType))
 	{
@@ -61,7 +61,7 @@ int32 UMagazine::RefillWithAmmoType(UAmmoTypeData* AmmoType, const int32 Ammo, i
 		return 0;
 	}
 
-	return Refill(Ammo, OutRemainingAmmo);
+	return Refill(Ammo, OutRemainingAmmo, Instigator);
 }
 
 void UMagazine::SetMagazineSize(int32 NewSize)
@@ -118,42 +118,42 @@ void UMagazine::ResetMagazineSizeToDefault()
 	SetMagazineSize(MagazineData.DefaultSize);
 }
 
-void UMagazine::OnRefill_Implementation(int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
+void UMagazine::OnRefill_Implementation(const UObject* Instigator, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
 {
 }
 
-void UMagazine::OnAmmoChange_Implementation(int32 CurrentAmmo, int32 MagSize)
+void UMagazine::OnAmmoChange_Implementation(const UObject* Instigator, int32 CurrentAmmo, int32 MagSize)
 {
 }
 
-void UMagazine::OnFull_Implementation()
+void UMagazine::OnFull_Implementation(const UObject* Instigator)
 {
 }
 
-void UMagazine::OnEmpty_Implementation()
+void UMagazine::OnEmpty_Implementation(const UObject* Instigator)
 {
 }
 
-void UMagazine::CallAmmoChangeEvent(const int32 MagSize)
+void UMagazine::CallAmmoChangeEvent(const int32 MagSize, const UObject* Instigator)
 {
-	OnAmmoChange(CurrentAmmoCount, MagSize);
-	OnAmmoChanged.Broadcast(CurrentAmmoCount, MagSize);
+	OnAmmoChange(Instigator, CurrentAmmoCount, MagSize);
+	OnMagazineAmmoChanged.Broadcast(Instigator, CurrentAmmoCount, MagSize);
 }
 
-void UMagazine::CallRefillEvent(const int32& OutRemainingAmmo, const int32 RefilledAmmo)
+void UMagazine::CallRefillEvent(const int32& OutRemainingAmmo, const int32 RefilledAmmo, const UObject* Instigator)
 {
-	OnRefill(CurrentAmmoCount, RefilledAmmo, OutRemainingAmmo);
-	OnMagazineRefilled.Broadcast(CurrentAmmoCount, RefilledAmmo, OutRemainingAmmo);
+	OnRefill(Instigator, CurrentAmmoCount, RefilledAmmo, OutRemainingAmmo);
+	OnMagazineRefilled.Broadcast(Instigator, CurrentAmmoCount, RefilledAmmo, OutRemainingAmmo);
 }
 
-void UMagazine::CallMagEmptyEvent()
+void UMagazine::CallMagEmptyEvent(const UObject* Instigator)
 {
-	OnEmpty();
-	OnMagazineEmpty.Broadcast();
+	OnEmpty(Instigator);
+	OnMagazineEmpty.Broadcast(Instigator);
 }
 
-void UMagazine::CallMagFullEvent()
+void UMagazine::CallMagFullEvent(const UObject* Instigator)
 {
-	OnFull();
-	OnMagazineFull.Broadcast();
+	OnFull(Instigator);
+	OnMagazineFull.Broadcast(Instigator);
 }

@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Shooter/ShootBarrel.h"
 #include "UObject/Object.h"
 #include "Shooter/Data/ShootData.h"
+#include "Shooter/Data/ShootFailReason.h"
 #include "ShooterHandlerBase.generated.h"
 
 class UShootBarrel;
@@ -23,10 +25,6 @@ private:
 	bool bIsInitialized = false;
 
 public:
-	/**
-	 * Initializes the shooter handler with the specified behaviour and shoot data.
-	 * @param InBehaviour - The shooter behaviour to associate with this handler.
-	 */
 	void Init(UShooterBehaviourBase* InBehaviour);
 	
 	virtual void Tick(float DeltaTime) override;
@@ -36,47 +34,23 @@ public:
 	virtual TStatId GetStatId() const override;
 
 protected:
-	/**
-	 * Called when the handler is initialized. Can be overridden in subclasses.
-	 */
 	virtual void OnInit();
-
-	/**
-	 * Binds events to the handler. Can be overridden in subclasses.
-	 */
+	
 	virtual void BindEvents();
 	
-	/**
-	 * Called when the behaviour is enabled.
-	 */
 	UFUNCTION()
-	virtual void OnBehaviourEnabled();
+	virtual void OnBehaviourEnabled(UShooterBehaviourBase* InBehaviour);
 	
-	/**
-	 * Called when the behaviour is disabled.
-	 */
 	UFUNCTION()
-	virtual void OnBehaviourDisabled();
+	virtual void OnBehaviourDisabled(UShooterBehaviourBase* InBehaviour);
 	
-	/**
-	 * Called when the behaviour shoot is successful.
-	 * @param ShootBarrel - The shoot barrel used.
-	 * @param ShotIndex - The index of the shot.
-	 */
 	UFUNCTION()
-	virtual void OnBehaviourShootSuccess(UShootBarrel* ShootBarrel, int32 ShotIndex);
-
-	/**
-	 * Called when the behaviour shoot fails.
-	 */
+	virtual void OnBehaviourShootSuccess(UShooterBehaviourBase* InBehaviour, UShootBarrel* ShootBarrel, int32 ShotIndex);
+	
 	UFUNCTION()
-	virtual void OnBehaviourShootFail();
+	virtual void OnBehaviourShootFail(UShooterBehaviourBase* InBehaviour, EShootFailReason FailReason);
 
 	UShootData* GetShootData() const;
-
-	/**
-	 * Checks if the handler is valid and ready for operations.
-	 * @return true if valid, false otherwise.
-	 */
+	
 	virtual bool Check() const;
 };

@@ -10,6 +10,11 @@ AWeaponMelee::AWeaponMelee()
 	MeleeHitboxesManager = CreateDefaultSubobject<UMeleeHitboxesManager>(TEXT("MeleeHitboxesManager"));
 }
 
+UWeaponMontagesManagerBase* AWeaponMelee::GetMontagesManager() const
+{
+	return MeleeMontagesManager;
+}
+
 bool AWeaponMelee::IsWeaponAttacking() const
 {
 	return MeleeMontagesManager->IsMontageAttacking();

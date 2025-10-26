@@ -7,25 +7,29 @@
 #include "UObject/Object.h"
 #include "Magazine.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FOnMagazineRefilled,
+	const UObject*, Instigator,
 	int32, CurrentAmmo,
 	int32, RefilledAmmo,
 	int32, RemainingAmmo
 );
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-	FOnAmmoChanged,
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+	FOnMagazineAmmoChanged,
+	const UObject*, Instigator,
 	int32, CurrentAmmo,
 	int32, MagSize
 );
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(
-	FOnMagazineFull
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnMagazineFull,
+	const UObject*, Instigator
 );
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(
-	FOnMagazineEmpty
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnMagazineEmpty,
+	const UObject*, Instigator
 );
 
 UCLASS(Blueprintable, BlueprintType, EditInlineNew)
@@ -37,7 +41,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnMagazineRefilled OnMagazineRefilled;
 	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnAmmoChanged OnAmmoChanged;
+	FOnMagazineAmmoChanged OnMagazineAmmoChanged;
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnMagazineFull OnMagazineFull;
 	UPROPERTY(BlueprintAssignable, Category = Events)
@@ -56,38 +60,41 @@ public:
 	void Init();
 
 	UFUNCTION(BlueprintCallable)
-	void SetCurrentAmmo(const int32 NewAmmo);
+	void SetCurrentAmmo(const int32 NewAmmo, const UObject* Instigator = nullptr);
 
 	UFUNCTION(BlueprintCallable)
-	void ModifyCurrentAmmo(const int32 Ammo);
+	void ModifyCurrentAmmo(const int32 Ammo, const UObject* Instigator = nullptr);
 
 	UFUNCTION(BlueprintCallable)
-	bool TryConsumeAmmo(const int32 Ammo);
+	bool TryConsumeAmmo(const int32 Ammo, const UObject* Instigator = nullptr);
 
 	/**
 	 * Refills the magazine with the specified amount of ammo.
 	 * @param Ammo - The amount of ammo to add.
 	 * @param OutRemainingAmmo - The amount of ammo that could not be added (excess).
+	 * @param Instigator - The object responsible for the refill action.
 	 * @return - The amount of ammo actually added to the magazine.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
-	int32 Refill(const int32 Ammo, int32& OutRemainingAmmo);
+	int32 Refill(const int32 Ammo, int32& OutRemainingAmmo, const UObject* Instigator = nullptr);
 
 	/**
 	 * Refills the magazine to its maximum capacity.
+	 * @param Instigator - The object responsible for the refill action.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void RefillAllMagazine();
+	void RefillAllMagazine(const UObject* Instigator = nullptr);
 
 	/**
 	 * Refills the magazine with a specific type of ammo.
 	 * @param AmmoType - The type of ammo to use for refilling.
 	 * @param Ammo - The amount of ammo to add.
 	 * @param OutRemainingAmmo - The amount of ammo that could not be added (excess).
+	 * @param Instigator - The object responsible for the refill action.
 	 * @return - The amount of ammo actually added to the magazine.
 	 */
 	UFUNCTION(BlueprintCallable)
-	int32 RefillWithAmmoType(UAmmoTypeData* AmmoType, const int32 Ammo, int32& OutRemainingAmmo);
+	int32 RefillWithAmmoType(UAmmoTypeData* AmmoType, const int32 Ammo, int32& OutRemainingAmmo, const UObject* Instigator = nullptr);
 	
 	UFUNCTION(BlueprintCallable)
 	void SetMagazineSize(int32 NewSize);
@@ -121,23 +128,23 @@ public:
 
 protected:
 	UFUNCTION(BlueprintNativeEvent)
-	void OnRefill(int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
+	void OnRefill(const UObject* Instigator, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void OnAmmoChange(int32 CurrentAmmo, int32 MagSize);
+	void OnAmmoChange(const UObject* Instigator, int32 CurrentAmmo, int32 MagSize);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void OnFull();
+	void OnFull(const UObject* Instigator);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void OnEmpty();
+	void OnEmpty(const UObject* Instigator);
 
 private:
-	void CallAmmoChangeEvent(const int32 MagSize);
+	void CallAmmoChangeEvent(const int32 MagSize, const UObject* Instigator = nullptr);
 
-	void CallRefillEvent(const int32& OutRemainingAmmo, const int32 RefilledAmmo);
+	void CallRefillEvent(const int32& OutRemainingAmmo, const int32 RefilledAmmo, const UObject* Instigator = nullptr);
 	
-	void CallMagEmptyEvent();
+	void CallMagEmptyEvent(const UObject* Instigator = nullptr);
 	
-	void CallMagFullEvent();
+	void CallMagFullEvent(const UObject* Instigator = nullptr);
 };

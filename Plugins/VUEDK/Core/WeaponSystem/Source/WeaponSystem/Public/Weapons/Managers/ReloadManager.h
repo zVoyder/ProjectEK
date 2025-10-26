@@ -26,8 +26,6 @@ public:
 	void RequestReloadByAmmoType(UAmmoTypeData* AmmoType, int32 AmmoToInsert);
 	
 	void RequestReloadBehaviour(int32 BehaviourIndex, UAmmoTypeData* AmmoType, int32 AmmoToInsert, bool bSequential = false);
-
-	void InsertAmmoMainBehaviour();
 	
 	void InsertAmmoBehaviour(const int32 BehaviourIndex);
 
@@ -37,7 +35,7 @@ private:
 	static FReloadEventData CreateReloadEvent(const FReloadRequest& Request);
 
 	UFUNCTION()
-	void OnMainReloadMontageEnded(bool bInterrupted);
+	void OnReloadMontageEnded(bool bInterrupted);
 	
 private:
 	bool Check() const;

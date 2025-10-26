@@ -18,17 +18,20 @@ void AEKWeaponFirearm::Init(APawn* InOwner, UObject* InPayload)
 	}
 
 	WeaponFirearmItem = GetWeaponFirearmItem();
-	const float Damage = WeaponFirearmItem->GetWeaponDamage();
-	SetWeaponDamage(Damage);
-
+	if (!IsValid(WeaponFirearmItem))
+	{
+		UE_LOG(LogEKWeapons, Warning, TEXT("AEKWeaponFirearm::Init: WeaponFirearmItem is not valid."));
+		return;
+	}
+	
 	if (bUseItemFireRate)
 	{
 		const float FireRate = WeaponFirearmItem->GetFireRate();
 		SetWeaponFireRate(FireRate);
 	}
-
-	const int32 MagSize = WeaponFirearmItem->GetMagSize();
-	SetWeaponMagSize(MagSize);
+	
+	SetWeaponDamage(WeaponFirearmItem->GetWeaponDamage());
+	SetWeaponMagazineSize( WeaponFirearmItem->GetMagSize());
 	SetCurrentAmmo(WeaponFirearmItem->GetCurrentMagAmmo());
 }
 
@@ -65,10 +68,12 @@ bool AEKWeaponFirearm::CanReloadWithItemData() const
 	return FoundItems.Num() > 0;
 }
 
-void AEKWeaponFirearm::OnCurrentAmmoChanged_Implementation(int32 CurrentAmmo, int32 MagSize)
+void AEKWeaponFirearm::OnBehaviourAmmoChange_Implementation(UShooterBehaviourBase* Behaviour, UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize)
 {
-	Super::OnCurrentAmmoChanged_Implementation(CurrentAmmo, MagSize);
+	Super::OnBehaviourAmmoChange_Implementation(Behaviour, Magazine, CurrentAmmo, MagSize);
 
+	// Since this game doesn't need multiple behaviours, we can directly update a single variable.
+	// Otherwise, we could map magazines tags to their respective ammo counts.
 	if (IsValid(WeaponFirearmItem))
 		WeaponFirearmItem->SetCurrentMagAmmo(CurrentAmmo);
 }

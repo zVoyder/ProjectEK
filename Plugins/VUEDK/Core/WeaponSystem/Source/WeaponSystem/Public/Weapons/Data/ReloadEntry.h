@@ -12,10 +12,8 @@ USTRUCT(BlueprintType)
 struct WEAPONSYSTEM_API FReloadEntry
 {
 	GENERATED_BODY()
-
+	
 	UPROPERTY(BlueprintReadWrite)
-	bool bIsMainBehaviour;
-	UPROPERTY(BlueprintReadWrite, meta = (EditCondition = "!bIsMainBehaviour"))
 	int32 BehaviourIndex;
 	UPROPERTY(BlueprintReadWrite)
 	UAmmoTypeData* AmmoType;

@@ -174,6 +174,8 @@ public:
 	 */
 	UFUNCTION(BlueprintPure)
 	FWeaponFirearmData GetWeaponFirearmData() const;
+
+	virtual UWeaponMontagesManagerBase* GetMontagesManager() const override;
 	
 	UFUNCTION(BlueprintPure)
 	float GetWeaponFireRate(const int32 BehaviourIndex = 0) const;
@@ -329,6 +331,99 @@ protected:
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDisableAim();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnBehaviourEnable(UShooterBehaviourBase* Behaviour);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnBehaviourDisable(UShooterBehaviourBase* Behaviour);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void OnBehaviourShootSuccess(UShooterBehaviourBase* Behaviour, UShootBarrel* ShootBarrel, int32 ShotIndex);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void OnBehaviourShootFail(UShooterBehaviourBase* Behaviour, EShootFailReason FailReason);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void OnBehaviourShootSequenceEnd(UShooterBehaviourBase* Behaviour);
+
+	/**
+	 * Called when the ammo count changes in a shooter behaviour.
+	 * (NOTE: This is called locally for each behaviour, use "OnMagazine" events for global events)
+	 * @param Behaviour - The shooter behaviour where the ammo change occurred.
+	 * @param Magazine - The magazine associated with the behaviour.
+	 * @param CurrentAmmo - The current ammo count after the change.
+	 * @param MagSize - The total magazine size.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnBehaviourAmmoChange(UShooterBehaviourBase* Behaviour, UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize);
+
+	/**
+	 * Called when ammo is refilled in a shooter behaviour.
+	 * (NOTE: This is called locally for each behaviour, use "OnMagazine" events for global events)
+	 * @param Behaviour - The shooter behaviour where the refill occurred.
+	 * @param Magazine - The magazine associated with the behaviour.
+	 * @param CurrentAmmo - The current ammo count after the refill.
+	 * @param RefilledAmmo - The amount of ammo that was refilled.
+	 * @param RemainingAmmo - The remaining ammo available for refilling.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnBehaviourRefill(UShooterBehaviourBase* Behaviour, UMagazine* Magazine, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
+
+	/**
+	 * Called when the magazine in a shooter behaviour becomes full.
+	 * (NOTE: This is called locally for each behaviour, use "OnMagazine" events for global events)
+	 * @param Behaviour - The shooter behaviour where the magazine became full.
+	 * @param Magazine - The magazine associated with the behaviour.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnBehaviourFull(UShooterBehaviourBase* Behaviour, UMagazine* Magazine);
+
+	/**
+	 * Called when the magazine in a shooter behaviour becomes empty.
+	 * (NOTE: This is called locally for each behaviour, use "OnMagazine" events for global events)
+	 * @param Behaviour - The shooter behaviour where the magazine became empty.
+	 * @param Magazine - The magazine associated with the behaviour.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnBehaviourEmpty(UShooterBehaviourBase* Behaviour, UMagazine* Magazine);
+
+	/**
+	 * Called when ammo is refilled in the magazine.
+	 * (NOTE: This is a global event for the magazine, use "OnBehaviour" events for behaviour-specific events)
+	 * @param MagInstigator - The object that initiated the magazine refill.
+	 * @param CurrentAmmo - The current ammo count after the refill.
+	 * @param RefilledAmmo - The amount of ammo that was refilled.
+	 * @param RemainingAmmo - The remaining ammo available for refilling.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnMagazineRefill(const UObject* MagInstigator, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
+
+	/**
+	 * Called when the ammo count changes in the magazine.
+	 * (NOTE: This is a global event for the magazine, use "OnBehaviour" events for behaviour-specific events)
+	 * @param MagInstigator - The object that initiated the ammo change.
+	 * @param CurrentAmmo - The current ammo count after the change.
+	 * @param MagSize - The total magazine size.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnMagazineAmmoChange(const UObject* MagInstigator, int32 CurrentAmmo, int32 MagSize);
+
+	/**
+	 * Called when the magazine becomes full.
+	 * (NOTE: This is a global event for the magazine, use "OnBehaviour" events for behaviour-specific events)
+	 * @param MagInstigator - The object that initiated the magazine full event.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnMagazineFull(const UObject* MagInstigator);
+
+	/**
+	 * Called when the magazine becomes empty.
+	 * (NOTE: This is a global event for the magazine, use "OnBehaviour" events for behaviour-specific events)
+	 * @param MagInstigator - The object that initiated the magazine empty event.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnMagazineEmpty(const UObject* MagInstigator);
 	
 	/**
 	 * Gets the payload data for the reload event.

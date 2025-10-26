@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Weapons/WeaponBase.h"
 #include "Components/ActorComponent.h"
+#include "Montages/Data/WeaponMontageData.h"
 #include "WeaponMontagesManagerBase.generated.h"
+
+class AWeaponBase;
 
 UCLASS(Abstract, NotBlueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class WEAPONSYSTEM_API UWeaponMontagesManagerBase : public UActorComponent
@@ -13,70 +15,42 @@ class WEAPONSYSTEM_API UWeaponMontagesManagerBase : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Equip")
-	FWeaponMontageData EquipMontageData;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Equip")
-	FWeaponMontageData UnequipMontageData;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
+	bool bUseTag;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages", meta = (ToolTip = "Used to find the anim instance of the owner's mesh if it is not a character."))
+	FName AnimInstanceMeshTag = TEXT("AnimInstanceMesh"); // Use a tag to be more flexible
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions|Equip")
+	FWeaponMontageData EquipMontageData;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions|Equip")
+	FWeaponMontageData UnequipMontageData;
+	
 protected:
 	UPROPERTY()
+	TMap<UAnimMontage*, FWeaponMontageData> PlayingMontages;
+	UPROPERTY()
 	AWeaponBase* Weapon;
+	UPROPERTY()
+	UAnimInstance* OwnerAnimInstance;
 
 private:
 	bool bIsPlayingEquipMontage;
 
 public:
 	UWeaponMontagesManagerBase();
-
-	/**
-	 * Resumes the specified weapon montage.
-	 * @param WeaponMontageData - The montage data to resume.
-	 */
+	
 	void ResumeWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
 	
-	/**
-	 * Pauses the specified weapon montage.
-	 * @param WeaponMontageData - The montage data to pause.
-	 */
 	void PauseWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
 	
-	/**
-	 * Starts the specified weapon montage with given play rates.
-	 * @param WeaponMontageData - The montage data to start.
-	 * @param WeaponPlayRate - The play rate for the weapon montage.
-	 * @param CharacterPlayRate - The play rate for the character animation.
-	 */
-	void StartWeaponMontage(const FWeaponMontageData& WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate) const;
+	void StartWeaponMontage(FWeaponMontageData& WeaponMontageData, float WeaponPlayRate, float CharacterPlayRate);
 	
-	/**
-	 * Starts the specified weapon montage with custom blends for weapon and character.
-	 * @param WeaponMontageData - The montage data to start.
-	 * @param WeaponPlayRate - The play rate for the weapon montage.
-	 * @param CharacterPlayRate - The play rate for the character animation.
-	 * @param WeaponBlendIn - The blend in arguments for the weapon.
-	 * @param CharacterBlendIn - The blend in arguments for the character.
-	 */
-	void StartWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const float WeaponPlayRate, const float CharacterPlayRate, const FAlphaBlendArgs& WeaponBlendIn, const FAlphaBlendArgs& CharacterBlendIn) const;
+	void StartWeaponMontageWithBlends(FWeaponMontageData& WeaponMontageData, float WeaponPlayRate, float CharacterPlayRate, const FAlphaBlendArgs& WeaponBlendIn, const FAlphaBlendArgs& CharacterBlendIn);
 
-	/**
-	 * Stops the specified weapon montage.
-	 * @param WeaponMontageData - The montage data to stop.
-	 */
-	void StopWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
-	
-	/**
-	 * Stops the specified weapon montage with custom blend out settings for weapon and character.
-	 * @param WeaponMontageData - The montage data to stop.
-	 * @param WeaponBlendOut - The blend out arguments for the weapon.
-	 * @param CharacterBlendOut - The blend out arguments for the character.
-	 */
-	void StopWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut) const;
-	
-	/**
-	 * Checks if the specified weapon montage is currently playing.
-	 * @param WeaponMontageData - The montage data to check.
-	 * @return true if the montage is playing, false otherwise.
-	 */
+	void StopWeaponMontage(const FWeaponMontageData& WeaponMontageData);
+
+	void StopWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut);
+
 	bool IsPlayingWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
 
 	/**
@@ -85,7 +59,7 @@ public:
 	 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintPure)
 	bool IsBusy() const;
-	
+
 	/**
 	 * Checks if an equip or unequip montage is currently playing.
 	 * @return true if an equip or unequip montage is playing, false otherwise.
@@ -93,69 +67,60 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsEquipOrUnequipMontagePlaying() const;
 	
-	/**
-	 * Called when the component ends play. Used for cleanup logic.
-	 * @param EndPlayReason - The reason the component is ending play.
-	 */
+	UFUNCTION(BlueprintPure)
+	UAnimInstance* GetOwnerAnimInstance() const;
+
+	UFUNCTION(BlueprintPure)
+	UAnimInstance* GetWeaponAnimInstance() const;
+	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 protected:
-	/**
-	 * Called when the component begins play. Used for initialization logic.
-	 */
 	virtual void BeginPlay() override;
 
-	/**
-	 * Checks if the manager is in a valid state for operations.
-	 * @return true if valid, false otherwise.
-	 */
-	virtual bool Check() const;
+	virtual void Init();
 
-	/**
-	 * Called when a weapon attack succeeds.
-	 */
+	virtual void BindEvents();
+
+	virtual void UnbindEvents();
+
 	UFUNCTION()
 	virtual void OnWeaponAttackSuccess();
 
-	/**
-	 * Called when a weapon attack fails.
-	 */
 	UFUNCTION()
 	virtual void OnWeaponAttackFail();
 
-	/**
-	 * Called when a weapon attack ends.
-	 */
 	UFUNCTION()
 	virtual void OnWeaponEndAttack();
 
+	virtual bool Check() const;
+
 private:
-	/**
-	 * Starts the equip montage for the weapon.
-	 */
+	void AddPlayingMontage(UAnimMontage* Montage, const FWeaponMontageData& WeaponMontageData);
+	
+	void RemovePlayingMontage(const UAnimMontage* Montage);
+	
+	void PlayMontageInternal(UAnimInstance* AnimInstance, FWeaponMontageData& WeaponMontageData, UAnimMontage* Montage, float PlayRate, bool bStopAll, bool bRegisterPlayingMontage = true);
+
+	void PlayMontageWithBlendInternal(UAnimInstance* AnimInstance, FWeaponMontageData& WeaponMontageData, UAnimMontage* Montage, float PlayRate, bool bStopAll, const FAlphaBlendArgs& BlendIn, bool bRegisterPlayingMontage = true);
+	
+	void SetOwnerAnimInstance();
+	
+	void SetWeaponMetaData(UAnimMontage* Montage) const;
+	
 	void StartEquipMontage();
 	
-	/**
-	 * Starts the unequip montage for the weapon.
-	 */
 	void StartUnequipMontage();
 	
-	/**
-	 * Called when the weapon is equipped.
-	 */
 	UFUNCTION()
 	void OnWeaponEquipped();
 
-	/**
-	 * Called when the weapon is unequipped.
-	 */
 	UFUNCTION()
 	void OnWeaponUnequipped();
 
-	/**
-	 * Called when the weapon is ready to use (after equip/unequip).
-	 * @param bInterrupted - True if the process was interrupted, false otherwise.
-	 */
 	UFUNCTION()
 	void OnWeaponReadyToUse(bool bInterrupted);
+
+	UFUNCTION()
+	void OnMontageEnded(UAnimMontage* AnimMontage, bool bInterrupted);
 };

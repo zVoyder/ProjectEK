@@ -70,8 +70,7 @@ void UShooterBehaviourBase::EnableBehaviour()
 		return;
 
 	bIsBehaviourActive = true;
-	OnEnabled();
-	OnBehaviourEnabled.Broadcast();
+	CallEnableEvent();
 }
 
 void UShooterBehaviourBase::DisableBehaviour()
@@ -80,8 +79,7 @@ void UShooterBehaviourBase::DisableBehaviour()
 		return;
 
 	bIsBehaviourActive = false;
-	OnDisabled();
-	OnBehaviourDisabled.Broadcast();
+	CallDisableEvent();
 }
 
 bool UShooterBehaviourBase::Shoot()
@@ -142,7 +140,7 @@ void UShooterBehaviourBase::EndShootSequence()
 
 	bIsShooting = false;
 	ShotsFired = 0;
-	OnEndShootSequence.Broadcast();
+	CallEndShootSequenceEvent();
 }
 
 void UShooterBehaviourBase::ResetSpread(const float ChangeRate) const
@@ -156,7 +154,7 @@ int32 UShooterBehaviourBase::RefillMagazine(const int32 Ammo, int32& OutRemainin
 	if (!IsValid(RelatedMagazine))
 		return 0;
 	
-	return RelatedMagazine->Refill(Ammo, OutRemainingAmmo);
+	return RelatedMagazine->Refill(Ammo, OutRemainingAmmo, this);
 }
 
 void UShooterBehaviourBase::RefillAllMagazine() const
@@ -165,7 +163,7 @@ void UShooterBehaviourBase::RefillAllMagazine() const
 	if (!IsValid(RelatedMagazine))
 		return;
 
-	RelatedMagazine->RefillAllMagazine();
+	RelatedMagazine->RefillAllMagazine(this);
 }
 
 int32 UShooterBehaviourBase::RefillWithAmmoType(UAmmoTypeData* AmmoType, const int32 Ammo, int32& OutRemainingAmmo) const
@@ -174,7 +172,7 @@ int32 UShooterBehaviourBase::RefillWithAmmoType(UAmmoTypeData* AmmoType, const i
 	if (!IsValid(RelatedMagazine))
 		return 0;
 
-	return RelatedMagazine->RefillWithAmmoType(AmmoType, Ammo, OutRemainingAmmo);
+	return RelatedMagazine->RefillWithAmmoType(AmmoType, Ammo, OutRemainingAmmo, this);
 }
 
 void UShooterBehaviourBase::AddDynamicSpread(const float AddSpread, const float ChangeRate, const float RecoveryRate) const
@@ -267,7 +265,7 @@ bool UShooterBehaviourBase::IsShooting() const
 	return bIsShooting;
 }
 
-bool UShooterBehaviourBase::IsMagEmpty() const
+bool UShooterBehaviourBase::IsMagazineEmpty() const
 {
 	const UMagazine* RelatedMagazine = GetRelatedMagazine();
 	if (!IsValid(RelatedMagazine))
@@ -276,7 +274,7 @@ bool UShooterBehaviourBase::IsMagEmpty() const
 	return RelatedMagazine->IsEmpty();
 }
 
-bool UShooterBehaviourBase::IsMagFull() const
+bool UShooterBehaviourBase::IsMagazineFull() const
 {
 	const UMagazine* RelatedMagazine = GetRelatedMagazine();
 	if (!IsValid(RelatedMagazine))
@@ -572,8 +570,7 @@ void UShooterBehaviourBase::ShootSuccess()
 	}
 
 	bIsShooting = true;
-	OnShootSuccess(ShootBarrel);
-	OnBehaviourShootSuccess.Broadcast(ShootBarrel, ShotsFired);
+	CallShootSuccessEvent();
 	CooldownHandler->StartCooldown();
 	RecoilHandler->ApplyRecoilImpulse();
 	SpreadHandler->AddDynamicSpreadWithCurve();
@@ -603,8 +600,7 @@ void UShooterBehaviourBase::ShootFail(const EShootFailReason FailReason)
 	default: ;
 	}
 	
-	OnShootFail(FailReason);
-	OnBehaviourShootFail.Broadcast();
+	CallShootFailEvent(FailReason);
 }
 
 void UShooterBehaviourBase::TickBehaviour(const float DeltaTime)
@@ -641,6 +637,10 @@ void UShooterBehaviourBase::OnDeployShoot_Implementation(UShootPoint* ShootPoint
 {
 }
 
+void UShooterBehaviourBase::OnShootSequenceEnd_Implementation()
+{
+}
+
 void UShooterBehaviourBase::OnShootSuccess_Implementation(const UShootBarrel* OutShootBarrel)
 {
 }
@@ -654,19 +654,19 @@ bool UShooterBehaviourBase::OnShootCondition_Implementation(UShootBarrel* OutSho
 	return true;
 }
 
-void UShooterBehaviourBase::OnMagazineAmmoChange_Implementation(int32 CurrentAmmo, int32 MagSize)
+void UShooterBehaviourBase::OnAmmoChange_Implementation(UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize)
 {
 }
 
-void UShooterBehaviourBase::OnMagazineRefill_Implementation(int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
+void UShooterBehaviourBase::OnRefill_Implementation(UMagazine* Magazine, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
 {
 }
 
-void UShooterBehaviourBase::OnMagazineFull_Implementation()
+void UShooterBehaviourBase::OnFull_Implementation(UMagazine* Magazine)
 {
 }
 
-void UShooterBehaviourBase::OnMagazineEmpty_Implementation()
+void UShooterBehaviourBase::OnEmpty_Implementation(UMagazine* Magazine)
 {
 }
 
@@ -746,7 +746,77 @@ bool UShooterBehaviourBase::TryConsumeAmmoForShoot() const
 		return false;
 
 	const int32 AmmoPerShot = ShootData->AmmoToConsumePerShot;
-	return RelatedMagazine->TryConsumeAmmo(AmmoPerShot);
+	return RelatedMagazine->TryConsumeAmmo(AmmoPerShot, this);
+}
+
+void UShooterBehaviourBase::CallEnableEvent()
+{
+	OnEnabled();
+	OnBehaviourEnabled.Broadcast(this);
+}
+
+void UShooterBehaviourBase::CallDisableEvent()
+{
+	OnDisabled();
+	OnBehaviourDisabled.Broadcast(this);
+}
+
+void UShooterBehaviourBase::CallEndShootSequenceEvent()
+{
+	OnShootSequenceEnd();
+	OnBehaviourShootSequenceEnded.Broadcast(this);
+}
+
+void UShooterBehaviourBase::CallShootSuccessEvent()
+{
+	OnShootSuccess(ShootBarrel);
+	OnBehaviourShootSuccess.Broadcast(this, ShootBarrel, ShotsFired);
+}
+
+void UShooterBehaviourBase::CallShootFailEvent(const EShootFailReason FailReason)
+{
+	OnShootFail(FailReason);
+	OnBehaviourShootFail.Broadcast(this, FailReason);
+}
+
+void UShooterBehaviourBase::CallAmmoChangeEvent(const UObject* Instigator, int32 CurrentAmmo, int32 MagSize)
+{
+	if (Instigator != this)
+		return;
+	
+	UMagazine* RelatedMagazine = GetRelatedMagazine();
+	OnAmmoChange(RelatedMagazine, CurrentAmmo, MagSize);
+	OnBehaviourAmmoChanged.Broadcast(this, RelatedMagazine, CurrentAmmo, MagSize);
+}
+
+void UShooterBehaviourBase::CallRefillEvent(const UObject* Instigator, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
+{
+	if (Instigator != this)
+		return;
+	
+	UMagazine* RelatedMagazine = GetRelatedMagazine();
+	OnRefill(RelatedMagazine, CurrentAmmo, RefilledAmmo, RemainingAmmo);
+	OnBehaviourRefilled.Broadcast(this, RelatedMagazine, CurrentAmmo, RefilledAmmo, RemainingAmmo);
+}
+
+void UShooterBehaviourBase::CallFullEvent(const UObject* Instigator)
+{
+	if (Instigator != this)
+		return;
+	
+	UMagazine* RelatedMagazine = GetRelatedMagazine();
+	OnFull(RelatedMagazine);
+	OnBehaviourFull.Broadcast(this, RelatedMagazine);
+}
+
+void UShooterBehaviourBase::CallEmptyEvent(const UObject* Instigator)
+{
+	if (Instigator != this)
+		return;
+	
+	UMagazine* RelatedMagazine = GetRelatedMagazine();
+	OnEmpty(RelatedMagazine);
+	OnBehaviourEmpty.Broadcast(this, RelatedMagazine);
 }
 
 void UShooterBehaviourBase::BindMagazineEvents(UMagazine* Magazine)
@@ -754,10 +824,10 @@ void UShooterBehaviourBase::BindMagazineEvents(UMagazine* Magazine)
 	if (!IsValid(Magazine))
 		return;
 	
-	Magazine->OnAmmoChanged.AddDynamic(this, &UShooterBehaviourBase::OnMagazineAmmoChange);
-	Magazine->OnMagazineRefilled.AddDynamic(this, &UShooterBehaviourBase::OnMagazineRefill);
-	Magazine->OnMagazineFull.AddDynamic(this, &UShooterBehaviourBase::OnMagazineFull);
-	Magazine->OnMagazineEmpty.AddDynamic(this, &UShooterBehaviourBase::OnMagazineEmpty);
+	Magazine->OnMagazineAmmoChanged.AddDynamic(this, &UShooterBehaviourBase::CallAmmoChangeEvent);
+	Magazine->OnMagazineRefilled.AddDynamic(this, &UShooterBehaviourBase::CallRefillEvent);
+	Magazine->OnMagazineFull.AddDynamic(this, &UShooterBehaviourBase::CallFullEvent);
+	Magazine->OnMagazineEmpty.AddDynamic(this, &UShooterBehaviourBase::CallEmptyEvent);
 }
 
 void UShooterBehaviourBase::UnbindMagazineEvents(UMagazine* Magazine)
@@ -765,8 +835,8 @@ void UShooterBehaviourBase::UnbindMagazineEvents(UMagazine* Magazine)
 	if (!IsValid(Magazine))
 		return;
 
-	Magazine->OnAmmoChanged.RemoveDynamic(this, &UShooterBehaviourBase::OnMagazineAmmoChange);
-	Magazine->OnMagazineRefilled.RemoveDynamic(this, &UShooterBehaviourBase::OnMagazineRefill);
-	Magazine->OnMagazineFull.RemoveDynamic(this, &UShooterBehaviourBase::OnMagazineFull);
-	Magazine->OnMagazineEmpty.RemoveDynamic(this, &UShooterBehaviourBase::OnMagazineEmpty);
+	Magazine->OnMagazineAmmoChanged.RemoveDynamic(this, &UShooterBehaviourBase::CallAmmoChangeEvent);
+	Magazine->OnMagazineRefilled.RemoveDynamic(this, &UShooterBehaviourBase::CallRefillEvent);
+	Magazine->OnMagazineFull.RemoveDynamic(this, &UShooterBehaviourBase::CallFullEvent);
+	Magazine->OnMagazineEmpty.RemoveDynamic(this, &UShooterBehaviourBase::CallEmptyEvent);
 }

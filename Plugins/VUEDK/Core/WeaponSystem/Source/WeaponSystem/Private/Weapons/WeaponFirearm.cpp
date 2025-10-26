@@ -44,7 +44,7 @@ bool AWeaponFirearm::IsMagFull(const int32 BehaviourIndex) const
 	if (!IsValid(Behaviour))
 		return false;
 	
-	return Behaviour->IsMagFull();
+	return Behaviour->IsMagazineFull();
 }
 
 bool AWeaponFirearm::IsMagEmpty(const int32 BehaviourIndex) const
@@ -53,7 +53,7 @@ bool AWeaponFirearm::IsMagEmpty(const int32 BehaviourIndex) const
 	if (!IsValid(Behaviour))
 		return false;
 	
-	return Behaviour->IsMagEmpty();
+	return Behaviour->IsMagazineEmpty();
 }
 
 void AWeaponFirearm::AddWeaponDynamicSpread(const float AddSpread, const float ChangeRate, const float RecoveryRate, const int32 BehaviourIndex) const
@@ -196,6 +196,11 @@ UMagazine* AWeaponFirearm::GetWeaponMagazineByTag(FGameplayTag MagazineTag) cons
 FWeaponFirearmData AWeaponFirearm::GetWeaponFirearmData() const
 {
 	return WeaponFirearmData;
+}
+
+UWeaponMontagesManagerBase* AWeaponFirearm::GetMontagesManager() const
+{
+	return FirearmMontagesManager;
 }
 
 float AWeaponFirearm::GetWeaponFireRate(const int32 BehaviourIndex) const
@@ -385,7 +390,7 @@ void AWeaponFirearm::FullReload()
 
 void AWeaponFirearm::InterruptReload(const float CharacterBlendOutTime, const float WeaponBlendOutTime)
 {
-	StopWeaponMontageWithBlends(FirearmMontagesManager->MainReloadMontage, WeaponBlendOutTime, CharacterBlendOutTime);
+	// StopWeaponMontageWithBlends(FirearmMontagesManager->MainReloadMontage, WeaponBlendOutTime, CharacterBlendOutTime);
 }
 
 void AWeaponFirearm::SetAim(const bool bIsEnabled, const int32 BehaviourIndex)
@@ -405,7 +410,8 @@ bool AWeaponFirearm::IsAiming() const
 
 bool AWeaponFirearm::IsReloading() const
 {
-	return IsPlayingWeaponMontage(FirearmMontagesManager->MainReloadMontage);
+	// return IsPlayingWeaponMontage(FirearmMontagesManager->MainReloadMontage);
+	return false;
 }
 
 void AWeaponFirearm::BeginPlay()
@@ -473,6 +479,10 @@ void AWeaponFirearm::DisableAim(const int32 BehaviourIndex)
 	OnAimDisabled.Broadcast();
 }
 
+void AWeaponFirearm::OnBehaviourEnable_Implementation(UShooterBehaviourBase* Behaviour)
+{
+}
+
 bool AWeaponFirearm::CanReload_Implementation() const
 {
 	return true;
@@ -502,6 +512,54 @@ void AWeaponFirearm::OnDisableAim_Implementation()
 {
 }
 
+void AWeaponFirearm::OnBehaviourDisable_Implementation(UShooterBehaviourBase* Behaviour)
+{
+}
+
+void AWeaponFirearm::OnBehaviourShootSuccess_Implementation(UShooterBehaviourBase* Behaviour, UShootBarrel* ShootBarrel, int32 ShotIndex)
+{
+}
+
+void AWeaponFirearm::OnBehaviourShootFail_Implementation(UShooterBehaviourBase* Behaviour, EShootFailReason FailReason)
+{
+}
+
+void AWeaponFirearm::OnBehaviourShootSequenceEnd_Implementation(UShooterBehaviourBase* Behaviour)
+{
+}
+
+void AWeaponFirearm::OnBehaviourAmmoChange_Implementation(UShooterBehaviourBase* Behaviour, UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize)
+{
+}
+
+void AWeaponFirearm::OnBehaviourRefill_Implementation(UShooterBehaviourBase* Behaviour, UMagazine* Magazine, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
+{
+}
+
+void AWeaponFirearm::OnBehaviourFull_Implementation(UShooterBehaviourBase* Behaviour, UMagazine* Magazine)
+{
+}
+
+void AWeaponFirearm::OnBehaviourEmpty_Implementation(UShooterBehaviourBase* Behaviour, UMagazine* Magazine)
+{
+}
+
+void AWeaponFirearm::OnMagazineRefill_Implementation(const UObject* MagInstigator, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
+{
+}
+
+void AWeaponFirearm::OnMagazineAmmoChange_Implementation(const UObject* MagInstigator, int32 CurrentAmmo, int32 MagSize)
+{
+}
+
+void AWeaponFirearm::OnMagazineFull_Implementation(const UObject* MagInstigator)
+{
+}
+
+void AWeaponFirearm::OnMagazineEmpty_Implementation(const UObject* MagInstigator)
+{
+}
+
 FReloadEventData AWeaponFirearm::GetReloadPayload() const
 {
 	return ReloadPayload;
@@ -509,12 +567,40 @@ FReloadEventData AWeaponFirearm::GetReloadPayload() const
 
 void AWeaponFirearm::BindEvents()
 {
-	FirearmMontagesManager->MainReloadMontage.OnMontageFinished.AddDynamic(this, &AWeaponFirearm::OnReloadMontageEnded);
+	// FirearmMontagesManager->MainReloadMontage.OnMontageFinished.AddDynamic(this, &AWeaponFirearm::OnReloadMontageEnded);
+	Shooter->OnBehaviourEnabled.AddDynamic(this, &AWeaponFirearm::OnBehaviourEnable);
+	Shooter->OnBehaviourDisabled.AddDynamic(this, &AWeaponFirearm::OnBehaviourDisable);
+	Shooter->OnBehaviourShootSuccess.AddDynamic(this, &AWeaponFirearm::OnBehaviourShootSuccess);
+	Shooter->OnBehaviourShootFail.AddDynamic(this, &AWeaponFirearm::OnBehaviourShootFail);
+	Shooter->OnBehaviourShootSequenceEnded.AddDynamic(this, &AWeaponFirearm::OnBehaviourShootSequenceEnd);
+	Shooter->OnBehaviourAmmoChanged.AddDynamic(this, &AWeaponFirearm::OnBehaviourAmmoChange);
+	Shooter->OnBehaviourRefilled.AddDynamic(this, &AWeaponFirearm::OnBehaviourRefill);
+	Shooter->OnBehaviourFull.AddDynamic(this, &AWeaponFirearm::OnBehaviourFull);
+	Shooter->OnBehaviourEmpty.AddDynamic(this, &AWeaponFirearm::OnBehaviourEmpty);
+
+	Shooter->OnMagazineRefilled.AddDynamic(this, &AWeaponFirearm::OnMagazineRefill);
+	Shooter->OnMagazineAmmoChanged.AddDynamic(this, &AWeaponFirearm::OnMagazineAmmoChange);
+	Shooter->OnMagazineFull.AddDynamic(this, &AWeaponFirearm::OnMagazineFull);
+	Shooter->OnMagazineEmpty.AddDynamic(this, &AWeaponFirearm::OnMagazineEmpty);
 }
 
 void AWeaponFirearm::UnbindEvents()
 {
-	FirearmMontagesManager->MainReloadMontage.OnMontageFinished.RemoveDynamic(this, &AWeaponFirearm::OnReloadMontageEnded);
+	// FirearmMontagesManager->MainReloadMontage.OnMontageFinished.RemoveDynamic(this, &AWeaponFirearm::OnReloadMontageEnded);
+	Shooter->OnBehaviourEnabled.RemoveDynamic(this, &AWeaponFirearm::OnBehaviourEnable);
+	Shooter->OnBehaviourDisabled.RemoveDynamic(this, &AWeaponFirearm::OnBehaviourDisable);
+	Shooter->OnBehaviourShootSuccess.RemoveDynamic(this, &AWeaponFirearm::OnBehaviourShootSuccess);
+	Shooter->OnBehaviourShootFail.RemoveDynamic(this, &AWeaponFirearm::OnBehaviourShootFail);
+	Shooter->OnBehaviourShootSequenceEnded.RemoveDynamic(this, &AWeaponFirearm::OnBehaviourShootSequenceEnd);
+	Shooter->OnBehaviourAmmoChanged.RemoveDynamic(this, &AWeaponFirearm::OnBehaviourAmmoChange);
+	Shooter->OnBehaviourRefilled.RemoveDynamic(this, &AWeaponFirearm::OnBehaviourRefill);
+	Shooter->OnBehaviourFull.RemoveDynamic(this, &AWeaponFirearm::OnBehaviourFull);
+	Shooter->OnBehaviourEmpty.RemoveDynamic(this, &AWeaponFirearm::OnBehaviourEmpty);
+
+	Shooter->OnMagazineRefilled.RemoveDynamic(this, &AWeaponFirearm::OnMagazineRefill);
+	Shooter->OnMagazineAmmoChanged.RemoveDynamic(this, &AWeaponFirearm::OnMagazineAmmoChange);
+	Shooter->OnMagazineFull.RemoveDynamic(this, &AWeaponFirearm::OnMagazineFull);
+	Shooter->OnMagazineEmpty.RemoveDynamic(this, &AWeaponFirearm::OnMagazineEmpty);
 }
 
 void AWeaponFirearm::SetReloadPayload(const FReloadEventData InReloadPayload)

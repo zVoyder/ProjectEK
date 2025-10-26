@@ -6,7 +6,6 @@
 #include "ShootBarrel.h"
 #include "Behaviours/ShooterBehaviourBase.h"
 #include "Components/ActorComponent.h"
-#include "Data/ShootData.h"
 #include "Managers/Magazine/MagazinesManager.h"
 #include "Shooter.generated.h"
 
@@ -18,6 +17,34 @@ class WEAPONSYSTEM_API UShooter : public UActorComponent
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnBehaviourEnabled OnBehaviourEnabled;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnBehaviourDisabled OnBehaviourDisabled;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnBehaviourShootSuccess OnBehaviourShootSuccess;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnBehaviourShootFail OnBehaviourShootFail;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnEndShootSequence OnBehaviourShootSequenceEnded;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnBehaviourAmmoChanged OnBehaviourAmmoChanged;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnBehaviourRefilled OnBehaviourRefilled;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnBehaviourFull OnBehaviourFull;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnBehaviourEmpty OnBehaviourEmpty;
+
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnMagazineRefilled OnMagazineRefilled;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnMagazineAmmoChanged OnMagazineAmmoChanged;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnMagazineFull OnMagazineFull;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnMagazineEmpty OnMagazineEmpty;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced)
 	TArray<UShooterBehaviourBase*> ShooterBehaviours;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ToolTip = "If true, allows multiple shooter behaviours to shoot at the same time."))
@@ -60,5 +87,48 @@ public:
 	bool IsAnyBehaviourShooting() const;
 
 private:
+	void BindEvents() const;
+
+	void UnbindEvents() const;
+	
 	void TickBehaviours(const float DeltaTime) const;
+
+	UFUNCTION()
+	void CallBehaviourEnabledEvent(UShooterBehaviourBase* Behaviour);
+	
+	UFUNCTION()
+	void CallBehaviourDisabledEvent(UShooterBehaviourBase* Behaviour);
+	
+	UFUNCTION()
+	void CallBehaviourShootSuccessEvent(UShooterBehaviourBase* Behaviour, UShootBarrel* ShootBarrel, int32 ShotIndex);
+	
+	UFUNCTION()
+	void CallBehaviourShootFailEvent(UShooterBehaviourBase* Behaviour, EShootFailReason FailReason);
+	
+	UFUNCTION()
+	void CallBehaviourShootSequenceEndedEvent(UShooterBehaviourBase* Behaviour);
+	
+	UFUNCTION()
+	void CallBehaviourAmmoChangedEvent(UShooterBehaviourBase* Behaviour, UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize);
+	
+	UFUNCTION()
+	void CallBehaviourRefilledEvent(UShooterBehaviourBase* Behaviour, UMagazine* Magazine, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
+	
+	UFUNCTION()
+	void CallBehaviourFullEvent(UShooterBehaviourBase* Behaviour, UMagazine* Magazine);
+	
+	UFUNCTION()
+	void CallBehaviourEmptyEvent(UShooterBehaviourBase* Behaviour, UMagazine* Magazine);
+
+	UFUNCTION()
+	void CallMagazineRefilledEvent(const UObject* Instigator, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
+	
+	UFUNCTION()
+	void CallMagazineAmmoChangedEvent(const UObject* Instigator, int32 CurrentAmmo, int32 MagSize);
+	
+	UFUNCTION()
+	void CallMagazineFullEvent(const UObject* Instigator);
+	
+	UFUNCTION()
+	void CallMagazineEmptyEvent(const UObject* Instigator);
 };

@@ -77,6 +77,8 @@ private:
 public:
 	AWeaponMelee();
 
+	virtual UWeaponMontagesManagerBase* GetMontagesManager() const override;
+	
 	virtual bool IsWeaponAttacking() const override;
 
 	/**

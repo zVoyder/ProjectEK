@@ -44,19 +44,19 @@ void UShooterHandlerBase::BindEvents()
 	Behaviour->OnBehaviourShootFail.AddDynamic(this, &UShooterHandlerBase::OnBehaviourShootFail);
 }
 
-void UShooterHandlerBase::OnBehaviourEnabled()
+void UShooterHandlerBase::OnBehaviourEnabled(UShooterBehaviourBase* InBehaviour)
 {
 }
 
-void UShooterHandlerBase::OnBehaviourDisabled()
+void UShooterHandlerBase::OnBehaviourDisabled(UShooterBehaviourBase* InBehaviour)
 {
 }
 
-void UShooterHandlerBase::OnBehaviourShootSuccess(UShootBarrel* ShootBarrel, int32 ShotIndex)
+void UShooterHandlerBase::OnBehaviourShootSuccess(UShooterBehaviourBase* InBehaviour, UShootBarrel* ShootBarrel, int32 ShotIndex)
 {
 }
 
-void UShooterHandlerBase::OnBehaviourShootFail()
+void UShooterHandlerBase::OnBehaviourShootFail(UShooterBehaviourBase* InBehaviour, EShootFailReason FailReason)
 {
 }
 

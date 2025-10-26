@@ -35,8 +35,8 @@ public:
 	virtual bool CanReload_Implementation() const override;
 	
 	bool CanReloadWithItemData() const;
-	
-	virtual void OnCurrentAmmoChanged_Implementation(int32 CurrentAmmo, int32 MagSize) override;
 
+	virtual void OnBehaviourAmmoChange_Implementation(UShooterBehaviourBase* Behaviour, UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize) override;
+	
 	virtual void OnReloadSuccess_Implementation(float Remain, float ReloadedAmmo) override;
 };

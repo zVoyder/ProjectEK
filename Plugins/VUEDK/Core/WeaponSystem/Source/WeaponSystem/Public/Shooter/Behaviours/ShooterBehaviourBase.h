@@ -18,26 +18,61 @@
 class UShooter;
 enum class EShootType : uint8;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(
-	FOnBehaviourEnabled
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnBehaviourEnabled,
+	UShooterBehaviourBase*, Behaviour
 );
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(
-	FOnBehaviourDisabled
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnBehaviourDisabled,
+	UShooterBehaviourBase*, Behaviour
 );
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	FOnBehaviourShootSuccess,
+	UShooterBehaviourBase*, Behaviour,
 	UShootBarrel*, ShootBarrel,
 	int32, ShotIndex
 );
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(
-	FOnBehaviourShootFail
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnBehaviourShootFail,
+	UShooterBehaviourBase*, Behaviour,
+	EShootFailReason, FailReason
 );
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(
-	FOnEndShootSequence
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnEndShootSequence,
+	UShooterBehaviourBase*, Behaviour
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+	FOnBehaviourAmmoChanged,
+	UShooterBehaviourBase*, Behaviour,
+	UMagazine*, Magazine,
+	int32, CurrentAmmo,
+	int32, MagSize
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
+	FOnBehaviourRefilled,
+	UShooterBehaviourBase*, Behaviour,
+	UMagazine*, Magazine,
+	int32, CurrentAmmo,
+	int32, RefilledAmmo,
+	int32, RemainingAmmo
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnBehaviourFull,
+	UShooterBehaviourBase*, Behaviour,
+	UMagazine*, Magazine
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnBehaviourEmpty,
+	UShooterBehaviourBase*, Behaviour,
+	UMagazine*, Magazine
 );
 
 constexpr int32 HasJustShootTicks = 2;
@@ -60,7 +95,15 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnBehaviourShootFail OnBehaviourShootFail;
 	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnEndShootSequence OnEndShootSequence;
+	FOnEndShootSequence OnBehaviourShootSequenceEnded;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnBehaviourAmmoChanged OnBehaviourAmmoChanged;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnBehaviourRefilled OnBehaviourRefilled;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnBehaviourFull OnBehaviourFull;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnBehaviourEmpty OnBehaviourEmpty;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UShootData* ShootData;
@@ -86,7 +129,7 @@ private:
 	int32 CurrentShootPointIndex;
 	bool bIsBehaviourActive;
 	bool bIsShooting;
-	
+
 	// Cached Stats
 	float CurrentDamage;
 	float CurrentFireRate;
@@ -104,7 +147,7 @@ public:
 	void SetupShootBarrel(UShootBarrel* InShootBarrel);
 
 	void CreateHandlers();
-	
+
 	void SetOwner(APawn* InOwner);
 
 	/**
@@ -119,7 +162,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void EnableBehaviour();
-	
+
 	/**
 	 * Disables the shooter behaviour.
 	 */
@@ -258,31 +301,31 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetInfiniteAmmo(const bool bEnabled);
-	
+
 	UFUNCTION(BlueprintCallable)
 	void ChangeShootType(const EShootType NewShootType);
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeMagazine(const FGameplayTag& NewMagazineTag);
-	
+
 	UFUNCTION(BlueprintPure)
 	bool IsBehaviourActive() const;
 
 	UFUNCTION(BlueprintPure)
 	bool IsShooting() const;
-	
-	UFUNCTION(BlueprintPure)
-	bool IsMagEmpty() const;
 
 	UFUNCTION(BlueprintPure)
-	bool IsMagFull() const;
+	bool IsMagazineEmpty() const;
+
+	UFUNCTION(BlueprintPure)
+	bool IsMagazineFull() const;
 
 	UFUNCTION(BlueprintPure)
 	bool UsesAmmoOfType(const UAmmoTypeData* InAmmoType) const;
 
 	UFUNCTION(BlueprintPure)
 	bool HasInfiniteAmmo() const;
-	
+
 	UFUNCTION(BlueprintPure)
 	APawn* GetOwner() const;
 
@@ -353,20 +396,20 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	UMagazine* GetRelatedMagazine() const;
-	
+
 	/**
 	 * Gets the number of shots fired by the shooter behaviour.
 	 * @return The number of shots fired.
 	 */
 	UFUNCTION(BlueprintPure)
 	int32 GetShotsFired() const;
-	
+
 	UFUNCTION(BlueprintPure)
 	UCooldownHandler* GetCooldownHandler() const;
-	
+
 	UFUNCTION(BlueprintPure)
 	URecoilHandler* GetRecoilHandler() const;
-	
+
 	UFUNCTION(BlueprintPure)
 	USpreadHandler* GetSpreadHandler() const;
 
@@ -384,19 +427,19 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ResetRecoilStrength();
-	
+
 	UFUNCTION(BlueprintCallable)
 	void ResetDefaultSpread();
-	
+
 	UFUNCTION(BlueprintCallable)
 	void ResetInfiniteAmmo();
-	
+
 	UFUNCTION(BlueprintCallable)
 	void ResetShootType();
 
 	UFUNCTION(BlueprintCallable)
 	void ResetMagazineTag();
-	
+
 	virtual UWorld* GetWorld() const override;
 
 #if WITH_EDITOR
@@ -425,7 +468,7 @@ protected:
 	 */
 	UFUNCTION(BlueprintPure)
 	bool IsInLineOfSight(const FVector& StartPoint, const FVector& TargetPoint, const float Tolerance = 50.0f) const;
-	
+
 	/**
 	 * Handles the shoot logic of the shooter behaviour.
 	 */
@@ -472,7 +515,7 @@ protected:
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDisabled();
-	
+
 	/**
 	 * Gets the location of the target the shooter is aiming at. By default, it returns the location of the camera hit point.
 	 * @return The location of the target the shooter is aiming at.
@@ -489,6 +532,9 @@ protected:
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDeployShoot(UShootPoint* ShootPoint, const FVector& TargetLocation, const FVector& DirectionToTarget, const FVector& DirectionToTargetSpreaded) const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnShootSequenceEnd();
 
 	/**
 	 * Called when the shoot is successful.
@@ -510,37 +556,44 @@ protected:
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	bool OnShootCondition(UShootBarrel* OutShootBarrel) const;
-	
+
 	/**
-	 * Called when the magazine ammo changes.
-	 * (NOTE: Prefer using the UMagazine versions to avoid duplicate calls when shared across multiple behaviours).
-	 * @param CurrentAmmo - The current ammo count.
-	 * @param MagSize - The magazine size.
+	 * Called when the ammo in the magazine changes.
+	 * (NOTE: This is a local event, use the UMagazine version to listen to global changes).
+	 * @param Magazine - The magazine whose ammo has changed.
+	 * @param CurrentAmmo - The current ammo count in the magazine.
+	 * @param MagSize - The size of the magazine.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
-	void OnMagazineAmmoChange(int32 CurrentAmmo, int32 MagSize);
+	void OnAmmoChange(UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize);
 
 	/**
 	 * Called when the magazine is refilled.
-	 * (NOTE: Prefer using the UMagazine versions to avoid duplicate calls when shared across multiple behaviours).
+	 * (NOTE: This is a local event, use the UMagazine version to listen to global changes).
+	 * @param Magazine - The magazine that has been refilled.
+	 * @param CurrentAmmo - The current ammo count in the magazine.
+	 * @param RefilledAmmo - The amount of ammo that was added to the magazine.
+	 * @param RemainingAmmo - The amount of ammo that could not be added (excess).
 	 */
 	UFUNCTION(BlueprintNativeEvent)
-	void OnMagazineRefill(int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
+	void OnRefill(UMagazine* Magazine, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
 
 	/**
-	 * Called when the magazine is refilled to its maximum capacity.
-	 * (NOTE: Prefer using the UMagazine versions to avoid duplicate calls when shared across multiple behaviours).
+	 * Called when the magazine becomes full.
+	 * (NOTE: This is a local event, use the UMagazine version to listen to global changes).
+	 * @param Magazine - The magazine that is full.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
-	void OnMagazineFull();
+	void OnFull(UMagazine* Magazine);
 
 	/**
-	 * Called when the magazine ammo count reaches zero.
-	 * (NOTE: Prefer using the UMagazine versions to avoid duplicate calls when shared across multiple behaviours).
+	 * Called when the magazine becomes empty.
+	 * (NOTE: This is a local event, use the UMagazine version to listen to global changes).
+	 * @param Magazine - The magazine that is empty.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
-	void OnMagazineEmpty();
-	
+	void OnEmpty(UMagazine* Magazine);
+
 	virtual bool Check() const;
 
 private:
@@ -565,8 +618,30 @@ private:
 	 * @return The index of the next shoot point.
 	 */
 	int32 NextShootPointIndex();
-	
+
 	bool TryConsumeAmmoForShoot() const;
+
+	void CallEnableEvent();
+
+	void CallDisableEvent();
+
+	void CallEndShootSequenceEvent();
+
+	void CallShootSuccessEvent();
+
+	void CallShootFailEvent(EShootFailReason FailReason);
+
+	UFUNCTION()
+	void CallAmmoChangeEvent(const UObject* Instigator, int32 CurrentAmmo, int32 MagSize);
+
+	UFUNCTION()
+	void CallRefillEvent(const UObject* Instigator, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
+
+	UFUNCTION()
+	void CallFullEvent(const UObject* Instigator);
+
+	UFUNCTION()
+	void CallEmptyEvent(const UObject* Instigator);
 
 	void BindMagazineEvents(UMagazine* Magazine);
 

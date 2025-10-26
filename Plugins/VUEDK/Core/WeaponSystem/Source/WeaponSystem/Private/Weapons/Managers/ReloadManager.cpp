@@ -5,7 +5,7 @@
 void UReloadManager::Init(AWeaponFirearm* InWeaponFirearm)
 {
 	WeaponFirearm = InWeaponFirearm;
-	WeaponFirearm->FirearmMontagesManager->MainReloadMontage.OnMontageFinished.AddDynamic(this, &UReloadManager::OnMainReloadMontageEnded);
+	// WeaponFirearm->FirearmMontagesManager->MainReloadMontage.OnMontageFinished.AddDynamic(this, &UReloadManager::OnReloadMontageEnded);
 }
 
 void UReloadManager::RequestReload(const FReloadRequest& Request)
@@ -32,28 +32,14 @@ void UReloadManager::RequestReloadBehaviour(int32 BehaviourIndex, UAmmoTypeData*
 {
 }
 
-void UReloadManager::InsertAmmoMainBehaviour()
-{
-	// if (!Check())
-	// 	return;
-	//
-	// const UAmmoTypeData* AmmoTypeData = WeaponFirearm->GetWeaponMainAmmoType();
-	// if (!CurrentReloadEventData.AmmoPerType.Contains(AmmoTypeData))
-	// 	return;
-	//
-	// int32& Ammo = CurrentReloadEventData.AmmoPerType[AmmoTypeData];
-	// const float Remain = WeaponFirearm->Shooter->MainShooterBehaviour->Refill(Ammo);
-	// Ammo = Remain;
-}
-
 void UReloadManager::InsertAmmoBehaviour(const int32 BehaviourIndex)
 {
-	// if (!Check())
-	// 	return;
-	//
-	// UShooterBehaviourBase* Behaviour = WeaponFirearm->GetShooterBehaviour(BehaviourIndex);
-	// if (!Behaviour)
-	// 	return;
+	if (!Check())
+		return;
+
+	UShooterBehaviourBase* Behaviour = WeaponFirearm->GetShooterBehaviour(BehaviourIndex);
+	if (!Behaviour)
+		return;
 	//
 	// const UAmmoTypeData* AmmoTypeData = Behaviour->AmmoType;
 	// if (!CurrentReloadEventData.AmmoPerType.Contains(AmmoTypeData))
@@ -71,25 +57,25 @@ void UReloadManager::PlayMainReload() const
 {
 	if (!Check())
 		return;
-	
-	const UFirearmMontagesManager* MontagesManager = WeaponFirearm->FirearmMontagesManager;
-	if (!IsValid(MontagesManager))
-		return;
 
-	float WeaponPlayRate = 0.f;
-	float CharacterPlayRate = 0.f;
-
-	if (IsValid(MontagesManager->MainReloadMontage.GetWeaponMontage()))
-		WeaponPlayRate = MontagesManager->MainReloadMontage.GetWeaponMontage()->GetPlayLength() / WeaponFirearm->GetWeaponReloadTime();
-
-	if (IsValid(MontagesManager->MainReloadMontage.GetCharacterMontage()))
-		CharacterPlayRate = MontagesManager->MainReloadMontage.GetCharacterMontage()->GetPlayLength() / WeaponFirearm->GetWeaponReloadTime();
-
-	WeaponFirearm->StartWeaponMontage(
-		MontagesManager->MainReloadMontage,
-		WeaponPlayRate,
-		CharacterPlayRate
-	);
+	// const UFirearmMontagesManager* MontagesManager = WeaponFirearm->FirearmMontagesManager;
+	// if (!IsValid(MontagesManager))
+	// 	return;
+	//
+	// float WeaponPlayRate = 0.f;
+	// float CharacterPlayRate = 0.f;
+	//
+	// if (IsValid(MontagesManager->MainReloadMontage.GetWeaponMontage()))
+	// 	WeaponPlayRate = MontagesManager->MainReloadMontage.GetWeaponMontage()->GetPlayLength() / WeaponFirearm->GetWeaponReloadTime();
+	//
+	// if (IsValid(MontagesManager->MainReloadMontage.GetCharacterMontage()))
+	// 	CharacterPlayRate = MontagesManager->MainReloadMontage.GetCharacterMontage()->GetPlayLength() / WeaponFirearm->GetWeaponReloadTime();
+	//
+	// WeaponFirearm->StartWeaponMontage(
+	// 	MontagesManager->MainReloadMontage,
+	// 	WeaponPlayRate,
+	// 	CharacterPlayRate
+	// );
 }
 
 FReloadEventData UReloadManager::CreateReloadEvent(const FReloadRequest& Request)
@@ -107,7 +93,7 @@ FReloadEventData UReloadManager::CreateReloadEvent(const FReloadRequest& Request
 	return ReloadEvent;
 }
 
-void UReloadManager::OnMainReloadMontageEnded(bool bInterrupted)
+void UReloadManager::OnReloadMontageEnded(bool bInterrupted)
 {
 	if (bInterrupted)
 		return;
@@ -115,13 +101,10 @@ void UReloadManager::OnMainReloadMontageEnded(bool bInterrupted)
 	if (CurrentReloadEventData.Request.bUseInsertAmmoNotifiers) // Handled by notifies
 		return;
 
-	for (const FReloadEntry& Entry : CurrentReloadEventData.Request.Entries)
-	{
-		if (Entry.bIsMainBehaviour)
-			InsertAmmoMainBehaviour();
-		else
-			InsertAmmoBehaviour(Entry.BehaviourIndex);
-	}
+	// for (const FReloadEntry& Entry : CurrentReloadEventData.Request.Entries)
+	// {
+	// 	InsertAmmoBehaviour(Entry.BehaviourIndex);
+	// }
 }
 
 bool UReloadManager::Check() const

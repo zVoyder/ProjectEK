@@ -181,7 +181,7 @@ protected:
 	/**
 	 * Ends the current combo attack sequence.
 	 */
-	void EndComboAttack() const;
+	void EndComboAttack();
 
 	/**
 	 * Resets the combo attack state.

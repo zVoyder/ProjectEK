@@ -214,7 +214,7 @@ void UMeleeMontagesManager::StartComboAttack()
 	WeaponMelee->CallAttackStartedEvent(Attack, CurrentAttackIndex);
 }
 
-void UMeleeMontagesManager::EndComboAttack() const
+void UMeleeMontagesManager::EndComboAttack()
 {
 	if (CurrentAttack == nullptr || !IsValid(CurrentAttack->AttackMontage.GetCharacterMontage()))
 		return;

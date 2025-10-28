@@ -63,51 +63,51 @@ public:
 	
 	/**
 	 * Tracks the specified quest, making it the currently tracked quest.
-	 * @param QuestDataKey - The quest data asset to track.
+	 * @param QuestDataKey The quest data asset to track.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void TrackQuest(const UQuestData* QuestDataKey);
 
 	/**
 	 * Achieves the specified task in all active quests that contain it.
-	 * @param TaskDataKey - The task data asset to achieve.
+	 * @param TaskDataKey The task data asset to achieve.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void AchieveTaskInActiveQuests(const UTaskData* TaskDataKey);
 
 	/**
 	 * Achieves the specified task in a specific quest.
-	 * @param QuestDataKey - The quest data asset containing the task.
-	 * @param TaskDataKey - The task data asset to achieve.
+	 * @param QuestDataKey The quest data asset containing the task.
+	 * @param TaskDataKey The task data asset to achieve.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void AchieveTaskInQuest(const UQuestData* QuestDataKey, const UTaskData* TaskDataKey);
 
 	/**
 	 * Adds the specified quest to the active quests list.
-	 * @param QuestDataKey - The quest data asset to add.
+	 * @param QuestDataKey The quest data asset to add.
 	 */
 	UFUNCTION(BlueprintCallable, CallInEditor)
 	void AddToActiveQuests(const UQuestData* QuestDataKey);
 
 	/**
 	 * Adds the specified quest to the inactive quests list.
-	 * @param QuestDataKey - The quest data asset to add.
+	 * @param QuestDataKey The quest data asset to add.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void AddToInactiveQuests(const UQuestData* QuestDataKey);
 
 	/**
 	 * Adds the specified quest to the completed quests list, optionally achieving all its tasks.
-	 * @param QuestDataKey - The quest data asset to add.
-	 * @param bAchieveAllTasks - If true, all tasks in the quest will be marked as achieved.
+	 * @param QuestDataKey The quest data asset to add.
+	 * @param bAchieveAllTasks If true, all tasks in the quest will be marked as achieved.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void AddToCompletedQuests(const UQuestData* QuestDataKey, bool bAchieveAllTasks = false);
 
 	/**
 	 * Checks if the specified quest is in the completed quests list.
-	 * @param QuestDataKey - The quest data asset to check.
+	 * @param QuestDataKey The quest data asset to check.
 	 * @return true if the quest is completed, false otherwise.
 	 */
 	UFUNCTION(BlueprintCallable)
@@ -115,7 +115,7 @@ public:
 
 	/**
 	 * Checks if the specified quest is in the active quests list.
-	 * @param QuestDataKey - The quest data asset to check.
+	 * @param QuestDataKey The quest data asset to check.
 	 * @return true if the quest is active, false otherwise.
 	 */
 	UFUNCTION(BlueprintCallable)
@@ -123,7 +123,7 @@ public:
 
 	/**
 	 * Checks if the specified quest is in the inactive quests list.
-	 * @param QuestDataKey - The quest data asset to check.
+	 * @param QuestDataKey The quest data asset to check.
 	 * @return true if the quest is inactive, false otherwise.
 	 */
 	UFUNCTION(BlueprintCallable)
@@ -131,8 +131,8 @@ public:
 
 	/**
 	 * Checks if a specific task in a quest has been achieved.
-	 * @param QuestDataKey - The quest data asset.
-	 * @param TaskDataKey - The task data asset to check.
+	 * @param QuestDataKey The quest data asset.
+	 * @param TaskDataKey The task data asset to check.
 	 * @return true if the task is achieved, false otherwise.
 	 */
 	UFUNCTION(BlueprintCallable)
@@ -140,7 +140,7 @@ public:
 
 	/**
 	 * Retrieves the quest instance associated with the specified quest data.
-	 * @param QuestDataKey - The quest data asset to retrieve.
+	 * @param QuestDataKey The quest data asset to retrieve.
 	 * @return Pointer to the quest instance if found, nullptr otherwise.
 	 */
 	UFUNCTION(BlueprintCallable)
@@ -148,7 +148,7 @@ public:
 
 	/**
 	 * Retrieves all quests that match the specified filter.
-	 * @param QuestFilterData - The filter data to apply.
+	 * @param QuestFilterData The filter data to apply.
 	 * @return Array of quest instances matching the filter.
 	 */
 	UFUNCTION(BlueprintCallable)
@@ -161,14 +161,14 @@ public:
 	
 	/**
 	 * Retrieves a quest instance by its FName identifier.
-	 * @param QuestFName - The FName of the quest to retrieve.
+	 * @param QuestFName The FName of the quest to retrieve.
 	 * @return Pointer to the quest instance if found, nullptr otherwise.
 	 */
 	UQuestBase* GetQuestByFName(const FName QuestFName) const;
 	
 	/**
 	 * Tracks a quest by its FName identifier.
-	 * @param QuestFName - The FName of the quest to track.
+	 * @param QuestFName The FName of the quest to track.
 	 */
 	void TrackQuestByFName(const FName QuestFName);
 
@@ -183,14 +183,14 @@ public:
 protected:
 	/**
 	 * Adds a quest to the quest log with the specified entry data.
-	 * @param QuestData - The quest data asset to add.
-	 * @param QuestEntryData - The entry data for the quest.
+	 * @param QuestData The quest data asset to add.
+	 * @param QuestEntryData The entry data for the quest.
 	 */
 	void AddQuest(UQuestData* QuestData, const FQuestEntryData QuestEntryData);
 	
 	/**
 	 * Removes a quest from the quest log.
-	 * @param QuestDataKey - The quest data asset to remove.
+	 * @param QuestDataKey The quest data asset to remove.
 	 */
 	void RemoveQuest(const UQuestData* QuestDataKey);
 };

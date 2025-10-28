@@ -137,6 +137,8 @@ void UMeleeHitboxesManager::HandleHitActors(TMap<UMeleeHitbox*, TArray<FHitResul
 
             if (bShouldApplyDamage)
             {
+            	WeaponMelee->CallPreHitEvent(MeleeHitbox, HitResult, MeleeHitbox->GetProcessedDamage());
+            	
                 UGameplayStatics::ApplyPointDamage(
                     HitActor,
                     MeleeHitbox->GetProcessedDamage(),
@@ -144,12 +146,11 @@ void UMeleeHitboxesManager::HandleHitActors(TMap<UMeleeHitbox*, TArray<FHitResul
                     HitResult,
                     WeaponMelee->GetInstigatorController(),
                     WeaponMelee->GetOwner(),
-                    WeaponMeleeData.DamageTypeClass
+                    MeleeHitbox->GetDamageType()
                 );
 
                 int32& RefCount = ActorsHitCounts.FindOrAdd(HitActor);
                 ++RefCount;
-
             	WeaponMelee->CallHitEvent(MeleeHitbox, HitResult, MeleeHitbox->GetProcessedDamage());
             }
         }

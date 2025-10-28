@@ -14,7 +14,7 @@ class RPGSYSTEM_API UCoreStatsContainer : public UStatsContainer
 public:
 	/**
 	 * Adds a set of core stats to the container.
-	 * @param CoreStats - The set of core stat data objects to add.
+	 * @param CoreStats The set of core stat data objects to add.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void AddCoreStats(TSet<UCoreStatData*> CoreStats);
@@ -28,7 +28,7 @@ public:
 	
 	/**
 	 * Gets the value of a specific stat as a string.
-	 * @param Stat - The stat data object to query.
+	 * @param Stat The stat data object to query.
 	 * @return The value of the stat as a string.
 	 */
 	virtual FString GetValueAsString(const UStatDataBase* Stat) const override;

@@ -50,7 +50,7 @@ TArray<FHitResult> UMeleeHitboxTracerBase::TraceHitbox()
 
 #if WITH_EDITOR
 	const AWeaponMelee* WeaponMelee = MeleeHitbox->GetWeaponMelee();
-	if (IsValid(WeaponMelee) && WeaponMelee->bDebug)
+	if (IsValid(WeaponMelee) && WeaponMelee->bDebugHitbox)
 		DrawDebugHitboxTrace(WeaponMelee, MeleeHitbox->GetComponentTransform());
 #endif
 

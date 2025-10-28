@@ -158,7 +158,7 @@ public:
 
 	/**
 	 * Initializes the SaveManager with the provided SaveManagerData.
-	 * @param SaveManagerData - The data structure containing configuration for the SaveManager.
+	 * @param SaveManagerData The data structure containing configuration for the SaveManager.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void Init(const FSaveManagerData SaveManagerData);
@@ -179,7 +179,7 @@ public:
 
 	/**
 	 * Gets the current slot info item.
-	 * @param SlotName - The name of the slot to retrieve the info for.
+	 * @param SlotName The name of the slot to retrieve the info for.
 	 * @return The slot info item for the specified slot name.
 	 */
 	UFUNCTION(BlueprintCallable)
@@ -199,44 +199,44 @@ public:
 
 	/**
 	 * Manually saves the current game state.
-	 * @param Instigator - The object that initiated the save.
-	 * @param bOverrideCurrentSlot - Whether to override the current save slot.
+	 * @param Instigator The object that initiated the save.
+	 * @param bOverrideCurrentSlot Whether to override the current save slot.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void ManualSave(UObject* Instigator, const bool bOverrideCurrentSlot = false);
 
 	/**
 	 * Saves the current game state to a shared slot.
-	 * @param Instigator - The object that initiated the shared save.
+	 * @param Instigator The object that initiated the shared save.
 	 */
 	UFUNCTION(Blueprintable)
 	void SharedSave(UObject* Instigator);
 
 	/**
 	 * Manually saves the current game state and also saves to a shared slot.
-	 * @param Instigator - The object that initiated the save.
-	 * @param bOverrideCurrentSlot - Whether to override the current save slot.
+	 * @param Instigator The object that initiated the save.
+	 * @param bOverrideCurrentSlot Whether to override the current save slot.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void ManualAndSharedSave(UObject* Instigator, const bool bOverrideCurrentSlot = false);
 
 	/**
 	 * Selects a save slot and saves the current game state to it.
-	 * @param Instigator - The object that initiated the save.
+	 * @param Instigator The object that initiated the save.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void LoadSelectedSlotAndSharedSlot(UObject* Instigator);
 
 	/**
 	 * Loads the selected save slot.
-	 * @param Instigator - The object that initiated the load.
+	 * @param Instigator The object that initiated the load.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void LoadSelectedSlot(UObject* Instigator);
 
 	/**
 	 * Loads a shared save slot.
-	 * @param Instigator - The object that initiated the load.
+	 * @param Instigator The object that initiated the load.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void LoadSharedSlot(UObject* Instigator);
@@ -250,8 +250,8 @@ public:
 
 	/**
 	 * Gets the current slot info item.
-	 * @param OutIsLoading - Whether the save manager is currently loading.
-	 * @param OutIsSaving - Whether the save manager is currently saving.
+	 * @param OutIsLoading Whether the save manager is currently loading.
+	 * @param OutIsSaving Whether the save manager is currently saving.
 	 * @return True if the status was retrieved successfully, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure)
@@ -300,60 +300,60 @@ public:
 	
 	/**
 	 * Saves the current game state.
-	 * @param SaveName - The name of the save slot to save to.
-	 * @param Instigator - The object that initiated the save.
-	 * @param bIsSharedSave - Whether this is a shared save.
+	 * @param SaveName The name of the save slot to save to.
+	 * @param Instigator The object that initiated the save.
+	 * @param bIsSharedSave Whether this is a shared save.
 	 */
 	void Save(const FString& SaveName, UObject* Instigator, const bool bIsSharedSave = false);
 
 	/**
 	 * Loads a save game from the specified slot.
-	 * @param SaveName - The name of the save slot to load from.
-	 * @param Instigator - The object that initiated the load.
-	 * @param bIsSharedLoad - Whether this is a shared load.
+	 * @param SaveName The name of the save slot to load from.
+	 * @param Instigator The object that initiated the load.
+	 * @param bIsSharedLoad Whether this is a shared load.
 	 */
 	void Load(const FString& SaveName, UObject* Instigator, const bool bIsSharedLoad = false);
 
 private:
 	/**
 	 * Called when a save operation is completed.
-	 * @param SlotFullPathName - The full path name of the save slot.
-	 * @param UserIndex - The user index for the save operation.
-	 * @param bSuccess - Whether the save operation was successful.
+	 * @param SlotFullPathName The full path name of the save slot.
+	 * @param UserIndex The user index for the save operation.
+	 * @param bSuccess Whether the save operation was successful.
 	 */
 	void OnSaveCompleted(const FString& SlotFullPathName, int32 UserIndex, bool bSuccess);
 
 	/**
 	 * Called when a shared save operation is completed.
-	 * @param SlotFullPathName - The full path name of the shared save slot.
-	 * @param UserIndex - The user index for the shared save operation.
-	 * @param SaveGame - The save game instance that was saved.
+	 * @param SlotFullPathName The full path name of the shared save slot.
+	 * @param UserIndex The user index for the shared save operation.
+	 * @param SaveGame The save game instance that was saved.
 	 */
 	void OnLoadCompleted(const FString& SlotFullPathName, int32 UserIndex, USaveGame* SaveGame);
 
 	/**
 	 * Called when a shared save operation is pending.
-	 * @param Instigator - The object that initiated the shared save.
+	 * @param Instigator The object that initiated the shared save.
 	 */
 	UFUNCTION()
 	void OnPendingSharedSaveEvent(UObject* Instigator);
 
 	/**
 	 * Called when a shared load operation is pending.
-	 * @param Instigator - The object that initiated the shared load.
+	 * @param Instigator The object that initiated the shared load.
 	 */
 	UFUNCTION()
 	void OnPendingSharedLoadEvent(UObject* Instigator);
 
 	/**
 	 * Updates the slot info with the new save slot name key.
-	 * @param NewSaveSlotNameKey - The new save slot name key to update.
+	 * @param NewSaveSlotNameKey The new save slot name key to update.
 	 */
 	void UpdateSlotInfo(const FName NewSaveSlotNameKey);
 
 	/**
 	 * Removes the slot info for the specified slot name key.
-	 * @param SlotNameKey - The name key of the slot to remove.
+	 * @param SlotNameKey The name key of the slot to remove.
 	 */
 	void RemoveSlotInfo(const FName SlotNameKey) const;
 

@@ -22,9 +22,9 @@ protected:
 public:
 	/**
 	 * Initializes the bridge stat operation with the given payload, modifier value, and core stat data.
-	 * @param InPayload - The payload object for initialization.
-	 * @param InModifierValue - The modifier value to apply.
-	 * @param InCoreStatData - The core stat data to associate with this operation.
+	 * @param InPayload The payload object for initialization.
+	 * @param InModifierValue The modifier value to apply.
+	 * @param InCoreStatData The core stat data to associate with this operation.
 	 */
 	void Init(UObject* InPayload, const float InModifierValue, UCoreStatData* InCoreStatData);
 
@@ -44,7 +44,7 @@ public:
 
 	/**
 	 * Gets the value of a specific special stat associated with this operation.
-	 * @param SpecialStat - The special stat data to query.
+	 * @param SpecialStat The special stat data to query.
 	 * @return The value of the special stat as a float.
 	 */
 	UFUNCTION(BlueprintPure)

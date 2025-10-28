@@ -118,8 +118,8 @@ private:
 public:
 	/**
 	 * Initializes the resource attribute with the given data and manager.
-	 * @param InResourceAttributeData - The data asset containing attribute configuration.
-	 * @param InResourceAttributesManager - The manager responsible for handling this attribute.
+	 * @param InResourceAttributeData The data asset containing attribute configuration.
+	 * @param InResourceAttributesManager The manager responsible for handling this attribute.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void Init(UResourceAttributeData* InResourceAttributeData, UResourceAttributesManager* InResourceAttributesManager);
@@ -179,14 +179,14 @@ public:
 
 	/**
 	 * Sets the attribute value to the specified amount.
-	 * @param NewValue - The new value to set.
+	 * @param NewValue The new value to set.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetValue(const float NewValue);
 
 	/**
 	 * Modifies the attribute value by the specified amount (positive or negative).
-	 * @param Amount - The amount to add or subtract from the current value.
+	 * @param Amount The amount to add or subtract from the current value.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void ModifyValue(const float Amount);
@@ -205,28 +205,28 @@ public:
 	
 	/**
 	 * Sets the minimum allowed value for the attribute.
-	 * @param NewMinValue - The new minimum value.
+	 * @param NewMinValue The new minimum value.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetMinValue(const float NewMinValue);
 
 	/**
 	 * Sets the maximum allowed value for the attribute.
-	 * @param NewMaxValue - The new maximum value.
+	 * @param NewMaxValue The new maximum value.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetMaxValue(const float NewMaxValue);
 
 	/**
 	 * Sets the regeneration rate for the attribute.
-	 * @param NewRegenerationRate - The new regeneration rate.
+	 * @param NewRegenerationRate The new regeneration rate.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetRegenerationRate(const float NewRegenerationRate);
 
 	/**
 	 * Starts the regeneration process for the attribute, with an optional delay.
-	 * @param Delay - Time in seconds before regeneration starts (default is 0).
+	 * @param Delay Time in seconds before regeneration starts (default is 0).
 	 */
 	UFUNCTION(BlueprintCallable)
 	void StartRegen(const float Delay = 0.0f);
@@ -240,19 +240,19 @@ public:
 private:
 	/**
 	 * Handles the regeneration logic, called every tick with DeltaTime.
-	 * @param DeltaTime - Time elapsed since last call.
+	 * @param DeltaTime Time elapsed since last call.
 	 */
 	void ProcessRegen(const float DeltaTime);
 
 	/**
 	 * Called when the attribute value increases.
-	 * @param OldValue - The value before the increase.
+	 * @param OldValue The value before the increase.
 	 */
 	void OnAttributeIncreased(const float OldValue);
 
 	/**
 	 * Called when the attribute value decreases.
-	 * @param OldValue - The value before the decrease.
+	 * @param OldValue The value before the decrease.
 	 */
 	void OnAttributeDecreased(const float OldValue);
 

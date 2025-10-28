@@ -31,7 +31,7 @@ void AEKWeaponFirearm::Init(APawn* InOwner, UObject* InPayload)
 	}
 	
 	SetWeaponDamage(WeaponFirearmItem->GetWeaponDamage());
-	SetWeaponMagazineSize( WeaponFirearmItem->GetMagSize());
+	SetWeaponMagazineSize(WeaponFirearmItem->GetMagSize());
 	SetCurrentAmmo(WeaponFirearmItem->GetCurrentMagAmmo());
 }
 
@@ -78,10 +78,10 @@ void AEKWeaponFirearm::OnBehaviourAmmoChange_Implementation(UShooterBehaviourBas
 		WeaponFirearmItem->SetCurrentMagAmmo(CurrentAmmo);
 }
 
-void AEKWeaponFirearm::OnReloadSuccess_Implementation(float Remain, float ReloadedAmmo)
+void AEKWeaponFirearm::OnReloadInsertAmmo_Implementation(UShooterBehaviourBase* Behaviour, int32 InsertedAmmo, int32 RemainingAmmo)
 {
-	Super::OnReloadSuccess_Implementation(Remain, ReloadedAmmo);
-	
+	Super::OnReloadInsertAmmo_Implementation(Behaviour, InsertedAmmo, RemainingAmmo);
+
 	if (!IsValid(AmmoItemData))
 	{
 		UE_LOG(LogEKWeapons, Warning, TEXT("AEKWeaponFirearm::ReloadWithItem: AmmoItemData is not valid."));
@@ -95,10 +95,8 @@ void AEKWeaponFirearm::OnReloadSuccess_Implementation(float Remain, float Reload
 		return;
 	}
 	
-	const int32 MaxItemStack = AmmoItemData->MaxStackSize;
 	TArray<UItemBase*> FoundItems = MainInventory->FindAll(AmmoItemData);
-	
-	int32 ReloadedAmount = ReloadedAmmo;
+	int32 ReloadedAmount = InsertedAmmo;
 	for (UItemBase* Item : FoundItems)
 	{
 		if (ReloadedAmount <= 0)

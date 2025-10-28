@@ -34,18 +34,30 @@ protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnSpreadChanged(float Spread);
 
+	/**
+	 * Called when a reload starts.
+	 * @param Request The reload request data.
+	 */
 	UFUNCTION(BlueprintNativeEvent)
-	void OnReloadStarted(FReloadEventData ReloadPayload);
+	void OnReloadStart(const FReloadRequest& Request);
 
+	/**
+	 * Called when a reload ends.
+	 * @param Request The reload request data.
+	 * @param bInterrupted Whether the reload was interrupted, if not the reload completed successfully.
+	 */
 	UFUNCTION(BlueprintNativeEvent)
-	void OnReloadEnded();
+	void OnReloadEnd(const FReloadRequest& Request, bool bInterrupted);
 
+	/**
+	 * Called when ammo is inserted during a reload.
+	 * @param Behaviour The shooter behaviour where ammo was inserted.
+	 * @param InsertedAmmo The amount of ammo that was inserted.
+	 * @param RemainingAmmo The remaining ammo available after insertion.
+	 */
 	UFUNCTION(BlueprintNativeEvent)
-	void OnReloadSuccess(FReloadEventData ReloadPayload);
+	void OnReloadInsertAmmo(UShooterBehaviourBase* Behaviour, int32 InsertedAmmo, int32 RemainingAmmo);
 	
-	UFUNCTION(BlueprintNativeEvent)
-	void OnReloadFail(FReloadEventData ReloadPayload);
-
 	UFUNCTION(BlueprintCallable)
 	void AnimateCrosshair(UWidgetAnimation* CrosshairAnimation);
 

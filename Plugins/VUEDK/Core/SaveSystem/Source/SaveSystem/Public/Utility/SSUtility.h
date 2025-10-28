@@ -20,13 +20,13 @@ private:
 public:
 	/**
 	 * Initializes the utility with a save manager.
-	 * @param SaveManager - The save manager to initialize with.
+	 * @param SaveManager The save manager to initialize with.
 	 */
 	static void Init(USaveManager* SaveManager);
 
 	/**
 	 * Sets the auto save manager.
-	 * @param InAutoSaveManager - The auto save manager to set.
+	 * @param InAutoSaveManager The auto save manager to set.
 	 */
 	static void SetAutoSaveManager(UAutoSaveManager* InAutoSaveManager);
 
@@ -66,52 +66,52 @@ public:
 	
 	/**
 	 * Performs a manual save.
-	 * @param Instigator - The object that initiated the save.
-	 * @param bOverrideCurrentSlot - If true, overrides the current slot.
+	 * @param Instigator The object that initiated the save.
+	 * @param bOverrideCurrentSlot If true, overrides the current slot.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Save System")
 	static void ManualSave(UObject* Instigator, const bool bOverrideCurrentSlot = false);
 
 	/**
 	 * Performs a shared save.
-	 * @param Instigator - The object that initiated the save.
+	 * @param Instigator The object that initiated the save.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Save System")
 	static void SharedSave(UObject* Instigator);
 
 	/**
 	 * Performs a manual and shared save operation.
-	 * @param Instigator - The object that initiated the save.
-	 * @param bOverrideCurrentSlot - If true, overrides the current slot.
+	 * @param Instigator The object that initiated the save.
+	 * @param bOverrideCurrentSlot If true, overrides the current slot.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Save System")
 	static void ManualAndSharedSave(UObject* Instigator, bool bOverrideCurrentSlot = false);
 
 	/**
 	 * Selects a slot by name and saves to it.
-	 * @param SlotName - The name of the slot to save to.
-	 * @param Instigator - The object that initiated the save.
+	 * @param SlotName The name of the slot to save to.
+	 * @param Instigator The object that initiated the save.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Save System")
 	static void SelectAndSaveOnSlot(const FString& SlotName, UObject* Instigator);
 	
 	/**
 	 * Loads the currently selected slot.
-	 * @param Instigator - The object that initiated the load.
+	 * @param Instigator The object that initiated the load.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Save System")
 	static void LoadSelectedSlot(UObject* Instigator);
 
 	/**
 	 * Loads the shared slot.
-	 * @param Instigator - The object that initiated the load.
+	 * @param Instigator The object that initiated the load.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Save System")
 	static void LoadSharedSlot(UObject* Instigator);
 
 	/**
 	 * Loads both the selected slot and the shared slot.
-	 * @param Instigator - The object that initiated the load.
+	 * @param Instigator The object that initiated the load.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Save System")
 	static void LoadSelectedSlotAndSharedSlot(UObject* Instigator);

@@ -50,12 +50,12 @@ public:
 	
 	/**
 	 * Initializes the projectile with the given instigator, damage type, damage, range, speed, and direction.
-	 * @param InInstigator - The actor that instigated the projectile.
-	 * @param InDamageTypeClass - The damage type class for the projectile.
-	 * @param InDamage - The amount of damage the projectile deals.
-	 * @param InRange - The range of the projectile.
-	 * @param InSpeed - The speed of the projectile.
-	 * @param InDirection - The direction vector of the projectile.
+	 * @param InInstigator The actor that instigated the projectile.
+	 * @param InDamageTypeClass The damage type class for the projectile.
+	 * @param InDamage The amount of damage the projectile deals.
+	 * @param InRange The range of the projectile.
+	 * @param InSpeed The speed of the projectile.
+	 * @param InDirection The direction vector of the projectile.
 	 */
 	void Init(AActor* InInstigator, const TSubclassOf<UDamageType>& InDamageTypeClass, float InDamage, float InRange, float InSpeed, const FVector& InDirection);
 
@@ -66,17 +66,17 @@ public:
 	
 	/**
 	 * Initializes the velocity and lifespan of the projectile.
-	 * @param InRange - The range of the projectile.
-	 * @param InSpeed - The speed of the projectile.
-	 * @param InDirection - The direction vector of the projectile.
+	 * @param InRange The range of the projectile.
+	 * @param InSpeed The speed of the projectile.
+	 * @param InDirection The direction vector of the projectile.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void InitVelocityAndLifeSpan(float InRange, float InSpeed, const FVector& InDirection);
 
 	/**
 	 * Calculates the lifespan of the projectile based on range and speed.
-	 * @param InRange - The range of the projectile.
-	 * @param InSpeed - The speed of the projectile.
+	 * @param InRange The range of the projectile.
+	 * @param InSpeed The speed of the projectile.
 	 * @return The calculated lifespan as a float.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
@@ -84,28 +84,28 @@ public:
 	
 	/**
 	 * Sets the damage value for the projectile.
-	 * @param InDamage - The damage value to set.
+	 * @param InDamage The damage value to set.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetDamage(float InDamage);
 
 	/**
 	 * Sets the range value for the projectile.
-	 * @param InRange - The range value to set.
+	 * @param InRange The range value to set.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetRange(float InRange);
 
 	/**
 	 * Sets the velocity of the projectile.
-	 * @param NewVelocity - The velocity vector to set.
+	 * @param NewVelocity The velocity vector to set.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetVelocity(const FVector NewVelocity) const;
 
 	/**
 	 * Sets the instigator actor for the projectile.
-	 * @param InInstigator - The instigator actor to set.
+	 * @param InInstigator The instigator actor to set.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetProjectileInstigator(AActor* InInstigator);
@@ -156,7 +156,7 @@ protected:
 
 	/**
 	 * Starts the projectile's lifespan countdown.
-	 * @param InLifeSpan - The lifespan of the projectile in seconds.
+	 * @param InLifeSpan The lifespan of the projectile in seconds.
 	 */
 	void StartProjectileLifeSpan(const float InLifeSpan);
 
@@ -168,8 +168,8 @@ protected:
 
 	/**
 	 * Called when the projectile hits something.
-	 * @param ImpactResult - The result of the hit, containing information about the impact.
-	 * @param ImpactVelocity - The velocity of the projectile at the time of impact.
+	 * @param ImpactResult The result of the hit, containing information about the impact.
+	 * @param ImpactVelocity The velocity of the projectile at the time of impact.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnProjectileHit(const FHitResult& ImpactResult, const FVector& ImpactVelocity);
@@ -183,7 +183,7 @@ protected:
 private:
 	/**
 	 * Processes the projectile's lifespan, decrementing it based on the DeltaSeconds.
-	 * @param DeltaSeconds - The time elapsed since the last frame.
+	 * @param DeltaSeconds The time elapsed since the last frame.
 	 */
 	void ProcessProjectileLifeSpan(const float DeltaSeconds);
 
@@ -195,8 +195,8 @@ private:
 
 	/**
 	 * Handles the projectile hit event.
-	 * @param ImpactResult - The result of the hit, containing information about the impact.
-	 * @param ImpactVelocity - The velocity of the projectile at the time of impact.
+	 * @param ImpactResult The result of the hit, containing information about the impact.
+	 * @param ImpactVelocity The velocity of the projectile at the time of impact.
 	 */
 	UFUNCTION()
 	void ProjectileHit(const FHitResult& ImpactResult, const FVector& ImpactVelocity);

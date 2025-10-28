@@ -37,7 +37,7 @@ void UMeleeHitboxSphereTracer::DrawDebugHitboxTrace(const AWeaponMelee* WeaponMe
 		12,
 		HitboxColor,
 		false,
-		WeaponMelee->DebugDrawDuration
+		WeaponMelee->DebugTraceDuration
 	);
 }
 #endif

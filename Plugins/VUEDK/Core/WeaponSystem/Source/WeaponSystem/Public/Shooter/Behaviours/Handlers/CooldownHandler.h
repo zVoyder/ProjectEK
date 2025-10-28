@@ -38,7 +38,7 @@ public:
 private:
 	/**
 	 * Processes the cooldown logic each frame.
-	 * @param DeltaTime - The time elapsed since the last tick.
+	 * @param DeltaTime The time elapsed since the last tick.
 	 */
 	void ProcessCooldown(float DeltaTime);
 

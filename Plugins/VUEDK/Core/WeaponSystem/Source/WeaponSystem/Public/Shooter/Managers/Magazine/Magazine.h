@@ -7,29 +7,33 @@
 #include "UObject/Object.h"
 #include "Magazine.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
 	FOnMagazineRefilled,
 	const UObject*, Instigator,
+	const UMagazine*, Magazine,
 	int32, CurrentAmmo,
 	int32, RefilledAmmo,
 	int32, RemainingAmmo
 );
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FOnMagazineAmmoChanged,
 	const UObject*, Instigator,
+	const UMagazine*, Magazine,
 	int32, CurrentAmmo,
 	int32, MagSize
 );
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FOnMagazineFull,
-	const UObject*, Instigator
+	const UObject*, Instigator,
+	const UMagazine*, Magazine
 );
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FOnMagazineEmpty,
-	const UObject*, Instigator
+	const UObject*, Instigator,
+	const UMagazine*, Magazine
 );
 
 UCLASS(Blueprintable, BlueprintType, EditInlineNew)
@@ -70,9 +74,9 @@ public:
 
 	/**
 	 * Refills the magazine with the specified amount of ammo.
-	 * @param Ammo - The amount of ammo to add.
-	 * @param OutRemainingAmmo - The amount of ammo that could not be added (excess).
-	 * @param Instigator - The object responsible for the refill action.
+	 * @param Ammo The amount of ammo to add.
+	 * @param OutRemainingAmmo The amount of ammo that could not be added (excess).
+	 * @param Instigator The object responsible for the refill action.
 	 * @return - The amount of ammo actually added to the magazine.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
@@ -80,17 +84,17 @@ public:
 
 	/**
 	 * Refills the magazine to its maximum capacity.
-	 * @param Instigator - The object responsible for the refill action.
+	 * @param Instigator The object responsible for the refill action.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void RefillAllMagazine(const UObject* Instigator = nullptr);
 
 	/**
 	 * Refills the magazine with a specific type of ammo.
-	 * @param AmmoType - The type of ammo to use for refilling.
-	 * @param Ammo - The amount of ammo to add.
-	 * @param OutRemainingAmmo - The amount of ammo that could not be added (excess).
-	 * @param Instigator - The object responsible for the refill action.
+	 * @param AmmoType The type of ammo to use for refilling.
+	 * @param Ammo The amount of ammo to add.
+	 * @param OutRemainingAmmo The amount of ammo that could not be added (excess).
+	 * @param Instigator The object responsible for the refill action.
 	 * @return - The amount of ammo actually added to the magazine.
 	 */
 	UFUNCTION(BlueprintCallable)

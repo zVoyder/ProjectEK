@@ -123,7 +123,7 @@ public:
 
 	/**
 	 * Sets the weapon defensive state.
-	 * @param bWants - True if the weapon wants to defend, false otherwise.
+	 * @param bWants True if the weapon wants to defend, false otherwise.
 	 */
 	void SetWantsToDefend(const bool bWants);
 
@@ -148,10 +148,11 @@ public:
 	void OnAttackFinishedNotify();
 
 protected:
-	/**
-	 * Called when the component begins play. Used for initialization logic.
-	 */
-	virtual void BeginPlay() override;
+	virtual void SetupWeapons(AWeaponBase* InWeapon) override;
+
+	virtual void BindEvents() override;
+
+	virtual void UnbindEvents() override;
 
 	/**
 	 * Called when a weapon attack succeeds.
@@ -168,7 +169,7 @@ protected:
 
 	/**
 	 * Called when an attack interrupt finishes.
-	 * @param bInterrupted - True if the attack was interrupted, false otherwise.
+	 * @param bInterrupted True if the attack was interrupted, false otherwise.
 	 */
 	UFUNCTION()
 	void OnAttackInterruptFinished(bool bInterrupted);
@@ -195,13 +196,13 @@ protected:
 
 	/**
 	 * Plays the attack montage at the specified index in the combo sequence.
-	 * @param AttackIndex - The index of the attack montage to play.
+	 * @param AttackIndex The index of the attack montage to play.
 	 */
 	void PlayAttackMontageAt(const int32 AttackIndex);
 
 	/**
 	 * Plays the specified attack montage.
-	 * @param Attack - The attack montage data to play.
+	 * @param Attack The attack montage data to play.
 	 */
 	void PlayAttackMontage(UWeaponMeleeAttackData* Attack);
 

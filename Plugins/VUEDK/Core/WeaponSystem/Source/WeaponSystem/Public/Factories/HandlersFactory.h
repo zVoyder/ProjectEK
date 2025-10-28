@@ -17,21 +17,21 @@ class WEAPONSYSTEM_API UHandlersFactory : public UBlueprintFunctionLibrary
 public:
 	/**
 	 * Creates and returns a new recoil handler for the specified shooter behaviour and shoot data.
-	 * @param InBehaviour - The shooter behaviour to associate with the handler.
+	 * @param InBehaviour The shooter behaviour to associate with the handler.
 	 * @return Pointer to the created URecoilHandler instance.
 	 */
 	static URecoilHandler* CreateRecoilHandler(UShooterBehaviourBase* InBehaviour);
 
 	/**
 	 * Creates and returns a new cooldown handler for the specified shooter behaviour and shoot data.
-	 * @param InBehaviour - The shooter behaviour to associate with the handler.
+	 * @param InBehaviour The shooter behaviour to associate with the handler.
 	 * @return Pointer to the created UCooldownHandler instance.
 	 */
 	static UCooldownHandler* CreateCooldownHandler(UShooterBehaviourBase* InBehaviour);
 
 	/**
 	 * Creates and returns a new spread handler for the specified shooter behaviour and shoot data.
-	 * @param InBehaviour - The shooter behaviour to associate with the handler.
+	 * @param InBehaviour The shooter behaviour to associate with the handler.
 	 * @return Pointer to the created USpreadHandler instance.
 	 */
 	static USpreadHandler* CreateSpreadHandler(UShooterBehaviourBase* InBehaviour);

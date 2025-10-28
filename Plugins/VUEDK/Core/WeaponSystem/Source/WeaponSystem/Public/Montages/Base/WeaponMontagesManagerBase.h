@@ -15,15 +15,15 @@ class WEAPONSYSTEM_API UWeaponMontagesManagerBase : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages")
-	bool bUseTag;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Montages", meta = (ToolTip = "Used to find the anim instance of the owner's mesh if it is not a character."))
-	FName AnimInstanceMeshTag = TEXT("AnimInstanceMesh"); // Use a tag to be more flexible
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions|Equip")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions")
 	FWeaponMontageData EquipMontageData;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions|Equip")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions")
 	FWeaponMontageData UnequipMontageData;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Advanced")
+	bool bUseTag;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Advanced", meta = (ToolTip = "Used to find the anim instance of the owner's mesh if it is not a character."))
+	FName AnimInstanceMeshTag = TEXT("AnimInstanceMesh"); // Use a tag to be more flexible
 	
 protected:
 	UPROPERTY()
@@ -38,7 +38,9 @@ private:
 
 public:
 	UWeaponMontagesManagerBase();
-	
+
+	void Init(AWeaponBase* InWeapon);
+
 	void ResumeWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
 	
 	void PauseWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
@@ -76,10 +78,8 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 protected:
-	virtual void BeginPlay() override;
-
-	virtual void Init();
-
+	virtual void SetupWeapons(AWeaponBase* InWeapon);
+	
 	virtual void BindEvents();
 
 	virtual void UnbindEvents();

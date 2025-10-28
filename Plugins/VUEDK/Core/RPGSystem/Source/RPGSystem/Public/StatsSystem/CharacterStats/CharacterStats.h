@@ -23,7 +23,7 @@ public:
 	
 	/**
 	 * Initializes the character stats with the provided equipment.
-	 * @param InEquipment - The equipment to associate with these stats.
+	 * @param InEquipment The equipment to associate with these stats.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void Init(UEquipment* InEquipment);
@@ -38,32 +38,32 @@ protected:
 private:
 	/**
 	 * Called when an item is equipped or unequipped.
-	 * @param EquipSlotKey - The equipment slot key affected.
-	 * @param SlotIndex - The index of the slot.
-	 * @param ItemBase - The item being equipped or unequipped.
+	 * @param EquipSlotKey The equipment slot key affected.
+	 * @param SlotIndex The index of the slot.
+	 * @param ItemBase The item being equipped or unequipped.
 	 */
 	UFUNCTION()
 	void OnItemEquippedOrUnequipped(UEquipSlotKey* EquipSlotKey, int32 SlotIndex, UItemBase* ItemBase);
 
 	/**
 	 * Called when an item is swapped with an inventory item.
-	 * @param EquipSlotKey - The equipment slot key affected.
-	 * @param Item - The item being equipped.
-	 * @param InventoryItem - The item from the inventory.
-	 * @param SlotIndex - The index of the slot.
+	 * @param EquipSlotKey The equipment slot key affected.
+	 * @param Item The item being equipped.
+	 * @param InventoryItem The item from the inventory.
+	 * @param SlotIndex The index of the slot.
 	 */
 	UFUNCTION()
 	void OnItemSwappedWithInventoryItem(UEquipSlotKey* EquipSlotKey, UItemBase* Item, UItemBase* InventoryItem, int32 SlotIndex);
 	
 	/**
 	 * Called when two items are switched between slots.
-	 * @param EquipSlotKey - The equipment slot key affected.
-	 * @param ItemBaseA - The first item being switched.
-	 * @param ItemBaseB - The second item being switched.
-	 * @param OldSlotIndexItemA - The old slot index of item A.
-	 * @param OldSlotIndexItemB - The old slot index of item B.
-	 * @param NewSlotIndexItemA - The new slot index of item A.
-	 * @param NewSlotIndexItemB - The new slot index of item B.
+	 * @param EquipSlotKey The equipment slot key affected.
+	 * @param ItemBaseA The first item being switched.
+	 * @param ItemBaseB The second item being switched.
+	 * @param OldSlotIndexItemA The old slot index of item A.
+	 * @param OldSlotIndexItemB The old slot index of item B.
+	 * @param NewSlotIndexItemA The new slot index of item A.
+	 * @param NewSlotIndexItemB The new slot index of item B.
 	 */
 	UFUNCTION()
 	void OnItemsSwitchedSlots(UEquipSlotKey* EquipSlotKey, UItemBase* ItemBaseA, UItemBase* ItemBaseB, int32 OldSlotIndexItemA, int32 OldSlotIndexItemB, int32 NewSlotIndexItemA, int32 NewSlotIndexItemB);

@@ -15,7 +15,7 @@ class RPGSYSTEM_API UStatsUtility : public UBlueprintFunctionLibrary
 public:
 	/**
 	 * Gets the stats bridge for the player pawn at the specified player index.
-	 * @param PlayerIndex - The index of the player.
+	 * @param PlayerIndex The index of the player.
 	 * @return Pointer to the UStatsBridgeBase instance for the player pawn, or nullptr if not found.
 	 */
 	UFUNCTION(BlueprintPure, Category = "VUEDK|RPGSystem|Stats")
@@ -23,7 +23,7 @@ public:
 
 	/**
 	 * Gets the stats bridge for the player controller at the specified player index.
-	 * @param PlayerIndex - The index of the player controller.
+	 * @param PlayerIndex The index of the player controller.
 	 * @return Pointer to the UStatsBridgeBase instance for the player controller, or nullptr if not found.
 	 */
 	UFUNCTION(BlueprintPure, Category = "VUEDK|RPGSystem|Stats")

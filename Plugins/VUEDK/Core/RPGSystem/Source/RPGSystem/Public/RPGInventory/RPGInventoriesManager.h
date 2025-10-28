@@ -26,7 +26,7 @@ public:
 
 	/**
 	 * Returns the rarity data for an item by its unique identifier.
-	 * @param RarityID - The unique identifier of the rarity.
+	 * @param RarityID The unique identifier of the rarity.
 	 * @return Pointer to the URPGRarityLevelData if found, nullptr otherwise.
 	 */
 	UFUNCTION(BlueprintPure)
@@ -34,7 +34,7 @@ public:
 
 	/**
 	 * Returns the stat data for an item by its unique identifier.
-	 * @param StatID - The unique identifier of the stat.
+	 * @param StatID The unique identifier of the stat.
 	 * @return Pointer to the UCoreStatData if found, nullptr otherwise.
 	 */
 	UFUNCTION(BlueprintPure)

@@ -5,6 +5,7 @@
 UShooter::UShooter()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	MagazinesManager = CreateDefaultSubobject<UMagazinesManager>(TEXT("MagazinesManager"));
 }
 
 void UShooter::Init(APawn* InOwner)
@@ -38,11 +39,14 @@ void UShooter::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorCo
 
 void UShooter::SetupShootBarrel(UShootBarrel* InShootBarrel, const int32 BehaviourIndex) const
 {
-	UShooterBehaviourBase* SecondaryBehaviour = GetShooterBehaviour(BehaviourIndex);
-	if (!IsValid(SecondaryBehaviour))
+	UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
+	if (!IsValid(Behaviour))
+	{
+		UE_LOG(LogShooter, Error, TEXT("Shooter::SetupShootBarrel: Invalid BehaviourIndex %d."), BehaviourIndex);
 		return;
+	}
 
-	SecondaryBehaviour->SetupShootBarrel(InShootBarrel);
+	Behaviour->SetupShootBarrel(InShootBarrel);
 }
 
 bool UShooter::Shoot(const int32 BehaviourIndex) const
@@ -99,7 +103,7 @@ UShooterBehaviourBase* UShooter::GetShooterBehaviour(const int32 BehaviourIndex)
 	return ShooterBehaviours[BehaviourIndex];
 }
 
-UMagazine* UShooter::GetMagazineByTag(const FGameplayTag& MagazineTag) const
+UMagazine* UShooter::GetMagazine(const int32 MagazineIndex) const
 {
 	if (!IsValid(MagazinesManager))
 	{
@@ -107,7 +111,7 @@ UMagazine* UShooter::GetMagazineByTag(const FGameplayTag& MagazineTag) const
 		return nullptr;
 	}
 
-	return MagazinesManager->GetMagazineByTag(MagazineTag);
+	return MagazinesManager->GetMagazine(MagazineIndex);
 }
 
 bool UShooter::IsAnyBehaviourShooting() const
@@ -142,16 +146,15 @@ void UShooter::BindEvents() const
 		Behaviour->OnBehaviourEmpty.AddDynamic(this, &UShooter::CallBehaviourEmptyEvent);
 	}
 
-	for (const auto& MagPair : MagazinesManager->MagazinesMap)
+	for (const auto& Mag : MagazinesManager->Magazines)
 	{
-		UMagazine* Magazine = MagPair.Value;
-		if (!IsValid(Magazine))
+		if (!IsValid(Mag))
 			continue;
 
-		Magazine->OnMagazineRefilled.AddDynamic(this, &UShooter::CallMagazineRefilledEvent);
-		Magazine->OnMagazineAmmoChanged.AddDynamic(this, &UShooter::CallMagazineAmmoChangedEvent);
-		Magazine->OnMagazineFull.AddDynamic(this, &UShooter::CallMagazineFullEvent);
-		Magazine->OnMagazineEmpty.AddDynamic(this, &UShooter::CallMagazineEmptyEvent);
+		Mag->OnMagazineRefilled.AddDynamic(this, &UShooter::CallMagazineRefilledEvent);
+		Mag->OnMagazineAmmoChanged.AddDynamic(this, &UShooter::CallMagazineAmmoChangedEvent);
+		Mag->OnMagazineFull.AddDynamic(this, &UShooter::CallMagazineFullEvent);
+		Mag->OnMagazineEmpty.AddDynamic(this, &UShooter::CallMagazineEmptyEvent);
 	}
 }
 
@@ -173,16 +176,15 @@ void UShooter::UnbindEvents() const
 		Behaviour->OnBehaviourEmpty.RemoveDynamic(this, &UShooter::CallBehaviourEmptyEvent);
 	}
 
-	for (const auto& MagPair : MagazinesManager->MagazinesMap)
+	for (const auto& Mag : MagazinesManager->Magazines)
 	{
-		UMagazine* Magazine = MagPair.Value;
-		if (!IsValid(Magazine))
+		if (!IsValid(Mag))
 			continue;
 
-		Magazine->OnMagazineRefilled.RemoveDynamic(this, &UShooter::CallMagazineRefilledEvent);
-		Magazine->OnMagazineAmmoChanged.RemoveDynamic(this, &UShooter::CallMagazineAmmoChangedEvent);
-		Magazine->OnMagazineFull.RemoveDynamic(this, &UShooter::CallMagazineFullEvent);
-		Magazine->OnMagazineEmpty.RemoveDynamic(this, &UShooter::CallMagazineEmptyEvent);
+		Mag->OnMagazineRefilled.RemoveDynamic(this, &UShooter::CallMagazineRefilledEvent);
+		Mag->OnMagazineAmmoChanged.RemoveDynamic(this, &UShooter::CallMagazineAmmoChangedEvent);
+		Mag->OnMagazineFull.RemoveDynamic(this, &UShooter::CallMagazineFullEvent);
+		Mag->OnMagazineEmpty.RemoveDynamic(this, &UShooter::CallMagazineEmptyEvent);
 	}
 }
 
@@ -242,22 +244,22 @@ void UShooter::CallBehaviourEmptyEvent(UShooterBehaviourBase* Behaviour, UMagazi
 	OnBehaviourEmpty.Broadcast(Behaviour, Magazine);
 }
 
-void UShooter::CallMagazineRefilledEvent(const UObject* Instigator, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
+void UShooter::CallMagazineRefilledEvent(const UObject* Instigator, const UMagazine* Magazine, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
 {
-	OnMagazineRefilled.Broadcast(Instigator, CurrentAmmo, RefilledAmmo, RemainingAmmo);
+	OnMagazineRefilled.Broadcast(Instigator, Magazine, CurrentAmmo, RefilledAmmo, RemainingAmmo);
 }
 
-void UShooter::CallMagazineAmmoChangedEvent(const UObject* Instigator, int32 CurrentAmmo, int32 MagSize)
+void UShooter::CallMagazineAmmoChangedEvent(const UObject* Instigator, const UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize)
 {
-	OnMagazineAmmoChanged.Broadcast(Instigator, CurrentAmmo, MagSize);
+	OnMagazineAmmoChanged.Broadcast(Instigator, Magazine, CurrentAmmo, MagSize);
 }
 
-void UShooter::CallMagazineFullEvent(const UObject* Instigator)
+void UShooter::CallMagazineFullEvent(const UObject* Instigator, const UMagazine* Magazine)
 {
-	OnMagazineFull.Broadcast(Instigator);
+	OnMagazineFull.Broadcast(Instigator, Magazine);
 }
 
-void UShooter::CallMagazineEmptyEvent(const UObject* Instigator)
+void UShooter::CallMagazineEmptyEvent(const UObject* Instigator, const UMagazine* Magazine)
 {
-	OnMagazineEmpty.Broadcast(Instigator);
+	OnMagazineEmpty.Broadcast(Instigator, Magazine);
 }

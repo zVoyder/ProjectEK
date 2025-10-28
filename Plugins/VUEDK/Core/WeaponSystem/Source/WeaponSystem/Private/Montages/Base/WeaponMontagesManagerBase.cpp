@@ -12,6 +12,21 @@ UWeaponMontagesManagerBase::UWeaponMontagesManagerBase() : Weapon(nullptr),
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+void UWeaponMontagesManagerBase::Init(AWeaponBase* InWeapon)
+{
+	SetupWeapons(InWeapon);
+
+	if (!Check())
+	{
+		UE_LOG(LogWeaponSystem, Error, TEXT("UWeaponMontagesManagerBase::BeginPlay: Check failed for %s in %s. Disabling component."), *GetName(), *GetOwner()->GetName());
+		UActorComponent::SetActive(false);
+		return;
+	}
+	
+	SetOwnerAnimInstance();
+	BindEvents();
+}
+
 void UWeaponMontagesManagerBase::ResumeWeaponMontage(const FWeaponMontageData& WeaponMontageData) const
 {
 	if (!PlayingMontages.Contains(WeaponMontageData.GetWeaponMontage()) && !PlayingMontages.Contains(WeaponMontageData.GetCharacterMontage()))
@@ -133,26 +148,9 @@ void UWeaponMontagesManagerBase::EndPlay(const EEndPlayReason::Type EndPlayReaso
 	UnbindEvents();
 }
 
-void UWeaponMontagesManagerBase::BeginPlay()
+void UWeaponMontagesManagerBase::SetupWeapons(AWeaponBase* InWeapon)
 {
-	Super::BeginPlay();
-
-	Init();
-
-	if (!Check())
-	{
-		UE_LOG(LogWeaponSystem, Error, TEXT("UWeaponMontagesManagerBase::BeginPlay: Check failed for %s in %s. Disabling component."), *GetName(), *GetOwner()->GetName());
-		UActorComponent::SetActive(false);
-		return;
-	}
-
-	SetOwnerAnimInstance();
-	BindEvents();
-}
-
-void UWeaponMontagesManagerBase::Init()
-{
-	Weapon = Cast<AWeaponBase>(GetOwner());
+	Weapon = InWeapon;
 }
 
 void UWeaponMontagesManagerBase::BindEvents()
@@ -239,8 +237,14 @@ void UWeaponMontagesManagerBase::PlayMontageWithBlendInternal(UAnimInstance* Ani
 void UWeaponMontagesManagerBase::SetOwnerAnimInstance()
 {
 	UAnimInstance* AnimInstance;
-
 	AActor* WeaponOwner = Weapon->Owner;
+
+	if (!IsValid(WeaponOwner))
+	{
+		UE_LOG(LogWeaponSystem, Error, TEXT("AWeaponBase::SetOwnerAnimInstance: Weapon has no valid owner. Animations will not be played."));
+		return;
+	}
+	
 	if (WeaponOwner->IsA<ACharacter>() && !bUseTag) // If it's a character, get the anim instance from the character
 	{
 		const ACharacter* Character = Cast<ACharacter>(WeaponOwner);
@@ -253,7 +257,6 @@ void UWeaponMontagesManagerBase::SetOwnerAnimInstance()
 	}
 
 	const USkeletalMeshComponent* SkeletalMeshComponent = WeaponOwner->FindComponentByTag<USkeletalMeshComponent>(AnimInstanceMeshTag);
-
 	if (!IsValid(SkeletalMeshComponent))
 	{
 		UE_LOG(LogWeaponSystem, Error, TEXT("AWeaponBase::SetOwnerAnimInstance: No valid SkeletalMeshComponent found with tag '%s'. Animations will not be played."), *AnimInstanceMeshTag.ToString());

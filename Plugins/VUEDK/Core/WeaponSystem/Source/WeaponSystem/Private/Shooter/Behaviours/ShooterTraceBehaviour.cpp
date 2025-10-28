@@ -66,8 +66,8 @@ void UShooterTraceBehaviour::CameraSightTrace(const UWorld* World, const UShootP
 	}
 
 #if WITH_EDITORONLY_DATA
-	if (bDrawDebugTraceLines)
-		DrawDebugLine(World, ShootPointLocation, CameraHitPoint, bIsInLineOfSight ? FColor::Green : FColor::Red, false, DebugTraceLineDuration, 0, 1.0f);
+	if (bDebug)
+		DrawDebugLine(World, ShootPointLocation, CameraHitPoint, bIsInLineOfSight ? FColor::Green : FColor::Red, false, DebugTraceDuration, 0, 1.0f);
 #endif
 
 	LineTraceDamage(World, ShootPointLocation, TraceStartPoint, TraceEndPoint);
@@ -104,8 +104,8 @@ void UShooterTraceBehaviour::LineTraceDamage(const UWorld* World, const FVector&
 	CollisionQueryParams.bReturnPhysicalMaterial = true;
 
 #if WITH_EDITORONLY_DATA
-	if (bDrawDebugTraceLines)
-		DrawDebugLine(World, TraceStartPoint, TraceEndPoint, FColor::Purple, false, DebugTraceLineDuration, 0, 1.0f);
+	if (bDebug)
+		DrawDebugLine(World, TraceStartPoint, TraceEndPoint, FColor::Purple, false, DebugTraceDuration, 0, 1.0f);
 #endif
 
 	TArray<FHitResult> HitResults;
@@ -138,8 +138,8 @@ void UShooterTraceBehaviour::LineTraceDamage(const UWorld* World, const FVector&
 			UGameplayStatics::ApplyPointDamage(HitActor, GetDamage(), HitResult.ImpactNormal, HitResult, Shooter->GetOwner()->GetInstigatorController(), Shooter->GetOwner(), GetDamageTypeClass());
 
 #if WITH_EDITORONLY_DATA
-			if (bDrawDebugTraceLines)
-				DrawDebugBox(World, HitResult.ImpactPoint, FVector(5.0f), FColor::Red, false, DebugTraceLineDuration, 0, 1.0f);
+			if (bDebug)
+				DrawDebugBox(World, HitResult.ImpactPoint, FVector(5.0f), FColor::Red, false, DebugTraceDuration, 0, 1.0f);
 #endif
 		}
 	}

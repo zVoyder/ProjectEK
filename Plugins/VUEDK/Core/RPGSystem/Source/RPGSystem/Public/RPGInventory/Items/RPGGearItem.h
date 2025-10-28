@@ -32,16 +32,16 @@ public:
 	
 	/**
 	 * Adds a stat to the gear item with an operation.
-	 * @param Stat - The stat to add.
-	 * @param Operation - The operation to apply to the stat.
+	 * @param Stat The stat to add.
+	 * @param Operation The operation to apply to the stat.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void AddItemStatWithOperation(UCoreStatData* Stat, UStatOperation* Operation);
 
 	/**
 	 * Adds a stat to the gear item with a specific value.
-	 * @param Stat - The stat to add.
-	 * @param Value - The value to set for the stat.
+	 * @param Stat The stat to add.
+	 * @param Value The value to set for the stat.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void AddItemStatWithValue(UCoreStatData* Stat, const float Value) const;

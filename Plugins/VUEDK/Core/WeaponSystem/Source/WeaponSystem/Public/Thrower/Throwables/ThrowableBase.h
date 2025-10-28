@@ -30,7 +30,7 @@ public:
 
 	/**
 	 * Initializes the throwable with the specified instigator.
-	 * @param InInstigator - The actor that instigated the throwable.
+	 * @param InInstigator The actor that instigated the throwable.
 	 */
 	void Init(AActor* InInstigator);
 	
@@ -84,7 +84,7 @@ private:
 	
 	/**
 	 * Sets the life span for the throwable.
-	 * @param LifeSpan - The life span value to set.
+	 * @param LifeSpan The life span value to set.
 	 */
 	void SetLifeSpan(const float LifeSpan);
 };

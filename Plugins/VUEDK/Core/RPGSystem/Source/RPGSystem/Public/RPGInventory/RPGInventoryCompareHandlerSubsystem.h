@@ -37,27 +37,27 @@ private:
 public:
 	/**
 	 * Called when the player controller changes.
-	 * @param NewPlayerController - The new player controller instance.
+	 * @param NewPlayerController The new player controller instance.
 	 */
 	virtual void PlayerControllerChanged(APlayerController* NewPlayerController) override;
 	
 	/**
 	 * Sets the target equipment to be used for comparison.
-	 * @param InComparingEquipment - The equipment to compare.
+	 * @param InComparingEquipment The equipment to compare.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|RPGSystem|Compare")
 	void SetTargetEquipmentForCompare(UEquipment* InComparingEquipment);
 	
 	/**
 	 * Sets the target equipment slot key to be used for comparison.
-	 * @param EquipSlotKey - The equipment slot key to compare.
+	 * @param EquipSlotKey The equipment slot key to compare.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|RPGSystem|Compare")
 	void SetTargetEquipSlotKeyForCompare(UEquipSlotKey* EquipSlotKey);
 	
 	/**
 	 * Requests a comparison operation.
-	 * @param bCompare - If true, initiates the comparison; if false, cancels it.
+	 * @param bCompare If true, initiates the comparison; if false, cancels it.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|RPGSystem|Compare")
 	void RequestCompare(const bool bCompare);

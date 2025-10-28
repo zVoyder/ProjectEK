@@ -24,13 +24,13 @@ public:
 
 	/**
 	 * Sets the spread in degrees for this shoot point.
-	 * @param NewSpreadDegree - The new spread value in degrees.
+	 * @param NewSpreadDegree The new spread value in degrees.
 	 */
 	void SetSpreadDegree(const float NewSpreadDegree);
 	
 	/**
 	 * Generates a random spread value up to the specified maximum degree.
-	 * @param MaxSpreadDegree - The maximum spread value in degrees.
+	 * @param MaxSpreadDegree The maximum spread value in degrees.
 	 */
 	void GenerateSpreadDegree(const float MaxSpreadDegree);
 

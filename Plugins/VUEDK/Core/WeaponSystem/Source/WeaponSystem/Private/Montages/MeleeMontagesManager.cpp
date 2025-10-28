@@ -125,19 +125,22 @@ void UMeleeMontagesManager::OnAttackFinishedNotify()
 	EndAttackSequence();
 }
 
-void UMeleeMontagesManager::BeginPlay()
+void UMeleeMontagesManager::SetupWeapons(AWeaponBase* InWeapon)
 {
-	Super::BeginPlay();
-	WeaponMelee = Cast<AWeaponMelee>(Weapon);
+	Super::SetupWeapons(InWeapon);
+	WeaponMelee = Cast<AWeaponMelee>(InWeapon);
+}
 
-	if (!IsValid(WeaponMelee))
-	{
-		UE_LOG(LogWeaponSystem, Error, TEXT("UMeleeMontagesManager::BeginPlay: %s in %s is not in a WeaponMelee."), *GetName(), *GetOwner()->GetName());
-		UActorComponent::SetActive(false);
-		return;
-	}
-
+void UMeleeMontagesManager::BindEvents()
+{
+	Super::BindEvents();
 	WeaponMelee->OnWeaponAttackInterrupt.AddDynamic(this, &UMeleeMontagesManager::OnWeaponAttackInterrupted);
+}
+
+void UMeleeMontagesManager::UnbindEvents()
+{
+	Super::UnbindEvents();
+	WeaponMelee->OnWeaponAttackInterrupt.RemoveDynamic(this, &UMeleeMontagesManager::OnWeaponAttackInterrupted);
 }
 
 void UMeleeMontagesManager::OnWeaponAttackSuccess()

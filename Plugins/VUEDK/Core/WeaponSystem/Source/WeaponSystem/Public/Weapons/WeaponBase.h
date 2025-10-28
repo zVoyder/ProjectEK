@@ -47,8 +47,6 @@ public:
 	FOnWeaponUnequipped OnWeaponUnequippedEvent;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (ToolTip = "If true, the weapon will automatically initialize on BeginPlay if it has a valid owner pawn."))
-	bool bAutoInitialize = true;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	FWeaponData WeaponData;
 

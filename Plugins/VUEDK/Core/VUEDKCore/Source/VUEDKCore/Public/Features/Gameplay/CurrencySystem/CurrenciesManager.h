@@ -40,7 +40,7 @@ public:
 
 	/**
 	 * Gets the currency instance for the specified currency data.
-	 * @param Currency - The currency data to retrieve.
+	 * @param Currency The currency data to retrieve.
 	 * @return Pointer to the UCurrency instance, or nullptr if not found.
 	 */
 	UFUNCTION(BlueprintPure)
@@ -48,7 +48,7 @@ public:
 
 	/**
 	 * Gets the amount of the specified currency.
-	 * @param Currency - The currency data to query.
+	 * @param Currency The currency data to query.
 	 * @return The amount of the specified currency.
 	 */
 	UFUNCTION(BlueprintPure)
@@ -56,7 +56,7 @@ public:
 
 	/**
 	 * Checks if the specified currency exists in the manager.
-	 * @param Currency - The currency data to check.
+	 * @param Currency The currency data to check.
 	 * @return true if the currency exists, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure)
@@ -64,8 +64,8 @@ public:
 
 	/**
 	 * Checks if the specified currency has at least the given amount.
-	 * @param Currency - The currency data to check.
-	 * @param AmountToCheck - The minimum amount to check for.
+	 * @param Currency The currency data to check.
+	 * @param AmountToCheck The minimum amount to check for.
 	 * @return true if the currency has at least the specified amount, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure)
@@ -73,34 +73,34 @@ public:
 
 	/**
 	 * Adds the specified amount to the given currency.
-	 * @param Currency - The currency data to add to.
-	 * @param AmountToAdd - The amount to add.
-	 * @param OutRemaining - Output parameter for the remaining amount after addition.
+	 * @param Currency The currency data to add to.
+	 * @param AmountToAdd The amount to add.
+	 * @param OutRemaining Output parameter for the remaining amount after addition.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
 	void AddCurrency(UCurrencyData* Currency, int32 AmountToAdd, int32& OutRemaining) const;
 
 	/**
 	 * Consumes the specified amount from the given currency.
-	 * @param Currency - The currency data to consume from.
-	 * @param AmountToConsume - The amount to consume.
-	 * @param OutConsumedAmount - Output parameter for the amount actually consumed.
+	 * @param Currency The currency data to consume from.
+	 * @param AmountToConsume The amount to consume.
+	 * @param OutConsumedAmount Output parameter for the amount actually consumed.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
 	void ConsumeCurrency(UCurrencyData* Currency, const int32 AmountToConsume, int32& OutConsumedAmount) const;
 
 	/**
 	 * Sets the amount of the specified currency.
-	 * @param Currency - The currency data to set.
-	 * @param Amount - The amount to set.
-	 * @param bNotify - Whether to notify the listeners about the change.
+	 * @param Currency The currency data to set.
+	 * @param Amount The amount to set.
+	 * @param bNotify Whether to notify the listeners about the change.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetCurrencyAmount(UCurrencyData* Currency, const int32 Amount, const bool bNotify = true) const;
 
 	/**
  	* Finds a currency by its unique identifier.
- 	* @param CurrencyID - The unique identifier of the currency.
+ 	* @param CurrencyID The unique identifier of the currency.
  	* @return Pointer to the UCurrency instance if found, nullptr otherwise.
  	*/
 	UCurrency* FindCurrencyByID(const FGuid& CurrencyID) const;	

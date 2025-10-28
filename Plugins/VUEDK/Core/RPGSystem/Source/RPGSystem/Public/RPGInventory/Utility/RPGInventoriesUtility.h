@@ -20,20 +20,20 @@ public:
 public:
 	/**
 	 * Initializes the utility with the provided compare handler subsystem.
-	 * @param InCompareHandlerSubsystem - The compare handler subsystem to use.
+	 * @param InCompareHandlerSubsystem The compare handler subsystem to use.
 	 */
 	static void Init(URPGInventoryCompareHandlerSubsystem* InCompareHandlerSubsystem);
 	
 	/**
 	 * Retrieves the stat data for an item by its unique identifier.
-	 * @param StatID - The unique identifier of the stat.
+	 * @param StatID The unique identifier of the stat.
 	 * @return Pointer to the UCoreStatData if found, nullptr otherwise.
 	 */
 	static UCoreStatData* GetItemStatByID(const FGuid StatID);
 	
 	/**
 	 * Retrieves the rarity data for an item by its unique identifier.
-	 * @param RarityID - The unique identifier of the rarity.
+	 * @param RarityID The unique identifier of the rarity.
 	 * @return Pointer to the URPGRarityLevelData if found, nullptr otherwise.
 	 */
 	static URPGRarityLevelData* GetItemRarityByID(const FGuid RarityID);
@@ -47,21 +47,21 @@ public:
 
 	/**
 	 * Sets the target equipment to be used for comparison.
-	 * @param InComparingEquipment - The equipment to compare.
+	 * @param InComparingEquipment The equipment to compare.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|RPGSystem|RPGInventoriesUtility")
 	static void SetTargetEquipmentForCompare(UEquipment* InComparingEquipment);
 	
 	/**
 	 * Sets the target equipment slot key to be used for comparison.
-	 * @param EquipSlotKey - The equipment slot key to compare.
+	 * @param EquipSlotKey The equipment slot key to compare.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|RPGSystem|RPGInventoriesUtility")
 	static void SetTargetEquipSlotKeyForCompare(UEquipSlotKey* EquipSlotKey);
 	
 	/**
 	 * Requests a comparison operation.
-	 * @param bCompare - If true, initiates the comparison; if false, cancels it.
+	 * @param bCompare If true, initiates the comparison; if false, cancels it.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|RPGSystem|RPGInventoriesUtility")
 	static void RequestCompare(const bool bCompare);

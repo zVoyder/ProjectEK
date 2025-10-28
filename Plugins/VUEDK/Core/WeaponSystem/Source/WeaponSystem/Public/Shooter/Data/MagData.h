@@ -13,6 +13,6 @@ struct WEAPONSYSTEM_API FMagData
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAmmoTypeData* AmmoType;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = 0, UIMin = 0, ToolTip = "Maximum number of ammo that the magazine can hold."))
 	int32 DefaultSize;
 };

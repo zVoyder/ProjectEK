@@ -4,6 +4,7 @@
 #include "WeaponSystem.h"
 #include "Montages/Data/WeaponAnimMetaData.h"
 #include "Weapons/WeaponFirearm.h"
+#include "Weapons/Managers/ReloadManager.h"
 
 void UReloadInsertAmmoNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
@@ -32,19 +33,10 @@ void UReloadInsertAmmoNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 			return;
 		}
 	}
-	
-	if (!Check())
+
+	UReloadManager* ReloadManager = Weapon->GetReloadManager();
+	if (!IsValid(ReloadManager))
 		return;
 
-	Weapon->ReloadInsertAmmo();
-}
-
-AWeaponFirearm* UReloadInsertAmmoNotify::GetWeaponFirearm() const
-{
-	return Weapon;
-}
-
-bool UReloadInsertAmmoNotify::Check() const
-{
-	return IsValid(Weapon);
+	ReloadManager->InsertAmmoInBehaviourOfIndex(ReloadBehaviourIndex);
 }

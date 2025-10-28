@@ -2,11 +2,13 @@
 
 #include "Weapons/WeaponFirearm.h"
 #include "WeaponSystem.h"
+#include "Weapons/Managers/ReloadManager.h"
 
 AWeaponFirearm::AWeaponFirearm()
 {
 	FirearmMontagesManager = CreateDefaultSubobject<UFirearmMontagesManager>(TEXT("FirearmMontagesManager"));
 	Shooter = CreateDefaultSubobject<UShooter>(TEXT("Shooter"));
+	ReloadManager = CreateDefaultSubobject<UReloadManager>(TEXT("ReloadManager"));
 	MainShootBarrel = CreateDefaultSubobject<UShootBarrel>(TEXT("ShootBarrel"));
 	MainShootBarrel->SetupAttachment(WeaponMesh);
 }
@@ -22,14 +24,23 @@ void AWeaponFirearm::OnConstruction(const FTransform& Transform)
 void AWeaponFirearm::Init(APawn* InOwner, UObject* InPayload)
 {
 	Super::Init(InOwner, InPayload);
-	Shooter->Init(InOwner);
 	Shooter->SetupShootBarrel(MainShootBarrel);
+	Shooter->Init(InOwner);
+	ReloadManager->Init(this);
 	SetAimRecoilModifier();
 	BindEvents();
 }
 
-bool AWeaponFirearm::Shoot(const int32 BehaviourIndex) const
+UWeaponMontagesManagerBase* AWeaponFirearm::GetMontagesManager() const
 {
+	return FirearmMontagesManager;
+}
+
+bool AWeaponFirearm::Shoot(const int32 BehaviourIndex)
+{
+	if (!CanShoot())
+		return false;
+	
 	return Shooter->Shoot(BehaviourIndex);
 }
 
@@ -43,7 +54,7 @@ bool AWeaponFirearm::IsMagFull(const int32 BehaviourIndex) const
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return false;
-	
+
 	return Behaviour->IsMagazineFull();
 }
 
@@ -52,7 +63,7 @@ bool AWeaponFirearm::IsMagEmpty(const int32 BehaviourIndex) const
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return false;
-	
+
 	return Behaviour->IsMagazineEmpty();
 }
 
@@ -70,7 +81,7 @@ void AWeaponFirearm::ResetCooldown(const int32 BehaviourIndex) const
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return;
-	
+
 	Behaviour->ResetCooldown();
 }
 
@@ -79,7 +90,7 @@ void AWeaponFirearm::ResetSpread(const int32 BehaviourIndex) const
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return;
-	
+
 	Behaviour->ResetSpread(WeaponFirearmData.SpreadChangeRate);
 }
 
@@ -89,7 +100,7 @@ void AWeaponFirearm::SetWeaponDamage(const float NewDamage)
 	UShooterBehaviourBase* Behaviour = GetShooterBehaviour(0);
 	if (!IsValid(Behaviour))
 		return;
-	
+
 	Behaviour->SetDamage(NewDamage);
 }
 
@@ -98,7 +109,7 @@ void AWeaponFirearm::SetDamage(const float NewDamage, const int32 BehaviourIndex
 	UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return;
-	
+
 	Behaviour->SetDamage(NewDamage);
 }
 
@@ -107,7 +118,7 @@ void AWeaponFirearm::SetWeaponFireRate(const float NewFireRate, const int32 Beha
 	UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return;
-	
+
 	Behaviour->SetFireRate(NewFireRate);
 }
 
@@ -116,7 +127,7 @@ void AWeaponFirearm::SetWeaponMagazineSize(const int32 NewSize, const int32 Beha
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return;
-	
+
 	Behaviour->SetMagSize(NewSize);
 }
 
@@ -125,7 +136,7 @@ void AWeaponFirearm::SetWeaponMaxRange(const float NewRange, const int32 Behavio
 	UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return;
-	
+
 	Behaviour->SetMaxRange(NewRange);
 }
 
@@ -134,7 +145,7 @@ void AWeaponFirearm::SetWeaponRecoilStrength(const float NewRecoilStrength, cons
 	UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return;
-	
+
 	Behaviour->SetRecoilStrength(NewRecoilStrength);
 }
 
@@ -170,7 +181,7 @@ void AWeaponFirearm::InstantSetSpread(const float InSpread, const bool bOverride
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return;
-	
+
 	Behaviour->InstantSetSpread(InSpread, bOverrideDefault);
 }
 
@@ -179,7 +190,7 @@ void AWeaponFirearm::SetWeaponSpread(const float InSpread, const bool bOverrideD
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return;
-	
+
 	Behaviour->SetSpread(InSpread, WeaponFirearmData.SpreadChangeRate, bOverrideDefault);
 }
 
@@ -188,9 +199,9 @@ UShooterBehaviourBase* AWeaponFirearm::GetShooterBehaviour(const int32 Behaviour
 	return Shooter->GetShooterBehaviour(BehaviourIndex);
 }
 
-UMagazine* AWeaponFirearm::GetWeaponMagazineByTag(FGameplayTag MagazineTag) const
+UMagazine* AWeaponFirearm::GetWeaponMagazine(const int32 MagazineIndex) const
 {
-	return Shooter->GetMagazineByTag(MagazineTag);
+	return Shooter->GetMagazine(MagazineIndex);
 }
 
 FWeaponFirearmData AWeaponFirearm::GetWeaponFirearmData() const
@@ -198,9 +209,9 @@ FWeaponFirearmData AWeaponFirearm::GetWeaponFirearmData() const
 	return WeaponFirearmData;
 }
 
-UWeaponMontagesManagerBase* AWeaponFirearm::GetMontagesManager() const
+UReloadManager* AWeaponFirearm::GetReloadManager() const
 {
-	return FirearmMontagesManager;
+	return ReloadManager;
 }
 
 float AWeaponFirearm::GetWeaponFireRate(const int32 BehaviourIndex) const
@@ -208,7 +219,7 @@ float AWeaponFirearm::GetWeaponFireRate(const int32 BehaviourIndex) const
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return 0.f;
-	
+
 	return Behaviour->GetFireRate();
 }
 
@@ -217,7 +228,7 @@ float AWeaponFirearm::GetWeaponMagSize(const int32 BehaviourIndex) const
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return 0.f;
-	
+
 	return Behaviour->GetMagSize();
 }
 
@@ -226,7 +237,7 @@ float AWeaponFirearm::GetWeaponMaxRange(const int32 BehaviourIndex) const
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return 0.f;
-	
+
 	return Behaviour->GetMaxRange();
 }
 
@@ -235,7 +246,7 @@ float AWeaponFirearm::GetWeaponRecoilStrength(const int32 BehaviourIndex) const
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return 0.f;
-	
+
 	return Behaviour->GetRecoilStrength();
 }
 
@@ -253,7 +264,7 @@ int32 AWeaponFirearm::GetCurrentAmmo(const int32 BehaviourIndex) const
 	const UMagazine* RelatedMagazine = Behaviour->GetRelatedMagazine();
 	if (!IsValid(RelatedMagazine))
 		return 0;
-	
+
 	return RelatedMagazine->GetCurrentAmmo();
 }
 
@@ -266,7 +277,7 @@ int32 AWeaponFirearm::GetNeededAmmo(const int32 BehaviourIndex) const
 	const UMagazine* RelatedMagazine = Behaviour->GetRelatedMagazine();
 	if (!IsValid(RelatedMagazine))
 		return 0;
-	
+
 	return RelatedMagazine->GetNeededAmmoToFull();
 }
 
@@ -279,7 +290,7 @@ UAmmoTypeData* AWeaponFirearm::GetWeaponAmmoType(const int32 BehaviourIndex) con
 	const UMagazine* RelatedMagazine = Behaviour->GetRelatedMagazine();
 	if (!IsValid(RelatedMagazine))
 		return nullptr;
-	
+
 	return RelatedMagazine->GetAmmoType();
 }
 
@@ -288,7 +299,7 @@ EShootType AWeaponFirearm::GetWeaponShootType(const int32 BehaviourIndex) const
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return EShootType::None;
-	
+
 	return Behaviour->GetShootType();
 }
 
@@ -297,7 +308,7 @@ float AWeaponFirearm::GetWeaponMaxSpread(const int32 BehaviourIndex) const
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return 0.f;
-	
+
 	return Behaviour->GetMaxRange();
 }
 
@@ -306,7 +317,7 @@ float AWeaponFirearm::GetDefaultSpread(const int32 BehaviourIndex) const
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return 0.f;
-	
+
 	return Behaviour->GetDefaultSpread();
 }
 
@@ -315,7 +326,7 @@ float AWeaponFirearm::GetWeaponSpread(const int32 BehaviourIndex) const
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return 0.f;
-	
+
 	return Behaviour->GetSpread();
 }
 
@@ -324,73 +335,29 @@ void AWeaponFirearm::ResetToDefaultShootType(const int32 BehaviourIndex) const
 	UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return;
-	
+
 	Behaviour->ResetShootType();
 }
 
-void AWeaponFirearm::ReloadOfAmmoType(UAmmoTypeData* InAmmoType, const int32 Ammo)
+void AWeaponFirearm::Reload(const FReloadRequest& Request) const
 {
-	// if (IsReloading())
-	// 	return;
-	//
-	// if (!CanReload())
-	// 	return;
-	//
-	// if (GetWeaponMainAmmoType() != InAmmoType)
-	// 	return;
-	//
-	// bHasReloadInsertedAmmo = false;
-	// float WeaponPlayRate = 0.f;
-	// float CharacterPlayRate = 0.f;
-	// FReloadEventData ReloadEventData;
-	// ReloadEventData.AmmoPerType.Add(InAmmoType, Ammo);
-	// SetReloadPayload(ReloadEventData);
-	//
-	// if (IsValid(FirearmMontagesManager->MainReloadMontage.GetWeaponMontage()))
-	// 	WeaponPlayRate = FirearmMontagesManager->MainReloadMontage.GetWeaponMontage()->GetPlayLength() / GetWeaponReloadTime();
-	//
-	// if (IsValid(FirearmMontagesManager->MainReloadMontage.GetCharacterMontage()))
-	// 	CharacterPlayRate = FirearmMontagesManager->MainReloadMontage.GetCharacterMontage()->GetPlayLength() / GetWeaponReloadTime();
-	//
-	// OnReloadStarted.Broadcast(ReloadEventData);
-	// OnReloadStart(ReloadEventData);
-	// StartWeaponMontage(
-	// 	FirearmMontagesManager->MainReloadMontage,
-	// 	WeaponPlayRate,
-	// 	CharacterPlayRate
-	// );
+	if (CanReload())
+		return;
+
+	ReloadManager->RequestReload(Request);
 }
 
-void AWeaponFirearm::ReloadShooterBehaviourOfAmmoType(UAmmoTypeData* InAmmoType, const int32 Ammo, int32 BehaviourIndex)
+void AWeaponFirearm::FullReload(const EReloadMode ReloadMode) const
 {
-	// if (IsReloading())
-	// 	return;
-	//
-	// if (!CanReload())
-	// 	return;
-	//
-	// UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
-	// Behaviour->RefillWithAmmoType(InAmmoType, Ammo);
+	if (!CanReload())
+		return;
+
+	ReloadManager->RequestFullReload(ReloadMode);
 }
 
-void AWeaponFirearm::FullReloadOfAmmoType(UAmmoTypeData* InAmmoType)
+void AWeaponFirearm::InterruptReload(const float CharacterBlendOutTime, const float WeaponBlendOutTime) const
 {
-	ReloadOfAmmoType(InAmmoType, GetNeededAmmo());
-}
-
-void AWeaponFirearm::Reload(const int32 Ammo)
-{
-	ReloadOfAmmoType(GetWeaponAmmoType(), Ammo);
-}
-
-void AWeaponFirearm::FullReload()
-{
-	FullReloadOfAmmoType(GetWeaponAmmoType());
-}
-
-void AWeaponFirearm::InterruptReload(const float CharacterBlendOutTime, const float WeaponBlendOutTime)
-{
-	// StopWeaponMontageWithBlends(FirearmMontagesManager->MainReloadMontage, WeaponBlendOutTime, CharacterBlendOutTime);
+	ReloadManager->InterruptReload();
 }
 
 void AWeaponFirearm::SetAim(const bool bIsEnabled, const int32 BehaviourIndex)
@@ -410,8 +377,10 @@ bool AWeaponFirearm::IsAiming() const
 
 bool AWeaponFirearm::IsReloading() const
 {
-	// return IsPlayingWeaponMontage(FirearmMontagesManager->MainReloadMontage);
-	return false;
+	if (!IsValid(ReloadManager))
+		return false;
+
+	return ReloadManager->IsReloading();
 }
 
 void AWeaponFirearm::BeginPlay()
@@ -431,19 +400,19 @@ bool AWeaponFirearm::CanShoot()
 	if (!IsValid(FirearmMontagesManager))
 	{
 		UE_LOG(LogWeaponSystem, Warning, TEXT("AWeaponFirearm::NativeDeployWeaponAttack: FirearmMontagesManager is not valid."));
-		return true;
+		return false;
 	}
 
 	if (FirearmMontagesManager->IsBusy())
-		return true;
+		return false;
 
-	if (bCanDeployAttackIfReloading)
+	if (WeaponFirearmData.bCanDeployAttackIfReloading)
 		return true;
 
 	if (IsReloading())
-		return true;
+		return false;
 
-	return false;
+	return true;
 }
 
 bool AWeaponFirearm::NativeDeployWeaponAttack()
@@ -488,22 +457,6 @@ bool AWeaponFirearm::CanReload_Implementation() const
 	return true;
 }
 
-void AWeaponFirearm::OnReloadStart_Implementation(FReloadEventData ReloadEventData)
-{
-}
-
-void AWeaponFirearm::OnReloadEnd_Implementation()
-{
-}
-
-void AWeaponFirearm::OnReloadSuccess_Implementation(float Remain, float ReloadedAmmo)
-{
-}
-
-void AWeaponFirearm::OnReloadFail_Implementation()
-{
-}
-
 void AWeaponFirearm::OnEnableAim_Implementation()
 {
 }
@@ -544,30 +497,36 @@ void AWeaponFirearm::OnBehaviourEmpty_Implementation(UShooterBehaviourBase* Beha
 {
 }
 
-void AWeaponFirearm::OnMagazineRefill_Implementation(const UObject* MagInstigator, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
+void AWeaponFirearm::OnMagazineRefill_Implementation(const UObject* MagInstigator, const UMagazine* Magazine, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
 {
 }
 
-void AWeaponFirearm::OnMagazineAmmoChange_Implementation(const UObject* MagInstigator, int32 CurrentAmmo, int32 MagSize)
+void AWeaponFirearm::OnMagazineAmmoChange_Implementation(const UObject* MagInstigator, const UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize)
 {
 }
 
-void AWeaponFirearm::OnMagazineFull_Implementation(const UObject* MagInstigator)
+void AWeaponFirearm::OnMagazineFull_Implementation(const UObject* MagInstigator, const UMagazine* Magazine)
 {
 }
 
-void AWeaponFirearm::OnMagazineEmpty_Implementation(const UObject* MagInstigator)
+void AWeaponFirearm::OnMagazineEmpty_Implementation(const UObject* MagInstigator, const UMagazine* Magazine)
 {
 }
 
-FReloadEventData AWeaponFirearm::GetReloadPayload() const
+void AWeaponFirearm::OnReloadStart_Implementation(const FReloadRequest& Request)
 {
-	return ReloadPayload;
+}
+
+void AWeaponFirearm::OnReloadEnd_Implementation(const FReloadRequest& Request, bool bInterrupted)
+{
+}
+
+void AWeaponFirearm::OnReloadInsertAmmo_Implementation(UShooterBehaviourBase* Behaviour, int32 InsertedAmmo, int32 RemainingAmmo)
+{
 }
 
 void AWeaponFirearm::BindEvents()
 {
-	// FirearmMontagesManager->MainReloadMontage.OnMontageFinished.AddDynamic(this, &AWeaponFirearm::OnReloadMontageEnded);
 	Shooter->OnBehaviourEnabled.AddDynamic(this, &AWeaponFirearm::OnBehaviourEnable);
 	Shooter->OnBehaviourDisabled.AddDynamic(this, &AWeaponFirearm::OnBehaviourDisable);
 	Shooter->OnBehaviourShootSuccess.AddDynamic(this, &AWeaponFirearm::OnBehaviourShootSuccess);
@@ -582,11 +541,14 @@ void AWeaponFirearm::BindEvents()
 	Shooter->OnMagazineAmmoChanged.AddDynamic(this, &AWeaponFirearm::OnMagazineAmmoChange);
 	Shooter->OnMagazineFull.AddDynamic(this, &AWeaponFirearm::OnMagazineFull);
 	Shooter->OnMagazineEmpty.AddDynamic(this, &AWeaponFirearm::OnMagazineEmpty);
+
+	ReloadManager->OnReloadStarted.AddDynamic(this, &AWeaponFirearm::OnReloadStart);
+	ReloadManager->OnReloadEnded.AddDynamic(this, &AWeaponFirearm::OnReloadEnd);
+	ReloadManager->OnReloadInsertedAmmo.AddDynamic(this, &AWeaponFirearm::OnReloadInsertAmmo);
 }
 
 void AWeaponFirearm::UnbindEvents()
 {
-	// FirearmMontagesManager->MainReloadMontage.OnMontageFinished.RemoveDynamic(this, &AWeaponFirearm::OnReloadMontageEnded);
 	Shooter->OnBehaviourEnabled.RemoveDynamic(this, &AWeaponFirearm::OnBehaviourEnable);
 	Shooter->OnBehaviourDisabled.RemoveDynamic(this, &AWeaponFirearm::OnBehaviourDisable);
 	Shooter->OnBehaviourShootSuccess.RemoveDynamic(this, &AWeaponFirearm::OnBehaviourShootSuccess);
@@ -601,43 +563,10 @@ void AWeaponFirearm::UnbindEvents()
 	Shooter->OnMagazineAmmoChanged.RemoveDynamic(this, &AWeaponFirearm::OnMagazineAmmoChange);
 	Shooter->OnMagazineFull.RemoveDynamic(this, &AWeaponFirearm::OnMagazineFull);
 	Shooter->OnMagazineEmpty.RemoveDynamic(this, &AWeaponFirearm::OnMagazineEmpty);
-}
 
-void AWeaponFirearm::SetReloadPayload(const FReloadEventData InReloadPayload)
-{
-	ReloadPayload = InReloadPayload;
-}
-
-void AWeaponFirearm::ReloadInsertAmmo()
-{
-	if (!IsReloading())
-		return;
-
-	// const FReloadEventData EventData = GetReloadPayload();
-	// bHasReloadInsertedAmmo = true;
-	//
-	// int32 Ammo = EventData.AmmoPerType[GetWeaponMainAmmoType()];
-	//
-	// const float Remain = Shooter->MainShooterBehaviour->Refill(AmmoPerType.Value);
-	// OnReloadSuccess(Remain, AmmoPerType.Value - Remain);
-	// OnReloadInsertedAmmo.Broadcast(EventData);
-}
-
-void AWeaponFirearm::OnReloadMontageEnded(const bool bInterrupted)
-{
-	const FReloadEventData EventData = GetReloadPayload();
-	OnReloadEnded.Broadcast();
-	OnReloadEnd();
-
-	if (bInterrupted && !bHasReloadInsertedAmmo)
-	{
-		OnReloadInterrupted.Broadcast(EventData);
-		OnReloadFail();
-		return;
-	}
-
-	if (!bHasReloadInsertedAmmo)
-		ReloadInsertAmmo();
+	ReloadManager->OnReloadStarted.RemoveDynamic(this, &AWeaponFirearm::OnReloadStart);
+	ReloadManager->OnReloadEnded.RemoveDynamic(this, &AWeaponFirearm::OnReloadEnd);
+	ReloadManager->OnReloadInsertedAmmo.RemoveDynamic(this, &AWeaponFirearm::OnReloadInsertAmmo);
 }
 
 void AWeaponFirearm::SetAimSpreadModifier(const int32 BehaviourIndex)
@@ -645,7 +574,7 @@ void AWeaponFirearm::SetAimSpreadModifier(const int32 BehaviourIndex)
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return;
-	
+
 	const float Spread = Behaviour->GetSpread();
 	AimSpread = Spread - ((Spread / 100.f) * GetWeaponFirearmData().AimPrecisionIncrease);
 }
@@ -655,7 +584,7 @@ void AWeaponFirearm::SetAimRecoilModifier(const int32 BehaviourIndex)
 	const UShooterBehaviourBase* Behaviour = GetShooterBehaviour(BehaviourIndex);
 	if (!IsValid(Behaviour))
 		return;
-	
+
 	DefaultRecoilStrength = Behaviour->GetRecoilStrength();
 	AdsRecoilStrength = DefaultRecoilStrength - ((DefaultRecoilStrength / 100.f) * GetWeaponFirearmData().AimRecoilControlIncrease);
 }
@@ -682,8 +611,8 @@ void AWeaponFirearm::AttachBarrelToSocket() const
 		return;
 	}
 
-	if (WeaponMesh->DoesSocketExist(ShootBarrelSocketName))
-		MainShootBarrel->AttachToComponent(WeaponMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, ShootBarrelSocketName);
+	if (WeaponMesh->DoesSocketExist(WeaponFirearmData.ShootBarrelSocketName))
+		MainShootBarrel->AttachToComponent(WeaponMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponFirearmData.ShootBarrelSocketName);
 	else
 		MainShootBarrel->AttachToComponent(WeaponMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "None");
 }

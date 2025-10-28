@@ -39,7 +39,7 @@ void UMeleeHitboxCapsuleTracer::DrawDebugHitboxTrace(const AWeaponMelee* WeaponM
 		HitboxTransform.GetRotation(),
 		HitboxColor,
 		false,
-		WeaponMelee->DebugDrawDuration
+		WeaponMelee->DebugTraceDuration
 	);
 }
 #endif

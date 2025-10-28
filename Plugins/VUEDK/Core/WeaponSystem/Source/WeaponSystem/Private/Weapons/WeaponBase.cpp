@@ -37,6 +37,15 @@ void AWeaponBase::Init(APawn* InOwner, UObject* InPayload)
 	SetOwner(InOwner);
 	SetInstigator(InOwner);
 	SetWeaponDamage(GetWeaponDamage());
+
+	UWeaponMontagesManagerBase* MontagesManager = GetMontagesManager();
+	if (!IsValid(MontagesManager))
+	{
+		UE_LOG(LogWeaponSystem, Warning, TEXT("AWeaponBase::Init: MontagesManager is not valid for weapon %s."), *GetName());
+		return;
+	}
+	
+	MontagesManager->Init(this);
 }
 
 USkeletalMeshComponent* AWeaponBase::GetWeaponMesh() const
@@ -126,7 +135,7 @@ void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (bAutoInitialize && IsValid(Owner))
+	if (WeaponData.bAutoInitialize && IsValid(Owner))
 	{
 		if (APawn* OwnerPawn = Cast<APawn>(Owner))
 			Init(OwnerPawn);

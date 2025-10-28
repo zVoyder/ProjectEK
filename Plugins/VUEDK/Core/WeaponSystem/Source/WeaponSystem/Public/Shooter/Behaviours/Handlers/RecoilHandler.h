@@ -26,7 +26,7 @@ public:
 
 	/**
 	 * Processes the recoil impulse rotation each frame.
-	 * @param DeltaTime - The time elapsed since the last tick.
+	 * @param DeltaTime The time elapsed since the last tick.
 	 */
 	void ProcessRecoilImpulseRotation(float DeltaTime);
 

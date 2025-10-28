@@ -4,19 +4,16 @@
 
 void UMagazinesManager::Init()
 {
-	for (const auto& Elem : MagazinesMap)
-	{
-		if (Elem.Value)
-			Elem.Value->Init();
-	}
+	for (const auto& Mag : Magazines)
+		Mag->Init();
 }
 
-UMagazine* UMagazinesManager::GetMagazineByTag(const FGameplayTag& MagazineTag) const
+UMagazine* UMagazinesManager::GetMagazine(const int32 Index) const
 {
-	return HasMagazineWithTag(MagazineTag) ? MagazinesMap[MagazineTag] : nullptr;
+	return HasMagazineOfIndex(Index) ? Magazines[Index] : nullptr;
 }
 
-bool UMagazinesManager::HasMagazineWithTag(const FGameplayTag& MagazineTag) const
+bool UMagazinesManager::HasMagazineOfIndex(const int32 Index) const
 {
-	return MagazinesMap.Contains(MagazineTag);
+	return Magazines.IsValidIndex(Index);
 }

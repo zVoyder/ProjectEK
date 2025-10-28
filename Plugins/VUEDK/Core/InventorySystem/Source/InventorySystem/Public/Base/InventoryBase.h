@@ -157,18 +157,20 @@ public:
 	/**
 	 * Finds the first item in the inventory that matches the specified item data.
 	 * @param ItemData The item data to find.
+	 * @param bSortByQuantity Whether to sort the found items by quantity in ascending order.
 	 * @return Pointer to the found UItemBase, or nullptr if not found.
 	 */
 	UFUNCTION(BlueprintCallable)
-	UItemBase* Find(const UItemDataBase* ItemData) const;
+	UItemBase* Find(const UItemDataBase* ItemData, const bool bSortByQuantity = true) const;
 
 	/**
 	 * Finds all items in the inventory that match the specified item data.
 	 * @param ItemData The item data to find.
+	 * @param bSortByQuantity Whether to sort the found items by quantity in ascending order.
 	 * @return An array of UItemBase pointers representing the found items.
 	 */
 	UFUNCTION(BlueprintCallable)
-	TArray<UItemBase*> FindAll(const UItemDataBase* ItemData) const;
+	TArray<UItemBase*> FindAll(const UItemDataBase* ItemData, bool bSortByQuantity = true) const;
 
 	/**
 	 * Checks if the inventory is full.

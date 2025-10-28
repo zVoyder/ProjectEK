@@ -6,7 +6,7 @@
 #include "Weapons/WeaponFirearm.h"
 #include "Weapons/Data/WeaponShootData.h"
 
-UFirearmMontagesManager::UFirearmMontagesManager(): WeaponFirearm(nullptr)
+UFirearmMontagesManager::UFirearmMontagesManager() : WeaponFirearm(nullptr)
 {
 }
 
@@ -19,6 +19,90 @@ void UFirearmMontagesManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	WeaponFirearm->OnWeaponAttackSuccessEvent.RemoveDynamic(this, &UFirearmMontagesManager::OnWeaponAttackSuccess);
 	WeaponFirearm->OnWeaponAttackFailEvent.RemoveDynamic(this, &UFirearmMontagesManager::OnWeaponAttackFail);
+}
+
+void UFirearmMontagesManager::PlayReloadMontage(const int32 MontageIndex)
+{
+	if (!Check())
+	{
+		UE_LOG(LogWeaponSystem, Error, TEXT("UFirearmMontagesManager::PlayReloadMontage: Check failed."));
+		return;
+	}
+
+	if (!ReloadMontages.IsValidIndex(MontageIndex))
+	{
+		UE_LOG(LogWeaponSystem, Warning, TEXT("UFirearmMontagesManager::PlayReloadMontage: Invalid ReloadMontageIndex %d."), MontageIndex);
+		return;
+	}
+
+	float WeaponPlayRate;
+	float CharacterPlayRate;
+	GetReloadPlayRates(ReloadMontages[MontageIndex], WeaponPlayRate, CharacterPlayRate);
+	StartWeaponMontage(
+		ReloadMontages[MontageIndex],
+		WeaponPlayRate,
+		CharacterPlayRate
+	);
+}
+
+void UFirearmMontagesManager::PlayShootMontage(const int32 MontageIndex)
+{
+	if (ShootSuccessMontages.IsEmpty())
+		return;
+
+	if (!ShootSuccessMontages.IsValidIndex(MontageIndex))
+	{
+		UE_LOG(LogWeaponSystem, Warning, TEXT("UFirearmMontagesManager::PlayShootMontage: Invalid ShootMontageIndex %d."), MontageIndex);
+		return;
+	}
+
+	float WeaponPlayRate;
+	float CharacterPlayRate;
+	GetShootPlayRates(ShootSuccessMontages[MontageIndex], WeaponPlayRate, CharacterPlayRate);
+	StartWeaponMontage(
+		ShootSuccessMontages[MontageIndex],
+		WeaponPlayRate,
+		CharacterPlayRate
+	);
+}
+
+void UFirearmMontagesManager::PlayFailShootMontage(const int32 MontageIndex)
+{
+	if (ShootFailMontages.IsEmpty())
+		return;
+
+	if (!ShootFailMontages.IsValidIndex(MontageIndex))
+	{
+		UE_LOG(LogWeaponSystem, Warning, TEXT("UFirearmMontagesManager::PlayFailShootMontage: Invalid FailShootMontageIndex %d."), MontageIndex);
+		return;
+	}
+
+	float WeaponPlayRate;
+	float CharacterPlayRate;
+	GetShootPlayRates(ShootFailMontages[MontageIndex], WeaponPlayRate, CharacterPlayRate);
+	StartWeaponMontage(
+		ShootFailMontages[MontageIndex],
+		WeaponPlayRate,
+		CharacterPlayRate
+	);
+}
+
+void UFirearmMontagesManager::StopShootMontage(const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut)
+{
+	for (const FWeaponMontageData& ShootMontage : ShootSuccessMontages)
+		StopWeaponMontageWithBlends(ShootMontage, WeaponBlendOut, CharacterBlendOut);
+}
+
+void UFirearmMontagesManager::StopFailShootMontage(const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut)
+{
+	for (const FWeaponMontageData& FailShootMontage : ShootFailMontages)
+		StopWeaponMontageWithBlends(FailShootMontage, WeaponBlendOut, CharacterBlendOut);
+}
+
+void UFirearmMontagesManager::StopReloadMontage(const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut)
+{
+	for (const FWeaponMontageData& ReloadMontage : ReloadMontages)
+		StopWeaponMontageWithBlends(ReloadMontage, WeaponBlendOut, CharacterBlendOut);
 }
 
 bool UFirearmMontagesManager::IsAnimShooting() const
@@ -54,10 +138,10 @@ bool UFirearmMontagesManager::IsAnimReloading() const
 	return false;
 }
 
-void UFirearmMontagesManager::Init()
+void UFirearmMontagesManager::SetupWeapons(AWeaponBase* InWeapon)
 {
-	Super::Init();
-	WeaponFirearm = Cast<AWeaponFirearm>(Weapon);
+	Super::SetupWeapons(InWeapon);
+	WeaponFirearm = Cast<AWeaponFirearm>(InWeapon);
 }
 
 void UFirearmMontagesManager::BindEvents()
@@ -65,11 +149,11 @@ void UFirearmMontagesManager::BindEvents()
 	Super::BindEvents();
 	WeaponFirearm->Shooter->OnBehaviourShootSuccess.AddDynamic(this, &UFirearmMontagesManager::OnBehaviourShootSuccess);
 	WeaponFirearm->Shooter->OnBehaviourShootFail.AddDynamic(this, &UFirearmMontagesManager::OnBehaviourShootFail);
-	
+
 	const UWorld* World = GetWorld();
 	if (!IsValid(World))
 		return;
-	
+
 	if (UWeaponMontagesEventsHandler* EventsHandler = World->GetSubsystem<UWeaponMontagesEventsHandler>())
 	{
 		EventsHandler->OnAnyMontageBegin.AddUniqueDynamic(this, &UFirearmMontagesManager::HandleAnyMontageBegin);
@@ -99,74 +183,20 @@ bool UFirearmMontagesManager::Check() const
 	return Super::Check() && IsValid(WeaponFirearm) && IsValid(WeaponFirearm->Shooter);
 }
 
-void UFirearmMontagesManager::PlayReloadMontage(const int32 MontageIndex)
-{
-	if (!Check())
-	{
-		UE_LOG(LogWeaponSystem, Error, TEXT("UFirearmMontagesManager::PlayReloadMontage: Check failed."));
-		return;
-	}
-	
-	if (!ReloadMontages.IsValidIndex(MontageIndex))
-	{
-		UE_LOG(LogWeaponSystem, Warning, TEXT("UFirearmMontagesManager::PlayReloadMontage: Invalid ReloadMontageIndex %d."), MontageIndex);
-		return;
-	}
-
-	const float ReloadTime = WeaponFirearm->GetWeaponReloadTime();
-	StartWeaponMontage(
-		ReloadMontages[MontageIndex],
-		ReloadTime,
-		ReloadTime
-	);
-}
-
-void UFirearmMontagesManager::PlayShootMontage(const int32 MontageIndex)
-{
-	if (!ShootSuccessMontages.IsValidIndex(MontageIndex))
-	{
-		UE_LOG(LogWeaponSystem, Warning, TEXT("UFirearmMontagesManager::PlayShootMontage: Invalid ShootMontageIndex %d."), MontageIndex);
-		return;
-	}
-	
-	float WeaponPlayRate;
-	float CharacterPlayRate;
-	GetShootPlayRates(ShootSuccessMontages[MontageIndex], WeaponPlayRate, CharacterPlayRate);
-	StartWeaponMontage(
-		ShootSuccessMontages[MontageIndex],
-		WeaponPlayRate,
-		CharacterPlayRate
-	);
-}
-
-void UFirearmMontagesManager::PlayFailShootMontage(const int32 MontageIndex)
-{
-	if (!ShootFailMontages.IsValidIndex(MontageIndex))
-	{
-		UE_LOG(LogWeaponSystem, Warning, TEXT("UFirearmMontagesManager::PlayFailShootMontage: Invalid FailShootMontageIndex %d."), MontageIndex);
-		return;
-	}
-	
-	float WeaponPlayRate;
-	float CharacterPlayRate;
-	GetShootPlayRates(ShootFailMontages[MontageIndex], WeaponPlayRate, CharacterPlayRate);
-	StartWeaponMontage(
-		ShootFailMontages[MontageIndex],
-		WeaponPlayRate,
-		CharacterPlayRate
-	);
-}
-
 void UFirearmMontagesManager::OnBehaviourShootSuccess_Implementation(UShooterBehaviourBase* Behaviour, UShootBarrel* ShootBarrel, int32 ShotIndex)
 {
 	if (IsAnimShooting())
 		return;
-	
+
 	int32 MontageIndex = 0;
 	const UWeaponShootData* ShootData = Cast<UWeaponShootData>(Behaviour->ShootData);
-
 	if (IsValid(ShootData))
+	{
+		if (!ShootData->bEnableShootMontage)
+			return;
+
 		MontageIndex = ShootData->ShootMontageIndex;
+	}
 
 	PlayShootMontage(MontageIndex);
 }
@@ -175,27 +205,38 @@ void UFirearmMontagesManager::OnBehaviourShootFail_Implementation(UShooterBehavi
 {
 	if (IsAnimFailShooting())
 		return;
-	
+
 	int32 MontageIndex = 0;
 	const UWeaponShootData* ShootData = Cast<UWeaponShootData>(Behaviour->ShootData);
-
 	if (IsValid(ShootData))
+	{
+		if (!ShootData->bEnableFailShootMontage)
+			return;
+
 		MontageIndex = ShootData->FailShootMontageIndex;
+	}
 
 	PlayFailShootMontage(MontageIndex);
 }
 
 void UFirearmMontagesManager::GetShootPlayRates(const FWeaponMontageData& WeaponMontageData, float& WeaponPlayRate, float& CharacterPlayRate) const
 {
-	WeaponPlayRate = 0.f;
-	CharacterPlayRate = 0.f;
 	const float SecondsPerShot = 60.f / WeaponFirearm->GetWeaponFireRate();
-	
-	if (IsValid(WeaponMontageData.GetWeaponMontage()))
-		WeaponPlayRate = WeaponMontageData.GetWeaponMontage()->GetPlayLength() / SecondsPerShot;
+	const UAnimMontage* WeaponMontage = WeaponMontageData.GetWeaponMontage();
+	const UAnimMontage* CharacterMontage = WeaponMontageData.GetCharacterMontage();
 
-	if (IsValid(WeaponMontageData.GetCharacterMontage()))
-		CharacterPlayRate = WeaponMontageData.GetCharacterMontage()->GetPlayLength() / SecondsPerShot;
+	WeaponPlayRate = IsValid(WeaponMontage) ? WeaponMontage->GetPlayLength() / SecondsPerShot : 1.f;
+	CharacterPlayRate = IsValid(CharacterMontage) ? CharacterMontage->GetPlayLength() / SecondsPerShot : 1.f;
+}
+
+void UFirearmMontagesManager::GetReloadPlayRates(const FWeaponMontageData& WeaponMontageData, float& WeaponPlayRate, float& CharacterPlayRate) const
+{
+	const float ReloadTime = WeaponFirearm->GetWeaponReloadTime();
+	const UAnimMontage* WeaponMontage = WeaponMontageData.GetWeaponMontage();
+	const UAnimMontage* CharacterMontage = WeaponMontageData.GetCharacterMontage();
+
+	WeaponPlayRate = IsValid(WeaponMontage) ? WeaponMontage->GetPlayLength() / ReloadTime : 1.f;
+	CharacterPlayRate = IsValid(CharacterMontage) ? CharacterMontage->GetPlayLength() / ReloadTime : 1.f;
 }
 
 void UFirearmMontagesManager::HandleAnyMontageBegin(const FWeaponMontageData& WeaponMontageData)

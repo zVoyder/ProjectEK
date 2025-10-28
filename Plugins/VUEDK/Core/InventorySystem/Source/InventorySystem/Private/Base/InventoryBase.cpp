@@ -188,27 +188,50 @@ void UInventoryBase::ClearInventory()
 	OnInventoryCleared.Broadcast();
 }
 
-UItemBase* UInventoryBase::Find(const UItemDataBase* ItemData) const
+UItemBase* UInventoryBase::Find(const UItemDataBase* ItemData, const bool bSortByQuantity) const
 {
+	if (bSortByQuantity)
+	{
+		TArray<UItemBase*> FoundItems = FindAll(ItemData, true);
+		if (FoundItems.Num() <= 0)
+			return nullptr;
+
+		return FoundItems[0];
+	}
+
+	if (!IsValid(ItemData))
+		return nullptr;
+	
 	for (UItemBase* Item : Items)
 	{
 		if (Item->GetItemData()->ItemDataID == ItemData->ItemDataID)
 			return Item;
 	}
-
+	
 	return nullptr;
 }
 
-TArray<UItemBase*> UInventoryBase::FindAll(const UItemDataBase* ItemData) const
+TArray<UItemBase*> UInventoryBase::FindAll(const UItemDataBase* ItemData, const bool bSortByQuantity) const
 {
+	if (!IsValid(ItemData))
+		return TArray<UItemBase*>();
+	
 	TArray<UItemBase*> FoundItems;
-
+	
 	for (UItemBase* Item : Items)
 	{
 		if (Item->GetItemData()->ItemDataID == ItemData->ItemDataID)
 			FoundItems.Add(Item);
 	}
 
+	if (bSortByQuantity)
+	{
+		FoundItems.Sort([](const UItemBase& A, const UItemBase& B)
+		{
+			return A.GetCurrentQuantity() < B.GetCurrentQuantity();
+		});
+	}
+	
 	return FoundItems;
 }
 

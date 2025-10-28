@@ -24,10 +24,10 @@ public:
 	TEnumAsByte<EShootTraceMode> ShootTraceMode = EShootTraceMode::CameraSightTrace;
 
 #if WITH_EDITORONLY_DATA
-	UPROPERTY(EditDefaultsOnly)
-	bool bDrawDebugTraceLines = false;
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bDrawDebugTraceLines", EditConditionHides))
-	float DebugTraceLineDuration = 5.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Shooter|Debug")
+	bool bDebug = false;
+	UPROPERTY(EditDefaultsOnly, Category = "Shooter|Debug", meta = (EditCondition = "bDebug", EditConditionHides))
+	float DebugTraceDuration = 5.f;
 #endif
 
 protected:

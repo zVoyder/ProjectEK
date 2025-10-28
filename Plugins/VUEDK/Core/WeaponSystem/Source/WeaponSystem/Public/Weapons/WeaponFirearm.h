@@ -4,32 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "WeaponBase.h"
-#include "Data/ReloadEventData.h"
+#include "Data/ReloadEvent/ReloadEventData.h"
 #include "Data/WeaponFirearmData.h"
 #include "Montages/FirearmMontagesManager.h"
 #include "Shooter/Shooter.h"
 #include "WeaponFirearm.generated.h"
 
+class UReloadManager;
 class UShootBarrel;
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FOnReloadStarted,
-	FReloadEventData, ReloadPayload
-);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FOnReloadInsertedAmmo,
-	FReloadEventData, ReloadPayload
-);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(
-	FOnReloadEnded
-);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FOnReloadInterrupted,
-	FReloadEventData, ReloadPayload
-);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(
 	FOnAimEnabled
@@ -48,14 +30,6 @@ class WEAPONSYSTEM_API AWeaponFirearm : public AWeaponBase
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnReloadStarted OnReloadStarted;
-	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnReloadEnded OnReloadEnded;
-	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnReloadInsertedAmmo OnReloadInsertedAmmo;
-	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnReloadInterrupted OnReloadInterrupted;
-	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnAimEnabled OnAimEnabled;
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnAimDisabled OnAimDisabled;
@@ -70,18 +44,15 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	FWeaponFirearmData WeaponFirearmData;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-	FName ShootBarrelSocketName;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Advanced")
-	bool bCanDeployAttackIfReloading = false;
 
 private:
+	UPROPERTY()
+	UReloadManager* ReloadManager;
 	bool bIsAimingDownSight;
 	bool bHasReloadInsertedAmmo;
 	float AimSpread;
 	float DefaultRecoilStrength;
 	float AdsRecoilStrength;
-	FReloadEventData ReloadPayload;
 
 public:
 	AWeaponFirearm();
@@ -89,19 +60,15 @@ public:
 #if WITH_EDITOR
 	virtual void OnConstruction(const FTransform& Transform) override;
 #endif
-
-	/**
-	 * Initializes the weapon with the given owner and optional payload.
-	 * It sets up the first shooter behaviour with the main shoot barrel.
-	 * @param InOwner - The pawn that owns this weapon.
-	 * @param InPayload - Optional payload data for initialization.
-	 */
+	
 	virtual void Init(APawn* InOwner, UObject* InPayload = nullptr) override;
 
-	UFUNCTION(BlueprintCallable)
-	bool Shoot(const int32 BehaviourIndex = 0) const;
+	virtual UWeaponMontagesManagerBase* GetMontagesManager() const override;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure = false)
+	bool Shoot(const int32 BehaviourIndex = 0);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure = false)
 	void EndShootSequence(const int32 BehaviourIndex = 0) const;
 	
 	UFUNCTION(BlueprintPure)
@@ -112,10 +79,10 @@ public:
 
 	/**
 	 * Adds dynamic spread to the weapon, affecting aim stability.
-	 * @param AddSpread - The amount of spread to add.
-	 * @param ChangeRate - The rate at which the spread changes.
-	 * @param RecoveryRate - The rate at which the spread recovers.
-	 * @param BehaviourIndex - The index of the shooter behaviour to apply the spread to.
+	 * @param AddSpread The amount of spread to add.
+	 * @param ChangeRate The rate at which the spread changes.
+	 * @param RecoveryRate The rate at which the spread recovers.
+	 * @param BehaviourIndex The index of the shooter behaviour to apply the spread to.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void AddWeaponDynamicSpread(const float AddSpread, const float ChangeRate = 1.0f, const float RecoveryRate = 1.0f, const int32 BehaviourIndex = 0) const;
@@ -145,7 +112,7 @@ public:
 
 	/**
 	 * Sets the reload time of the weapon.
-	 * @param NewReloadTime - The new reload time.
+	 * @param NewReloadTime The new reload time.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetWeaponReloadTime(const float NewReloadTime);
@@ -166,7 +133,7 @@ public:
 	UShooterBehaviourBase* GetShooterBehaviour(const int32 BehaviourIndex) const;
 
 	UFUNCTION(BlueprintPure)
-	UMagazine* GetWeaponMagazineByTag(FGameplayTag MagazineTag) const;
+	UMagazine* GetWeaponMagazine(const int32 MagazineIndex = 0) const;
 
 	/**
 	 * Gets the firearm data structure containing various weapon properties.
@@ -174,8 +141,9 @@ public:
 	 */
 	UFUNCTION(BlueprintPure)
 	FWeaponFirearmData GetWeaponFirearmData() const;
-
-	virtual UWeaponMontagesManagerBase* GetMontagesManager() const override;
+	
+	UFUNCTION(BlueprintPure)
+	UReloadManager* GetReloadManager() const;
 	
 	UFUNCTION(BlueprintPure)
 	float GetWeaponFireRate(const int32 BehaviourIndex = 0) const;
@@ -215,45 +183,16 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void ResetToDefaultShootType(const int32 BehaviourIndex = 0) const;
-	
-	/**
-	 * Reloads the weapon using the montage animation for the specified ammo type and amount.
-	 * @param InAmmoType - The ammo type data to use for reloading.
-	 * @param Ammo - The amount of ammo to reload.
-	 */
-	UFUNCTION(BlueprintCallable)
-	void ReloadOfAmmoType(UAmmoTypeData* InAmmoType, const int32 Ammo);
 
-	void ReloadShooterBehaviourOfAmmoType(UAmmoTypeData* InAmmoType, const int32 Ammo, int32 BehaviourIndex);
-
-	/**
-	 * Fully reloads the weapon using the montage animation for the specified ammo type.
-	 * @param InAmmoType - The ammo type data to use for reloading.
-	 */
 	UFUNCTION(BlueprintCallable)
-	void FullReloadOfAmmoType(UAmmoTypeData* InAmmoType);
+	void Reload(const FReloadRequest& Request) const;
 
-	/**
-	 * Reloads the weapon using the montage animation for the specified amount of ammo.
-	 * @param Ammo - The amount of ammo to reload.
-	 */
 	UFUNCTION(BlueprintCallable)
-	void Reload(const int32 Ammo);
+	void FullReload(const EReloadMode ReloadMode = EReloadMode::Parallel) const;
 
-	/**
-	 * Fully reloads the weapon using the montage animation to fill the magazine.
-	 */
 	UFUNCTION(BlueprintCallable)
-	void FullReload();
+	void InterruptReload(const float CharacterBlendOutTime = 0.2f, const float WeaponBlendOutTime = 0.2f) const;
 
-	/**
-	 * Interrupts the reload process, optionally specifying blend out times.
-	 * @param CharacterBlendOutTime - The blend out time for the character animation.
-	 * @param WeaponBlendOutTime - The blend out time for the weapon animation.
-	 */
-	UFUNCTION(BlueprintCallable)
-	void InterruptReload(float CharacterBlendOutTime = 0.0f, float WeaponBlendOutTime = 0.0f);
-	
 	UFUNCTION(BlueprintCallable)
 	void SetAim(const bool bIsEnabled, const int32 BehaviourIndex = 0);
 
@@ -294,33 +233,6 @@ protected:
 	bool CanReload() const;
 	
 	/**
-	 * Called when the reload process starts.
-	 * @param ReloadEventData - The data associated with the reload event.
-	 */
-	UFUNCTION(BlueprintNativeEvent)
-	void OnReloadStart(FReloadEventData ReloadEventData);
-
-	/**
-	 * Called when the reload is ended, regardless of success or interruption.
-	 */
-	UFUNCTION(BlueprintNativeEvent)
-	void OnReloadEnd();
-	
-	/**
-	 * Called when the reload process ends successfully, when the ammo is inserted.
-	 * @param Remain - The remaining ammo after reload.
-	 * @param ReloadedAmmo - The amount of ammo that was reloaded.
-	 */
-	UFUNCTION(BlueprintNativeEvent)
-	void OnReloadSuccess(float Remain, float ReloadedAmmo);
-
-	/**
-	 * Called when the reload is interrupted.
-	 */
-	UFUNCTION(BlueprintNativeEvent)
-	void OnReloadFail();
-
-	/**
 	 * Called when the weapon goes into Aim state.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
@@ -350,10 +262,10 @@ protected:
 	/**
 	 * Called when the ammo count changes in a shooter behaviour.
 	 * (NOTE: This is called locally for each behaviour, use "OnMagazine" events for global events)
-	 * @param Behaviour - The shooter behaviour where the ammo change occurred.
-	 * @param Magazine - The magazine associated with the behaviour.
-	 * @param CurrentAmmo - The current ammo count after the change.
-	 * @param MagSize - The total magazine size.
+	 * @param Behaviour The shooter behaviour where the ammo change occurred.
+	 * @param Magazine The magazine associated with the behaviour.
+	 * @param CurrentAmmo The current ammo count after the change.
+	 * @param MagSize The total magazine size.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnBehaviourAmmoChange(UShooterBehaviourBase* Behaviour, UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize);
@@ -361,11 +273,11 @@ protected:
 	/**
 	 * Called when ammo is refilled in a shooter behaviour.
 	 * (NOTE: This is called locally for each behaviour, use "OnMagazine" events for global events)
-	 * @param Behaviour - The shooter behaviour where the refill occurred.
-	 * @param Magazine - The magazine associated with the behaviour.
-	 * @param CurrentAmmo - The current ammo count after the refill.
-	 * @param RefilledAmmo - The amount of ammo that was refilled.
-	 * @param RemainingAmmo - The remaining ammo available for refilling.
+	 * @param Behaviour The shooter behaviour where the refill occurred.
+	 * @param Magazine The magazine associated with the behaviour.
+	 * @param CurrentAmmo The current ammo count after the refill.
+	 * @param RefilledAmmo The amount of ammo that was refilled.
+	 * @param RemainingAmmo The remaining ammo available for refilling.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnBehaviourRefill(UShooterBehaviourBase* Behaviour, UMagazine* Magazine, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
@@ -373,8 +285,8 @@ protected:
 	/**
 	 * Called when the magazine in a shooter behaviour becomes full.
 	 * (NOTE: This is called locally for each behaviour, use "OnMagazine" events for global events)
-	 * @param Behaviour - The shooter behaviour where the magazine became full.
-	 * @param Magazine - The magazine associated with the behaviour.
+	 * @param Behaviour The shooter behaviour where the magazine became full.
+	 * @param Magazine The magazine associated with the behaviour.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnBehaviourFull(UShooterBehaviourBase* Behaviour, UMagazine* Magazine);
@@ -382,8 +294,8 @@ protected:
 	/**
 	 * Called when the magazine in a shooter behaviour becomes empty.
 	 * (NOTE: This is called locally for each behaviour, use "OnMagazine" events for global events)
-	 * @param Behaviour - The shooter behaviour where the magazine became empty.
-	 * @param Magazine - The magazine associated with the behaviour.
+	 * @param Behaviour The shooter behaviour where the magazine became empty.
+	 * @param Magazine The magazine associated with the behaviour.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnBehaviourEmpty(UShooterBehaviourBase* Behaviour, UMagazine* Magazine);
@@ -391,74 +303,72 @@ protected:
 	/**
 	 * Called when ammo is refilled in the magazine.
 	 * (NOTE: This is a global event for the magazine, use "OnBehaviour" events for behaviour-specific events)
-	 * @param MagInstigator - The object that initiated the magazine refill.
-	 * @param CurrentAmmo - The current ammo count after the refill.
-	 * @param RefilledAmmo - The amount of ammo that was refilled.
-	 * @param RemainingAmmo - The remaining ammo available for refilling.
+	 * @param MagInstigator The object that initiated the magazine refill.
+	 * @param Magazine The magazine that was refilled.
+	 * @param CurrentAmmo The current ammo count after the refill.
+	 * @param RefilledAmmo The amount of ammo that was refilled.
+	 * @param RemainingAmmo The remaining ammo available for refilling.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
-	void OnMagazineRefill(const UObject* MagInstigator, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
+	void OnMagazineRefill(const UObject* MagInstigator, const UMagazine* Magazine, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
 
 	/**
 	 * Called when the ammo count changes in the magazine.
 	 * (NOTE: This is a global event for the magazine, use "OnBehaviour" events for behaviour-specific events)
-	 * @param MagInstigator - The object that initiated the ammo change.
-	 * @param CurrentAmmo - The current ammo count after the change.
-	 * @param MagSize - The total magazine size.
+	 * @param MagInstigator The object that initiated the ammo change.
+	 * @param Magazine The magazine where the ammo change occurred.
+	 * @param CurrentAmmo The current ammo count after the change.
+	 * @param MagSize The total magazine size.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
-	void OnMagazineAmmoChange(const UObject* MagInstigator, int32 CurrentAmmo, int32 MagSize);
+	void OnMagazineAmmoChange(const UObject* MagInstigator, const UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize);
 
 	/**
 	 * Called when the magazine becomes full.
 	 * (NOTE: This is a global event for the magazine, use "OnBehaviour" events for behaviour-specific events)
-	 * @param MagInstigator - The object that initiated the magazine full event.
+	 * @param MagInstigator The object that initiated the magazine full event.
+	 * @param Magazine The magazine that became full.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
-	void OnMagazineFull(const UObject* MagInstigator);
+	void OnMagazineFull(const UObject* MagInstigator, const UMagazine* Magazine);
 
 	/**
 	 * Called when the magazine becomes empty.
 	 * (NOTE: This is a global event for the magazine, use "OnBehaviour" events for behaviour-specific events)
-	 * @param MagInstigator - The object that initiated the magazine empty event.
+	 * @param MagInstigator The object that initiated the magazine empty event.
+	 * @param Magazine The magazine that became empty.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
-	void OnMagazineEmpty(const UObject* MagInstigator);
-	
+	void OnMagazineEmpty(const UObject* MagInstigator, const UMagazine* Magazine);
+
 	/**
-	 * Gets the payload data for the reload event.
-	 * @return The reload event data containing ammo type and amount.
+	 * Called when a reload starts.
+	 * @param Request The reload request data.
 	 */
-	FReloadEventData GetReloadPayload() const;
+	UFUNCTION(BlueprintNativeEvent)
+	void OnReloadStart(const FReloadRequest& Request);
+
+	/**
+	 * Called when a reload ends.
+	 * @param Request The reload request data.
+	 * @param bInterrupted Whether the reload was interrupted, if not the reload completed successfully.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnReloadEnd(const FReloadRequest& Request, bool bInterrupted);
+
+	/**
+	 * Called when ammo is inserted during a reload.
+	 * @param Behaviour The shooter behaviour where ammo was inserted.
+	 * @param InsertedAmmo The amount of ammo that was inserted.
+	 * @param RemainingAmmo The remaining ammo available after insertion.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnReloadInsertAmmo(UShooterBehaviourBase* Behaviour, int32 InsertedAmmo, int32 RemainingAmmo);
 
 private:
-	/**
-	 * Binds events related to the weapon's functionalities.
-	 */
 	void BindEvents();
-
-	/**
-	 * Unbinds events related to the weapon's functionalities.
-	 */
-	void UnbindEvents();
-
-	/**
-	 * Sets the payload for the reload event.
-	 * @param InReloadPayload - The reload event data containing ammo type and amount.
-	 */
-	void SetReloadPayload(const FReloadEventData InReloadPayload);
-
-	/**
-	 * Reloads the weapon by inserting ammo into the magazine.
-	 */
-	void ReloadInsertAmmo();
 	
-	/**
-	 * Called when the reload montage ends.
-	 * @param bInterrupted - True if the montage was interrupted, false if it completed normally.
-	 */
-	UFUNCTION()
-	void OnReloadMontageEnded(const bool bInterrupted);
+	void UnbindEvents();
 	
 	void SetAimSpreadModifier(const int32 BehaviourIndex = 0);
 	

@@ -23,16 +23,16 @@ public:
 	bool bHasInfiniteAmmo = false;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "General", meta = (ClampMin = 0, UIMin = 0))
 	int32 AmmoToConsumePerShot = 1;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "General")
-	FGameplayTag MagazineTag = FGameplayTag::EmptyTag;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "General", meta = (ClampMin = 0, UIMin = 0, ToolTip = "Index of the magazine to use from the Magazines Manager."))
+	int32 MagazineIndex;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General", meta = (ClampMin = "0", UIMin = "0"))
 	float Damage = 0.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General", meta = (ClampMin = "0", UIMin = "0", ToolTip = "Rounds per minute"))
-	float FireRate = 0.f;
+	float FireRate = 300.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General")
-	EShootType ShootType;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General", meta = (ClampMin = "0", UIMin = "0"))
-	float MaxRange = 0.f;
+	EShootType ShootType = EShootType::Sequential;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General", meta = (ClampMin = "0", UIMin = "0", ToolTip = "Maximum effective range of the weapon in meters."))
+	float MaxRange = 10000.f;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Recoil")
 	bool bHasRecoil = false;

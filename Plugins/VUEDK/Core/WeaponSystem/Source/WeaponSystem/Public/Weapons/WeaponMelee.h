@@ -10,17 +10,17 @@
 #include "WeaponMelee.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FOnWeaponComboStart,
+	FOnWeaponComboStarted,
 	UWeaponMeleeAttackData*, AttackData
 );
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FOnWeaponComboEnd,
+	FOnWeaponComboEnded,
 	UWeaponMeleeAttackData*, AttackData
 );
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-	FOnWeaponAttackStart,
+	FOnWeaponAttackStarted,
 	UWeaponMeleeAttackData*, AttackData,
 	int32, AttackIndex
 );
@@ -33,7 +33,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 );
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-	FOnWeaponAttackInterrupt,
+	FOnWeaponAttackInterrupted,
 	UMeleeHitbox*, Hitbox,
 	FHitResult, HitResult
 );
@@ -45,15 +45,17 @@ class WEAPONSYSTEM_API AWeaponMelee : public AWeaponBase
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnWeaponComboStart OnWeaponComboStart;
+	FOnWeaponComboStarted OnWeaponComboStart;
 	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnWeaponComboEnd OnWeaponComboEnd;
+	FOnWeaponComboEnded OnWeaponComboEnd;
 	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnWeaponAttackStart OnWeaponAttackStart;
+	FOnWeaponAttackStarted OnWeaponAttackStart;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnWeaponAttackHit OnWeaponAttackPreHit;
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnWeaponAttackHit OnWeaponAttackHit;
 	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnWeaponAttackInterrupt OnWeaponAttackInterrupt;
+	FOnWeaponAttackInterrupted OnWeaponAttackInterrupt;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UMeleeHitboxesManager* MeleeHitboxesManager;
@@ -61,14 +63,14 @@ public:
 	UMeleeMontagesManager* MeleeMontagesManager;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	FWeaponMeleeData WeaponMeleeData;
-	
+
 #if WITH_EDITORONLY_DATA
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Debug", meta = (Tooltip = "Enables debug draws"))
-	bool bDebug = false;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Debug", meta = (EditCondition = "bDebug"))
-	float DebugDrawDuration = 0.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Debug")
+	bool bDebugHitbox = false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Debug", meta = (EditCondition = "bDebugHitbox"))
+	float DebugTraceDuration = 0.0f;
 #endif
-	
+
 private:
 	bool bIsBlockActive = false;
 	UPROPERTY()
@@ -123,7 +125,7 @@ public:
 
 	/**
 	 * Sets the block state of the weapon.
-	 * @param bActive - True to activate block, false to deactivate.
+	 * @param bActive True to activate block, false to deactivate.
 	 */
 	void SetBlockActive(const bool bActive);
 
@@ -158,6 +160,8 @@ public:
 	
 	void CallAttackStartedEvent(UWeaponMeleeAttackData* AttackData, int32 AttackIndex);
 
+	void CallPreHitEvent(UMeleeHitbox* Hitbox, const FHitResult& HitResult, float Damage);
+	
 	void CallHitEvent(UMeleeHitbox* Hitbox, const FHitResult& HitResult, float Damage);
 
 	void CallInterruptEvent(UMeleeHitbox* Hitbox, const FHitResult& HitResult);
@@ -176,6 +180,9 @@ protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnAttackStarted(UWeaponMeleeAttackData* AttackData, int32 AttackIndex);
 
+	UFUNCTION(BlueprintNativeEvent)
+	void OnAttackPreHit(UMeleeHitbox* Hitbox, FHitResult HitResult, float Damage);
+	
 	UFUNCTION(BlueprintNativeEvent)
 	void OnAttackHit(UMeleeHitbox* Hitbox, FHitResult HitResult, float Damage);
 

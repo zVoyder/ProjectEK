@@ -3,6 +3,7 @@
 #include "WeaponCrosshair/Widgets/FirearmCrosshairWidget.h"
 #include "WeaponSystem.h"
 #include "Animation/WidgetAnimation.h"
+#include "Weapons/Managers/ReloadManager.h"
 
 void UFirearmCrosshairWidget::NativeDestruct()
 {
@@ -13,10 +14,14 @@ void UFirearmCrosshairWidget::NativeDestruct()
 
 	Firearm->OnAimEnabled.RemoveDynamic(this, &UFirearmCrosshairWidget::OnAimEnabled);
 	Firearm->OnAimDisabled.RemoveDynamic(this, &UFirearmCrosshairWidget::OnAimDisabled);
-	Firearm->OnReloadStarted.RemoveDynamic(this, &UFirearmCrosshairWidget::OnReloadStarted);
-	Firearm->OnReloadEnded.RemoveDynamic(this, &UFirearmCrosshairWidget::OnReloadEnded);
-	Firearm->OnReloadInterrupted.RemoveDynamic(this, &UFirearmCrosshairWidget::OnReloadFail);
-	Firearm->OnReloadInsertedAmmo.RemoveDynamic(this, &UFirearmCrosshairWidget::OnReloadSuccess);
+
+	UReloadManager* ReloadManager = Firearm->GetReloadManager();
+	if (IsValid(ReloadManager))
+		return;
+
+	ReloadManager->OnReloadStarted.RemoveDynamic(this, &UFirearmCrosshairWidget::OnReloadStart);
+	ReloadManager->OnReloadEnded.RemoveDynamic(this, &UFirearmCrosshairWidget::OnReloadEnd);
+	ReloadManager->OnReloadInsertedAmmo.RemoveDynamic(this, &UFirearmCrosshairWidget::OnReloadInsertAmmo);
 
 	const UShooterBehaviourBase* Behaviour = Firearm->Shooter->GetShooterBehaviour(FirearmBehaviourIndex);
 	if (!IsValid(Behaviour))
@@ -39,11 +44,15 @@ void UFirearmCrosshairWidget::OnInit_Implementation()
 
 	Firearm->OnAimEnabled.AddDynamic(this, &UFirearmCrosshairWidget::OnAimEnabled);
 	Firearm->OnAimDisabled.AddDynamic(this, &UFirearmCrosshairWidget::OnAimDisabled);
-	Firearm->OnReloadStarted.AddDynamic(this, &UFirearmCrosshairWidget::OnReloadStarted);
-	Firearm->OnReloadEnded.AddDynamic(this, &UFirearmCrosshairWidget::OnReloadEnded);
-	Firearm->OnReloadInterrupted.AddDynamic(this, &UFirearmCrosshairWidget::OnReloadFail);
-	Firearm->OnReloadInsertedAmmo.AddDynamic(this, &UFirearmCrosshairWidget::OnReloadSuccess);
 
+	UReloadManager* ReloadManager = Firearm->GetReloadManager();
+	if (IsValid(ReloadManager))
+		return;
+
+	ReloadManager->OnReloadStarted.AddDynamic(this, &UFirearmCrosshairWidget::OnReloadStart);
+	ReloadManager->OnReloadEnded.AddDynamic(this, &UFirearmCrosshairWidget::OnReloadEnd);
+	ReloadManager->OnReloadInsertedAmmo.AddDynamic(this, &UFirearmCrosshairWidget::OnReloadInsertAmmo);
+	
 	const UShooterBehaviourBase* Behaviour = Firearm->Shooter->GetShooterBehaviour(FirearmBehaviourIndex);
 	if (!IsValid(Behaviour))
 		return;
@@ -63,19 +72,15 @@ void UFirearmCrosshairWidget::OnSpreadChanged_Implementation(float Spread)
 {
 }
 
-void UFirearmCrosshairWidget::OnReloadStarted_Implementation(FReloadEventData ReloadPayload)
+void UFirearmCrosshairWidget::OnReloadStart_Implementation(const FReloadRequest& Request)
 {
 }
 
-void UFirearmCrosshairWidget::OnReloadEnded_Implementation()
+void UFirearmCrosshairWidget::OnReloadEnd_Implementation(const FReloadRequest& Request, bool bInterrupted)
 {
 }
 
-void UFirearmCrosshairWidget::OnReloadSuccess_Implementation(FReloadEventData ReloadPayload)
-{
-}
-
-void UFirearmCrosshairWidget::OnReloadFail_Implementation(FReloadEventData ReloadPayload)
+void UFirearmCrosshairWidget::OnReloadInsertAmmo_Implementation(UShooterBehaviourBase* Behaviour, int32 InsertedAmmo, int32 RemainingAmmo)
 {
 }
 
@@ -86,7 +91,7 @@ void UFirearmCrosshairWidget::AnimateCrosshair(UWidgetAnimation* CrosshairAnimat
 		UE_LOG(LogWeaponSystem, Warning, TEXT("UFirearmCrosshairWidget::AnimateCrosshair: CrosshairAnimation is null."));
 		return;
 	}
-	
+
 	if (!Check())
 		return;
 

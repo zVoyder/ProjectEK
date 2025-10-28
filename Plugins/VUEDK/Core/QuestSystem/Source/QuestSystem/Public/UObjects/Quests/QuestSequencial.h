@@ -34,7 +34,7 @@ public:
 
 	/**
 	 * Gets the next task in the sequence.
-	 * @param TaskDataKey - The task to check.
+	 * @param TaskDataKey The task to check.
 	 * @return Pointer to the next task if available, nullptr otherwise.
 	 */
 	UFUNCTION(BlueprintPure)

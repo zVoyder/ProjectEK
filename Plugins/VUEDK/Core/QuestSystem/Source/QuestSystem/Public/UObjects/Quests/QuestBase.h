@@ -36,29 +36,29 @@ private:
 public:
 	/**
 	 * Initializes the quest with the provided quest data and entry data.
-	 * @param InitData - The quest data asset to initialize from.
-	 * @param EntryData - The entry data for this quest instance.
+	 * @param InitData The quest data asset to initialize from.
+	 * @param EntryData The entry data for this quest instance.
 	 */
 	virtual void Init(UQuestData* InitData, const FQuestEntryData& EntryData);
 	
 	/**
 	 * Marks a specific quest task as achieved.
-	 * @param TaskDataKey - The task to achieve.
-	 * @param bFullyAchieve - If true, fully completes the task.
+	 * @param TaskDataKey The task to achieve.
+	 * @param bFullyAchieve If true, fully completes the task.
 	 */
 	UFUNCTION(BlueprintCallable)
 	virtual void AchieveQuestTask(const UTaskData* TaskDataKey, const bool bFullyAchieve = false);
 
 	/**
 	 * Achieves all tasks in the quest.
-	 * @param bFullyAchieve - If true, fully completes all tasks.
+	 * @param bFullyAchieve If true, fully completes all tasks.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void AchieveAllTasks(const bool bFullyAchieve = false) const;
 
 	/**
 	 * Checks if a specific task has been achieved.
-	 * @param TaskDataKey - The task to check.
+	 * @param TaskDataKey The task to check.
 	 * @return true if the task is achieved, false otherwise.
 	 */
 	UFUNCTION(BlueprintCallable)
@@ -66,7 +66,7 @@ public:
 
 	/**
 	 * Retrieves a task by its data key.
-	 * @param TaskDataKey - The key of the task to retrieve.
+	 * @param TaskDataKey The key of the task to retrieve.
 	 * @return Pointer to the task if found, nullptr otherwise.
 	 */
 	UFUNCTION(BlueprintCallable)
@@ -74,7 +74,7 @@ public:
 
 	/**
 	 * Retrieves a task by its name.
-	 * @param TaskName - The name of the task to retrieve.
+	 * @param TaskName The name of the task to retrieve.
 	 * @return Pointer to the task if found, nullptr otherwise.
 	 */
 	UFUNCTION(BlueprintCallable)
@@ -82,7 +82,7 @@ public:
 
 	/**
 	 * Sets the current status of the quest.
-	 * @param Status - The new quest status to set.
+	 * @param Status The new quest status to set.
 	 */
 	void SetQuestStatus(EQuestStatus Status);
 

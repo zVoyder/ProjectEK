@@ -13,6 +13,9 @@ TArray<UShootPoint*> UShootBarrel::GetShootPointsChildren() const
 	TArray<UShootPoint*> ShootPoints;
 	for (UActorComponent* Component : GetAttachChildren())
 	{
+		if (!IsValid(Component))
+			continue;
+		
 		if (UShootPoint* ShootPoint = Cast<UShootPoint>(Component); IsValid(ShootPoint))
 			ShootPoints.Add(ShootPoint);
 	}

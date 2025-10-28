@@ -22,10 +22,10 @@ class RPGSYSTEM_API URPGFactory : public UBlueprintFunctionLibrary
 public:
 	/**
 	 * Creates a generic RPG item instance based on the provided item data and generation data.
-	 * @param WorldContextObject - The world context for spawning the item.
-	 * @param Data - The item data asset to use for creation.
-	 * @param GenerationData - The generation data for the item.
-	 * @param bBuildItem - If true, the item will be fully built.
+	 * @param WorldContextObject The world context for spawning the item.
+	 * @param Data The item data asset to use for creation.
+	 * @param GenerationData The generation data for the item.
+	 * @param bBuildItem If true, the item will be fully built.
 	 * @return Pointer to the created URPGItem instance.
 	 */
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", HidePin = "bBuildItem"), Category = "VUEDK|RPGSystem|Factories")
@@ -33,12 +33,12 @@ public:
 
 	/**
 	 * Creates multiple generic RPG item instances based on the provided item data and generation data.
-	 * @param WorldContextObject - The world context for spawning the items.
-	 * @param Data - The item data asset to use for creation.
-	 * @param GenerationData - The generation data for the items.
-	 * @param OutOverflow - Output parameter for overflow quantity.
-	 * @param bBuildItem - If true, the items will be fully built.
-	 * @param Quantity - Number of items to create.
+	 * @param WorldContextObject The world context for spawning the items.
+	 * @param Data The item data asset to use for creation.
+	 * @param GenerationData The generation data for the items.
+	 * @param OutOverflow Output parameter for overflow quantity.
+	 * @param bBuildItem If true, the items will be fully built.
+	 * @param Quantity Number of items to create.
 	 * @return Pointer to the created URPGItem instance(s).
 	 */
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", HidePin = "bBuildItem"), Category = "VUEDK|RPGSystem|Factories")
@@ -46,10 +46,10 @@ public:
 
 	/**
 	 * Creates a gear item instance based on the provided gear data and generation data.
-	 * @param WorldContextObject - The world context for spawning the gear item.
-	 * @param Data - The gear item data asset to use for creation.
-	 * @param GenerationData - The generation data for the gear item.
-	 * @param bBuildItem - If true, the gear item will be fully built.
+	 * @param WorldContextObject The world context for spawning the gear item.
+	 * @param Data The gear item data asset to use for creation.
+	 * @param GenerationData The generation data for the gear item.
+	 * @param bBuildItem If true, the gear item will be fully built.
 	 * @return Pointer to the created URPGGearItem instance.
 	 */
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", HidePin = "bBuildItem"), Category = "VUEDK|RPGSystem|Factories")
@@ -57,9 +57,9 @@ public:
 
 	/**
 	 * Creates a gear item instance using a generation set.
-	 * @param WorldContextObject - The world context for spawning the gear item.
-	 * @param Data - The gear item data asset to use for creation.
-	 * @param GenerationSet - The generation set to use for the gear item.
+	 * @param WorldContextObject The world context for spawning the gear item.
+	 * @param Data The gear item data asset to use for creation.
+	 * @param GenerationSet The generation set to use for the gear item.
 	 * @return Pointer to the created URPGGearItem instance.
 	 */
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "VUEDK|RPGSystem|Factories")
@@ -67,9 +67,9 @@ public:
 
 	/**
 	 * Creates a gear item instance with fixed stats based on the provided generation data.
-	 * @param WorldContextObject - The world context for spawning the gear item.
-	 * @param Data - The gear item data asset to use for creation.
-	 * @param GenerationData - The fixed stats generation data for the gear item.
+	 * @param WorldContextObject The world context for spawning the gear item.
+	 * @param Data The gear item data asset to use for creation.
+	 * @param GenerationData The fixed stats generation data for the gear item.
 	 * @return Pointer to the created URPGGearItem instance.
 	 */
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", HidePin = "bBuildItem"), Category = "VUEDK|RPGSystem|Factories")
@@ -77,8 +77,8 @@ public:
 
 	/**
 	 * Creates a stat operation for the specified item.
-	 * @param Operation - The stat operation to use as a base.
-	 * @param Item - The item to apply the operation to.
+	 * @param Operation The stat operation to use as a base.
+	 * @param Item The item to apply the operation to.
 	 * @return Pointer to the created UStatOperation instance.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|RPGSystem|Factories")
@@ -86,10 +86,10 @@ public:
 
 	/**
 	 * Creates a bridge stat operation for the specified bridge and stats.
-	 * @param Bridge - The stats bridge to use.
-	 * @param InCoreStatData - The core stat data to use.
-	 * @param SpecialStat - The special stat data to use.
-	 * @param OperationClass - The class of the bridge stat operation to create.
+	 * @param Bridge The stats bridge to use.
+	 * @param InCoreStatData The core stat data to use.
+	 * @param SpecialStat The special stat data to use.
+	 * @param OperationClass The class of the bridge stat operation to create.
 	 * @return Pointer to the created UBridgeStatOperation instance.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VUEDK|RPGSystem|Factories")

@@ -83,7 +83,7 @@ public:
 
 	/**
 	 * Combines the provided SaveDataID with the unique save ID of this saver instance.
-	 * @param SaveDataID - The sub-identifier for the SaveData.
+	 * @param SaveDataID The sub-identifier for the SaveData.
 	 * @return A composite FName that uniquely identifies the SaveData in the context of this saver.
 	 */
 	UFUNCTION(BlueprintPure)
@@ -91,7 +91,7 @@ public:
 
 	/**
 	 * Pushes some SaveData to the SaveGame instance (calling function TrySerializeSaveDataObjectInSaveGame internally).
-	 * @param SaveData - The SaveData object to push data to.
+	 * @param SaveData The SaveData object to push data to.
 	 * @return True if the operation was successful, False otherwise.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
@@ -99,7 +99,7 @@ public:
 
 	/**
 	 * Pulls some SaveData from the SaveGame instance (calling function TryDeserializeSaveDataObjectFromSaveGame internally).
-	 * @param SaveData - The SaveData object to populate with data from the save.
+	 * @param SaveData The SaveData object to populate with data from the save.
 	 * @return True if the operation was successful and data was found, False otherwise.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
@@ -122,137 +122,137 @@ protected:
 
 	/**
 	 * Called when the component ends play. Used for cleanup logic.
-	 * @param EndPlayReason - The reason the component is ending play.
+	 * @param EndPlayReason The reason the component is ending play.
 	 */
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	/**
 	 * Prepares the save operation with the given save game, slot info, and instigator.
-	 * @param SaveGame - The save game object to prepare.
-	 * @param SlotInfoItem - The slot info item associated with the save.
-	 * @param Instigator - The object that initiated the save.
+	 * @param SaveGame The save game object to prepare.
+	 * @param SlotInfoItem The slot info item associated with the save.
+	 * @param Instigator The object that initiated the save.
 	 */
 	UFUNCTION()
 	void PrepareSave(UDefaultSaveGame* SaveGame, USlotInfoItem* SlotInfoItem, UObject* Instigator);
 
 	/**
 	 * Prepares the load operation with the given save game and instigator.
-	 * @param SaveGame - The save game object to prepare.
-	 * @param Instigator - The object that initiated the load.
+	 * @param SaveGame The save game object to prepare.
+	 * @param Instigator The object that initiated the load.
 	 */
 	UFUNCTION()
 	void PrepareLoad(UDefaultSaveGame* SaveGame, UObject* Instigator);
 
 	/**
 	 * Prepares a shared save operation with the given save game, slot info, and instigator.
-	 * @param SaveGame - The save game object to prepare.
-	 * @param SlotInfoItem - The slot info item associated with the save.
-	 * @param Instigator - The object that initiated the save.
+	 * @param SaveGame The save game object to prepare.
+	 * @param SlotInfoItem The slot info item associated with the save.
+	 * @param Instigator The object that initiated the save.
 	 */
 	UFUNCTION()
 	void PrepareSharedSave(UDefaultSaveGame* SaveGame, USlotInfoItem* SlotInfoItem, UObject* Instigator);
 
 	/**
 	 * Prepares a shared load operation with the given save game and instigator.
-	 * @param SaveGame - The save game object to prepare.
-	 * @param Instigator - The object that initiated the load.
+	 * @param SaveGame The save game object to prepare.
+	 * @param Instigator The object that initiated the load.
 	 */
 	UFUNCTION()
 	void PrepareSharedLoad(UDefaultSaveGame* SaveGame, UObject* Instigator);
 
 	/**
 	 * Event called to prepare a save operation.
-	 * @param SaveGame - The save game object to prepare.
-	 * @param SlotInfoItem - The slot info item associated with the save.
-	 * @param Instigator - The object that initiated the save.
+	 * @param SaveGame The save game object to prepare.
+	 * @param SlotInfoItem The slot info item associated with the save.
+	 * @param Instigator The object that initiated the save.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnPrepareSave(UDefaultSaveGame* SaveGame, USlotInfoItem* SlotInfoItem, UObject* Instigator);
 
 	/**
 	 * Event called to prepare a load operation.
-	 * @param SaveGame - The save game object to prepare.
-	 * @param Instigator - The object that initiated the load.
+	 * @param SaveGame The save game object to prepare.
+	 * @param Instigator The object that initiated the load.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnPrepareLoad(UDefaultSaveGame* SaveGame, UObject* Instigator);
 
 	/**
 	 * Event called when a save operation is completed.
-	 * @param SlotName - The name of the save slot.
-	 * @param UserIndex - The user index associated with the save.
-	 * @param bSuccess - Indicates if the save operation was successful.
-	 * @param SaveGame - The save game object that was saved.
-	 * @param Instigator - The object that initiated the save.
+	 * @param SlotName The name of the save slot.
+	 * @param UserIndex The user index associated with the save.
+	 * @param bSuccess Indicates if the save operation was successful.
+	 * @param SaveGame The save game object that was saved.
+	 * @param Instigator The object that initiated the save.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnSaveCompletedEvent(const FString& SlotName, const int32 UserIndex, bool bSuccess, UDefaultSaveGame* SaveGame, UObject* Instigator);
 
 	/**
 	 * Event called when a load operation is completed.
-	 * @param SlotName - The name of the save slot.
-	 * @param UserIndex - The user index associated with the load.
-	 * @param LoadedData - The loaded save game data.
-	 * @param Instigator - The object that initiated the load.
+	 * @param SlotName The name of the save slot.
+	 * @param UserIndex The user index associated with the load.
+	 * @param LoadedData The loaded save game data.
+	 * @param Instigator The object that initiated the load.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnLoadCompletedEvent(const FString& SlotName, const int32 UserIndex, UDefaultSaveGame* LoadedData, UObject* Instigator);
 
 	/**
 	 * Event called to prepare a shared save operation.
-	 * @param SaveGame - The save game object to prepare.
-	 * @param SlotInfoItem - The slot info item associated with the save.
-	 * @param Instigator - The object that initiated the save.
+	 * @param SaveGame The save game object to prepare.
+	 * @param SlotInfoItem The slot info item associated with the save.
+	 * @param Instigator The object that initiated the save.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnPrepareSharedSave(UDefaultSaveGame* SaveGame, USlotInfoItem* SlotInfoItem, UObject* Instigator);
 
 	/**
 	 * Event called to prepare a shared load operation.
-	 * @param SaveGame - The save game object to prepare.
-	 * @param Instigator - The object that initiated the load.
+	 * @param SaveGame The save game object to prepare.
+	 * @param Instigator The object that initiated the load.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnPrepareSharedLoad(UDefaultSaveGame* SaveGame, UObject* Instigator);
 
 	/**
 	 * Event called when a shared save operation is completed.
-	 * @param SlotName - The name of the save slot.
-	 * @param UserIndex - The user index associated with the save.
-	 * @param bSuccess - Indicates if the shared save operation was successful.
-	 * @param SaveGame - The save game object that was saved.
-	 * @param Instigator - The object that initiated the save.
+	 * @param SlotName The name of the save slot.
+	 * @param UserIndex The user index associated with the save.
+	 * @param bSuccess Indicates if the shared save operation was successful.
+	 * @param SaveGame The save game object that was saved.
+	 * @param Instigator The object that initiated the save.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnSharedSaveCompletedEvent(const FString& SlotName, const int32 UserIndex, bool bSuccess, UDefaultSaveGame* SaveGame, UObject* Instigator);
 
 	/**
 	 * Event called when a shared load operation is completed.
-	 * @param SlotName - The name of the save slot.
-	 * @param UserIndex - The user index associated with the load.
-	 * @param LoadedData - The loaded save game data.
-	 * @param Instigator - The object that initiated the load.
+	 * @param SlotName The name of the save slot.
+	 * @param UserIndex The user index associated with the load.
+	 * @param LoadedData The loaded save game data.
+	 * @param Instigator The object that initiated the load.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnSharedLoadCompletedEvent(const FString& SlotName, const int32 UserIndex, UDefaultSaveGame* LoadedData, UObject* Instigator);
 
 	/**
 	 * Event called when the saver begins with a loaded save game.
-	 * @param SaveGame - The save game object that was loaded.
+	 * @param SaveGame The save game object that was loaded.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnBeginWithNewSaveGameEvent(UDefaultSaveGame* SaveGame);
 
 	/**
 	 * Event called when the saver begins with a loaded shared save game.
-	 * @param SaveGame - The shared save game object that was loaded.
+	 * @param SaveGame The shared save game object that was loaded.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnBeginWithLoadedSharedSaveGameEvent(UDefaultSaveGame* SaveGame);
 
 	/**
 	 * Event called when the saver begins with a new shared save game.
-	 * @param SaveGame - The shared save game object that is new.
+	 * @param SaveGame The shared save game object that is new.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnBeginWithNewSharedSaveGameEvent(UDefaultSaveGame* SaveGame);

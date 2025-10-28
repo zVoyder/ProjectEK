@@ -137,23 +137,23 @@ void UMagazine::OnEmpty_Implementation(const UObject* Instigator)
 void UMagazine::CallAmmoChangeEvent(const int32 MagSize, const UObject* Instigator)
 {
 	OnAmmoChange(Instigator, CurrentAmmoCount, MagSize);
-	OnMagazineAmmoChanged.Broadcast(Instigator, CurrentAmmoCount, MagSize);
+	OnMagazineAmmoChanged.Broadcast(Instigator, this, CurrentAmmoCount, MagSize);
 }
 
 void UMagazine::CallRefillEvent(const int32& OutRemainingAmmo, const int32 RefilledAmmo, const UObject* Instigator)
 {
 	OnRefill(Instigator, CurrentAmmoCount, RefilledAmmo, OutRemainingAmmo);
-	OnMagazineRefilled.Broadcast(Instigator, CurrentAmmoCount, RefilledAmmo, OutRemainingAmmo);
+	OnMagazineRefilled.Broadcast(Instigator, this, CurrentAmmoCount, RefilledAmmo, OutRemainingAmmo);
 }
 
 void UMagazine::CallMagEmptyEvent(const UObject* Instigator)
 {
 	OnEmpty(Instigator);
-	OnMagazineEmpty.Broadcast(Instigator);
+	OnMagazineEmpty.Broadcast(Instigator, this);
 }
 
 void UMagazine::CallMagFullEvent(const UObject* Instigator)
 {
 	OnFull(Instigator);
-	OnMagazineFull.Broadcast(Instigator);
+	OnMagazineFull.Broadcast(Instigator, this);
 }

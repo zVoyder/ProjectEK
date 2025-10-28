@@ -2,7 +2,6 @@
 
 #include "Weapons/WeaponMelee.h"
 #include "WeaponSystem.h"
-#include "Kismet/GameplayStatics.h"
 
 AWeaponMelee::AWeaponMelee()
 {
@@ -159,6 +158,12 @@ void AWeaponMelee::CallAttackStartedEvent(UWeaponMeleeAttackData* AttackData, in
 	OnAttackStarted(AttackData, AttackIndex);
 }
 
+void AWeaponMelee::CallPreHitEvent(UMeleeHitbox* Hitbox, const FHitResult& HitResult, float Damage)
+{
+	OnWeaponAttackPreHit.Broadcast(Hitbox, HitResult, Damage);
+	OnAttackPreHit(Hitbox, HitResult, Damage);
+}
+
 void AWeaponMelee::CallHitEvent(UMeleeHitbox* Hitbox, const FHitResult& HitResult, float Damage)
 {
 	OnWeaponAttackHit.Broadcast(Hitbox, HitResult, Damage);
@@ -199,6 +204,10 @@ bool AWeaponMelee::NativeDeployWeaponAttack()
 		return false;
 
 	return true;
+}
+
+void AWeaponMelee::OnAttackPreHit_Implementation(UMeleeHitbox* Hitbox, FHitResult HitResult, float Damage)
+{
 }
 
 void AWeaponMelee::OnComboStarted_Implementation(UWeaponMeleeAttackData* AttackData)

@@ -78,8 +78,8 @@ private:
 public:
 	/**
 	 * Initializes the currency with the specified currency data and currencies manager.
-	 * @param InCurrencyData - The currency data asset to associate with this currency.
-	 * @param InCurrenciesManager - The currencies manager that owns this currency.
+	 * @param InCurrencyData The currency data asset to associate with this currency.
+	 * @param InCurrenciesManager The currencies manager that owns this currency.
 	 */
 	void Init(UCurrencyData* InCurrencyData, UCurrenciesManager* InCurrenciesManager);
 
@@ -109,16 +109,16 @@ public:
 
 	/**
 	 * Sets the value of the currency.
-	 * @param NewValue - The new value to set.
-	 * @param bNotify - Whether to notify listeners of the change.
+	 * @param NewValue The new value to set.
+	 * @param bNotify Whether to notify listeners of the change.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetValue(const int32 NewValue, const bool bNotify = true);
 
 	/**
 	 * Modifies the value of the currency by the specified amount.
-	 * @param Amount - The amount to add or subtract from the current value.
-	 * @param bNotify - Whether to notify listeners of the change.
+	 * @param Amount The amount to add or subtract from the current value.
+	 * @param bNotify Whether to notify listeners of the change.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void ModifyValue(const int32 Amount, const bool bNotify = true);

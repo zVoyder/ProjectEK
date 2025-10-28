@@ -58,6 +58,17 @@ float UMeleeHitbox::GetProcessedDamage()
 	return DamageProcessor->ProcessDamageNative(WeaponMelee->GetWeaponDamage(), this, GetWeaponMelee());
 }
 
+TSubclassOf<UDamageType> UMeleeHitbox::GetDamageType() const
+{
+	if (!Check())
+		return UDamageType::StaticClass();
+
+	if (DamageProcessor->bUseCustomDamageType)
+		return DamageProcessor->CustomDamageType;
+	
+	return UDamageType::StaticClass();
+}
+
 AWeaponMelee* UMeleeHitbox::GetWeaponMelee() const
 {
 	return WeaponMelee;

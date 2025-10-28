@@ -22,8 +22,8 @@ private:
 public:
 	/**
 	 * Initializes the auto save manager with the given save manager and auto save data.
-	 * @param SaveManager - The save manager to use for auto saving.
-	 * @param InAutoSaveData - The auto save configuration data.
+	 * @param SaveManager The save manager to use for auto saving.
+	 * @param InAutoSaveData The auto save configuration data.
 	 */
 	void Init(USaveManager* SaveManager, const FAutoSaveManagerData& InAutoSaveData);
 

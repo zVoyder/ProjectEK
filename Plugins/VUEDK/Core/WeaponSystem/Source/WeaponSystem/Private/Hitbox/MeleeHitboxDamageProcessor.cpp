@@ -2,6 +2,14 @@
 
 #include "Hitbox/MeleeHitboxDamageProcessor.h"
 
+TSubclassOf<UDamageType> UMeleeHitboxDamageProcessor::GetDamageType() const
+{
+	if (bUseCustomDamageType && CustomDamageType != nullptr)
+		return CustomDamageType;
+	
+	return UDamageType::StaticClass();
+}
+
 float UMeleeHitboxDamageProcessor::ProcessDamageNative(const float WeaponDamage, UMeleeHitbox* Hitbox, AWeaponMelee* WeaponMelee) const
 {
 	return ProcessDamage(WeaponDamage, Hitbox, WeaponMelee) * DamageMultiplier;

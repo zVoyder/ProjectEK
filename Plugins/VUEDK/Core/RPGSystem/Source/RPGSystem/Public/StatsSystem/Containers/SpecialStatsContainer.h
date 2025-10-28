@@ -16,7 +16,7 @@ class RPGSYSTEM_API USpecialStatsContainer : public UStatsContainer
 public:
 	/**
 	 * Adds a set of special stats to the container.
-	 * @param SpecialStats - The set of special stat data objects to add.
+	 * @param SpecialStats The set of special stat data objects to add.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void AddSpecialStats(TSet<USpecialStatData*> SpecialStats);

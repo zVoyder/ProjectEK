@@ -21,7 +21,7 @@ private:
 public:
 	/**
 	 * Initializes the slots utility with the given save manager.
-	 * @param SaveManager - The save manager to initialize with.
+	 * @param SaveManager The save manager to initialize with.
 	 */
 	static void Init(USaveManager* SaveManager);
 
@@ -47,7 +47,7 @@ public:
 
 	/**
 	 * Checks if a slot file exists for the given slot name.
-	 * @param SlotName - The name of the slot to check.
+	 * @param SlotName The name of the slot to check.
 	 * @return True if the slot file exists, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Save System")
@@ -62,7 +62,7 @@ public:
 
 	/**
 	 * Checks if any slot file exists, excluding shared slots if specified.
-	 * @param bExcludeSharedSlot - If true, shared slots are excluded from the check.
+	 * @param bExcludeSharedSlot If true, shared slots are excluded from the check.
 	 * @return True if any slot file exists, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Save System")
@@ -70,8 +70,8 @@ public:
 	
 	/**
 	 * Tries to get all save file names.
-	 * @param OutSaveFiles - Output parameter for the array of save file names.
-	 * @param bWithExtension - If true, file extensions are included in the names.
+	 * @param OutSaveFiles Output parameter for the array of save file names.
+	 * @param bWithExtension If true, file extensions are included in the names.
 	 * @return True if the save file names were retrieved successfully, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Save System")
@@ -79,7 +79,7 @@ public:
 
 	/**
 	 * Gets the total number of save slots.
-	 * @param bExcludeSharedSlot - If true, shared slots are excluded from the count.
+	 * @param bExcludeSharedSlot If true, shared slots are excluded from the count.
 	 * @return The total number of save slots.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Save System")
@@ -101,7 +101,7 @@ public:
 
 	/**
 	 * Tries to get the shared slot info data.
-	 * @param OutSlotInfo - Output parameter for the shared slot info data.
+	 * @param OutSlotInfo Output parameter for the shared slot info data.
 	 * @return True if the shared slot info was found, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Save System")
@@ -109,9 +109,9 @@ public:
 	
 	/**
 	 * Tries to get slot infos of a specific type.
-	 * @param OutSlotInfos - Output parameter for the slot info data array.
-	 * @param Type - The type of slots to filter (default: All).
-	 * @param bExcludeSharedSlot - If true, shared slots are excluded.
+	 * @param OutSlotInfos Output parameter for the slot info data array.
+	 * @param Type The type of slots to filter (default: All).
+	 * @param bExcludeSharedSlot If true, shared slots are excluded.
 	 * @return True if slot infos were found, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Save System")
@@ -119,8 +119,8 @@ public:
 
 	/**
 	 * Tries to get the most recent slot info data.
-	 * @param OutSlotData - Output parameter for the most recent slot info data.
-	 * @param Type - The type of slots to filter (default: All).
+	 * @param OutSlotData Output parameter for the most recent slot info data.
+	 * @param Type The type of slots to filter (default: All).
 	 * @return True if the most recent slot info was found, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Save System")
@@ -128,8 +128,8 @@ public:
 
 	/**
 	 * Tries to get the most ancient slot info data.
-	 * @param OutSlotData - Output parameter for the most ancient slot info data.
-	 * @param Type - The type of slots to filter (default: All).
+	 * @param OutSlotData Output parameter for the most ancient slot info data.
+	 * @param Type The type of slots to filter (default: All).
 	 * @return True if the most ancient slot info was found, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Save System")
@@ -137,7 +137,7 @@ public:
 	
 	/**
 	 * Tries to select a save game slot by name.
-	 * @param SlotName - The name of the slot to select.
+	 * @param SlotName The name of the slot to select.
 	 * @return True if the slot was selected successfully, false otherwise.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Save System")
@@ -166,7 +166,7 @@ public:
 
 	/**
 	 * Checks if the given slot info represents a shared slot.
-	 * @param SlotInfo - The slot info data to check.
+	 * @param SlotInfo The slot info data to check.
 	 * @return True if the slot is shared, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Save System")
@@ -174,14 +174,14 @@ public:
 	
 	/**
 	 * Checks if the given slot name represents a shared slot.
-	 * @param SlotName - The slot name to check.
+	 * @param SlotName The slot name to check.
 	 * @return True if the slot name is shared, false otherwise.
 	 */
 	static bool IsSharedSlotName(const FString& SlotName);
 	
 	/**
 	 * Checks if the given slot name is valid.
-	 * @param SlotName - The slot name to validate.
+	 * @param SlotName The slot name to validate.
 	 * @return True if the slot name is valid, false otherwise.
 	 */
 	static bool IsSlotNameValid(const FString& SlotName);

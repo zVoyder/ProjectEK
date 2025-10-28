@@ -49,7 +49,7 @@ public:
 	TArray<UShooterBehaviourBase*> ShooterBehaviours;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (ToolTip = "If true, allows multiple shooter behaviours to shoot at the same time."))
 	bool bCanShootInParallel = false;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced)
 	UMagazinesManager* MagazinesManager;
 
 public:
@@ -81,7 +81,7 @@ public:
 	UShooterBehaviourBase* GetShooterBehaviour(const int32 BehaviourIndex = 0) const;
 	
 	UFUNCTION(BlueprintPure)
-	UMagazine* GetMagazineByTag(const FGameplayTag& MagazineTag) const;
+	UMagazine* GetMagazine(const int32 MagazineIndex = 0) const;
 
 	UFUNCTION(BlueprintPure)
 	bool IsAnyBehaviourShooting() const;
@@ -121,14 +121,14 @@ private:
 	void CallBehaviourEmptyEvent(UShooterBehaviourBase* Behaviour, UMagazine* Magazine);
 
 	UFUNCTION()
-	void CallMagazineRefilledEvent(const UObject* Instigator, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
+	void CallMagazineRefilledEvent(const UObject* Instigator, const UMagazine* Magazine, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
 	
 	UFUNCTION()
-	void CallMagazineAmmoChangedEvent(const UObject* Instigator, int32 CurrentAmmo, int32 MagSize);
+	void CallMagazineAmmoChangedEvent(const UObject* Instigator, const UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize);
 	
 	UFUNCTION()
-	void CallMagazineFullEvent(const UObject* Instigator);
+	void CallMagazineFullEvent(const UObject* Instigator, const UMagazine* Magazine);
 	
 	UFUNCTION()
-	void CallMagazineEmptyEvent(const UObject* Instigator);
+	void CallMagazineEmptyEvent(const UObject* Instigator, const UMagazine* Magazine);
 };

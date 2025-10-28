@@ -54,21 +54,21 @@ public:
 
 	/**
 	 * Gets the special stat data by its unique identifier.
-	 * @param SpecialStatID - The unique identifier of the special stat.
+	 * @param SpecialStatID The unique identifier of the special stat.
 	 * @return Pointer to the USpecialStatData if found, nullptr otherwise.
 	 */
 	USpecialStatData* GetSpecialStatByID(const FGuid SpecialStatID) const;
 
 	/**
 	 * Gets the core stat data by its unique identifier.
-	 * @param CoreStatID - The unique identifier of the core stat.
+	 * @param CoreStatID The unique identifier of the core stat.
 	 * @return Pointer to the UCoreStatData if found, nullptr otherwise.
 	 */
 	UCoreStatData* GetCoreStatByID(const FGuid CoreStatID) const;
 
 	/**
 	 * Gets the special stat data by its code name.
-	 * @param SpecialStatCodeName - The code name of the special stat.
+	 * @param SpecialStatCodeName The code name of the special stat.
 	 * @return Pointer to the USpecialStatData if found, nullptr otherwise.
 	 */
 	UFUNCTION(BlueprintPure)
@@ -76,7 +76,7 @@ public:
 
 	/**
 	 * Gets the core stat data by its code name.
-	 * @param CoreStatCodeName - The code name of the core stat.
+	 * @param CoreStatCodeName The code name of the core stat.
 	 * @return Pointer to the UCoreStatData if found, nullptr otherwise.
 	 */
 	UFUNCTION(BlueprintPure)
@@ -98,7 +98,7 @@ public:
 
 	/**
 	 * Gets the value of a specific stat as a float.
-	 * @param Stat - The stat data object to query.
+	 * @param Stat The stat data object to query.
 	 * @return The value of the stat as a float.
 	 */
 	UFUNCTION(BlueprintPure)
@@ -106,7 +106,7 @@ public:
 
 	/**
 	 * Gets the value of a specific stat as an integer.
-	 * @param Stat - The stat data object to query.
+	 * @param Stat The stat data object to query.
 	 * @return The value of the stat as an integer.
 	 */
 	UFUNCTION(BlueprintPure)
@@ -114,7 +114,7 @@ public:
 
 	/**
 	 * Gets the value of a specific stat as a string.
-	 * @param Stat - The stat data object to query.
+	 * @param Stat The stat data object to query.
 	 * @return The value of the stat as a string.
 	 */
 	UFUNCTION(BlueprintPure)
@@ -129,9 +129,9 @@ public:
 	
 	/**
 	 * Calculates the value of a core stat based on a special stat and a bridge operation.
-	 * @param InSpecialStat - The special stat to use for the calculation.
-	 * @param CoreStatData - The core stat data to modify.
-	 * @param OperationClass - The class of the bridge operation to use for the calculation.
+	 * @param InSpecialStat The special stat to use for the calculation.
+	 * @param CoreStatData The core stat data to modify.
+	 * @param OperationClass The class of the bridge operation to use for the calculation.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void CalculateCoreStatValueWithSpecialStat(USpecialStatData* InSpecialStat, UCoreStatData* CoreStatData, const TSubclassOf<UBridgeStatOperation> OperationClass);
@@ -144,16 +144,16 @@ protected:
 
 	/**
 	 * Sets the value of a full stat in the full stats container.
-	 * @param Stat - The stat data object to set.
-	 * @param Value - The value to assign to the stat.
+	 * @param Stat The stat data object to set.
+	 * @param Value The value to assign to the stat.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetFullStatValue(UStatDataBase* Stat, float Value) const;
 
 	/**
 	 * Modifies the value of a full stat in the full stats container by adding the specified value.
-	 * @param Stat - The stat data object to modify.
-	 * @param Value - The value to add to the stat.
+	 * @param Stat The stat data object to modify.
+	 * @param Value The value to add to the stat.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void ModifyFullStatValue(UStatDataBase* Stat, float Value) const;

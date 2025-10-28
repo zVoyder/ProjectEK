@@ -31,11 +31,11 @@ struct WEAPONSYSTEM_API FWeaponMontageData
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Montages")
 	TSoftObjectPtr<UAnimMontage> CharacterMontage;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, AdvancedDisplay, Category = "Montages")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Montages|Advanced")
 	bool bWeaponMontageStopAllMontages = false;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, AdvancedDisplay, Category = "Montages")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Montages|Advanced")
 	bool bCharacterMontageStopAllMontages = false;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, AdvancedDisplay, Category = "Montages")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Montages|Advanced")
 	TEnumAsByte<EMontageEndPriority> MontageEndPriority;
 
 	FWeaponMontageData() : WeaponMontage(nullptr),

@@ -105,7 +105,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnBehaviourEmpty OnBehaviourEmpty;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Shooter")
 	UShootData* ShootData;
 
 protected:
@@ -138,7 +138,7 @@ private:
 	float CurrentDefaultSpread;
 	bool bCurrentInfiniteAmmo;
 	EShootType CurrentShootType;
-	FGameplayTag CurrentMagazineTag;
+	int32 CurrentMagazineIndex;
 
 public:
 	virtual void Init(UShooter* InShooter);
@@ -152,7 +152,7 @@ public:
 
 	/**
 	 * Enables or disables the shooter behaviour.
-	 * @param bEnabled - True to enable, false to disable.
+	 * @param bEnabled True to enable, false to disable.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetBehaviourEnabled(const bool bEnabled);
@@ -190,7 +190,7 @@ public:
 
 	/**
 	 * Resets the spread of the shooter behaviour.
-	 * @param ChangeRate - The rate of change for the spread reset.
+	 * @param ChangeRate The rate of change for the spread reset.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void ResetSpread(const float ChangeRate = 1.f) const;
@@ -198,8 +198,8 @@ public:
 	/**
 	 * Refills the associated magazine with the specified amount of ammo.
 	 * (NOTE: Prefer using the UMagazine versions to avoid duplicate calls when shared across multiple behaviours).
-	 * @param Ammo - The amount of ammo to add.
-	 * @param OutRemainingAmmo - The amount of ammo that could not be added (excess).
+	 * @param Ammo The amount of ammo to add.
+	 * @param OutRemainingAmmo The amount of ammo that could not be added (excess).
 	 * @return The amount of ammo actually added to the magazine.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
@@ -215,9 +215,9 @@ public:
 	/**
 	 * Refills the associated magazine with a specific type of ammo to check compatibility.
 	 * (NOTE: Prefer using the UMagazine versions to avoid duplicate calls when shared across multiple behaviours).
-	 * @param AmmoType - The type of ammo to use for refilling.
-	 * @param Ammo - The amount of ammo to add.
-	 * @param OutRemainingAmmo - The amount of ammo that could not be added (excess).
+	 * @param AmmoType The type of ammo to use for refilling.
+	 * @param Ammo The amount of ammo to add.
+	 * @param OutRemainingAmmo The amount of ammo that could not be added (excess).
 	 * @return The amount of ammo actually added to the magazine.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
@@ -225,73 +225,73 @@ public:
 
 	/**
 	 * Adds dynamic spread to the shooter behaviour.
-	 * @param AddSpread - The amount of spread to add.
-	 * @param ChangeRate - The rate of change for the spread addition.
-	 * @param RecoveryRate - The rate of recovery from the added spread.
+	 * @param AddSpread The amount of spread to add.
+	 * @param ChangeRate The rate of change for the spread addition.
+	 * @param RecoveryRate The rate of recovery from the added spread.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void AddDynamicSpread(const float AddSpread, const float ChangeRate = 1.0f, const float RecoveryRate = 1.0f) const;
 
 	/**
 	 * Sets the shoot parameters of the shooter behaviour.
-	 * @param NewDamage - The new damage value.
-	 * @param NewFireRate - The new fire rate value.
-	 * @param NewRange - The new range value.
-	 * @param NewMagSize - The new magazine size.
-	 * @param NewRecoilStrength - The new recoil strength.
-	 * @param NewDefaultSpread - The new default spread value.
+	 * @param NewDamage The new damage value.
+	 * @param NewFireRate The new fire rate value.
+	 * @param NewRange The new range value.
+	 * @param NewMagSize The new magazine size.
+	 * @param NewRecoilStrength The new recoil strength.
+	 * @param NewDefaultSpread The new default spread value.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetShootParams(const float NewDamage, const float NewFireRate, const float NewRange, const int32 NewMagSize, const int32 NewRecoilStrength, const float NewDefaultSpread);
 
 	/**
 	 * Sets the damage of the shooter behaviour.
-	 * @param NewDamage - The new damage value.
+	 * @param NewDamage The new damage value.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetDamage(const float NewDamage);
 
 	/**
 	 * Sets the fire rate of the shooter behaviour.
-	 * @param NewFireRate - The new fire rate value.
+	 * @param NewFireRate The new fire rate value.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetFireRate(const float NewFireRate);
 
 	/**
 	 * Sets the maximum range of the shooter behaviour.
-	 * @param NewRange - The new maximum range value.
+	 * @param NewRange The new maximum range value.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetMaxRange(const float NewRange);
 
 	/**
 	 * Sets the size of the magazine associated with this shooter behaviour.
-	 * @param NewMagSize - The new magazine size.
+	 * @param NewMagSize The new magazine size.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetMagSize(const int32 NewMagSize) const;
 
 	/**
 	 * Sets the recoil strength of the shooter behaviour.
-	 * @param NewRecoilStrength - The new recoil strength.
+	 * @param NewRecoilStrength The new recoil strength.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetRecoilStrength(const float NewRecoilStrength);
 
 	/**
 	 * Instantly sets the spread of the shooter behaviour.
-	 * @param InSpread - The new spread value.
-	 * @param bOverrideDefault - Whether to override the default spread.
+	 * @param InSpread The new spread value.
+	 * @param bOverrideDefault Whether to override the default spread.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void InstantSetSpread(const float InSpread, const bool bOverrideDefault = false) const;
 
 	/**
 	 * Sets the spread of the shooter behaviour.
-	 * @param NewSpread - The new spread value.
-	 * @param NewSpreadChangeRate - The rate of change for the new spread.
-	 * @param bOverrideDefault - Whether to override the default spread.
+	 * @param NewSpread The new spread value.
+	 * @param NewSpreadChangeRate The rate of change for the new spread.
+	 * @param bOverrideDefault Whether to override the default spread.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetSpread(const float NewSpread, const float NewSpreadChangeRate = 1.0f, const bool bOverrideDefault = false) const;
@@ -306,7 +306,7 @@ public:
 	void ChangeShootType(const EShootType NewShootType);
 
 	UFUNCTION(BlueprintCallable)
-	void ChangeMagazine(const FGameplayTag& NewMagazineTag);
+	void ChangeMagazine(const int32 NewMagazineIndex);
 
 	UFUNCTION(BlueprintPure)
 	bool IsBehaviourActive() const;
@@ -449,11 +449,11 @@ public:
 protected:
 	/**
  	 * Tries to get the camera start, end, and hit points, as well as the rotation.
- 	 * @param OutStartPoint - Output parameter for the camera start point.
- 	 * @param OutEndPoint - Output parameter for the camera end point.
- 	 * @param OutHitPoint - Output parameter for the camera hit point.
- 	 * @param OutRotation - Output parameter for the camera rotation.
- 	 * @param StartPointOffset - Optional offset to apply to the start point.
+ 	 * @param OutStartPoint Output parameter for the camera start point.
+ 	 * @param OutEndPoint Output parameter for the camera end point.
+ 	 * @param OutHitPoint Output parameter for the camera hit point.
+ 	 * @param OutRotation Output parameter for the camera rotation.
+ 	 * @param StartPointOffset Optional offset to apply to the start point.
  	 * @return true if the points were successfully retrieved, false otherwise.
  	*/
 	UFUNCTION(BlueprintCallable)
@@ -461,9 +461,9 @@ protected:
 
 	/**
 	 * Checks if the target point is in line of sight from the start point within a given tolerance.
-	 * @param StartPoint - The starting point for the line of sight check.
-	 * @param TargetPoint - The target point to check visibility to.
-	 * @param Tolerance - The allowed tolerance for the check (default: 50.0f).
+	 * @param StartPoint The starting point for the line of sight check.
+	 * @param TargetPoint The target point to check visibility to.
+	 * @param Tolerance The allowed tolerance for the check (default: 50.0f).
 	 * @return true if the target is in line of sight, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure)
@@ -476,7 +476,7 @@ protected:
 
 	/**
 	 * Deploys the shoot action to the specified shoot point.
-	 * @param ShootPoint - The shoot point to deploy the shoot action to.
+	 * @param ShootPoint The shoot point to deploy the shoot action to.
 	 */
 	void DeployShoot(UShootPoint* ShootPoint) const;
 
@@ -487,7 +487,7 @@ protected:
 
 	/**
 	 * Called when the shoot fails.
-	 * @param FailReason - The reason for the shoot failure.
+	 * @param FailReason The reason for the shoot failure.
 	 */
 	void ShootFail(const EShootFailReason FailReason);
 
@@ -499,7 +499,7 @@ protected:
 
 	/**
 	 * Called every tick to update the shooter behaviour.
-	 * @param DeltaTime - The time elapsed since the last tick.
+	 * @param DeltaTime The time elapsed since the last tick.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnTickBehaviour(const float DeltaTime);
@@ -525,10 +525,10 @@ protected:
 
 	/**
 	 * Called when the shoot is deployed.
-	 * @param ShootPoint - The shoot point used for the shoot.
-	 * @param TargetLocation - The location of the target.
-	 * @param DirectionToTarget - The direction to the target.
-	 * @param DirectionToTargetSpreaded - The direction to the target with spread applied.
+	 * @param ShootPoint The shoot point used for the shoot.
+	 * @param TargetLocation The location of the target.
+	 * @param DirectionToTarget The direction to the target.
+	 * @param DirectionToTargetSpreaded The direction to the target with spread applied.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDeployShoot(UShootPoint* ShootPoint, const FVector& TargetLocation, const FVector& DirectionToTarget, const FVector& DirectionToTargetSpreaded) const;
@@ -538,14 +538,14 @@ protected:
 
 	/**
 	 * Called when the shoot is successful.
-	 * @param OutShootBarrel - The shoot barrel used for the successful shoot.
+	 * @param OutShootBarrel The shoot barrel used for the successful shoot.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnShootSuccess(const UShootBarrel* OutShootBarrel);
 
 	/**
 	 * Called when the shoot fails.
-	 * @param FailReason - The reason for the shoot failure.
+	 * @param FailReason The reason for the shoot failure.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnShootFail(const EShootFailReason FailReason);
@@ -560,9 +560,9 @@ protected:
 	/**
 	 * Called when the ammo in the magazine changes.
 	 * (NOTE: This is a local event, use the UMagazine version to listen to global changes).
-	 * @param Magazine - The magazine whose ammo has changed.
-	 * @param CurrentAmmo - The current ammo count in the magazine.
-	 * @param MagSize - The size of the magazine.
+	 * @param Magazine The magazine whose ammo has changed.
+	 * @param CurrentAmmo The current ammo count in the magazine.
+	 * @param MagSize The size of the magazine.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnAmmoChange(UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize);
@@ -570,10 +570,10 @@ protected:
 	/**
 	 * Called when the magazine is refilled.
 	 * (NOTE: This is a local event, use the UMagazine version to listen to global changes).
-	 * @param Magazine - The magazine that has been refilled.
-	 * @param CurrentAmmo - The current ammo count in the magazine.
-	 * @param RefilledAmmo - The amount of ammo that was added to the magazine.
-	 * @param RemainingAmmo - The amount of ammo that could not be added (excess).
+	 * @param Magazine The magazine that has been refilled.
+	 * @param CurrentAmmo The current ammo count in the magazine.
+	 * @param RefilledAmmo The amount of ammo that was added to the magazine.
+	 * @param RemainingAmmo The amount of ammo that could not be added (excess).
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnRefill(UMagazine* Magazine, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
@@ -581,7 +581,7 @@ protected:
 	/**
 	 * Called when the magazine becomes full.
 	 * (NOTE: This is a local event, use the UMagazine version to listen to global changes).
-	 * @param Magazine - The magazine that is full.
+	 * @param Magazine The magazine that is full.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnFull(UMagazine* Magazine);
@@ -589,7 +589,7 @@ protected:
 	/**
 	 * Called when the magazine becomes empty.
 	 * (NOTE: This is a local event, use the UMagazine version to listen to global changes).
-	 * @param Magazine - The magazine that is empty.
+	 * @param Magazine The magazine that is empty.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnEmpty(UMagazine* Magazine);
@@ -599,7 +599,7 @@ protected:
 private:
 	/**
 	 * Called every tick to update the shooter behaviour.
-	 * @param DeltaTime - The time elapsed since the last tick.
+	 * @param DeltaTime The time elapsed since the last tick.
 	 */
 	void TickBehaviour(float DeltaTime);
 
@@ -632,16 +632,16 @@ private:
 	void CallShootFailEvent(EShootFailReason FailReason);
 
 	UFUNCTION()
-	void CallAmmoChangeEvent(const UObject* Instigator, int32 CurrentAmmo, int32 MagSize);
+	void CallAmmoChangeEvent(const UObject* Instigator, const UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize);
 
 	UFUNCTION()
-	void CallRefillEvent(const UObject* Instigator, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
+	void CallRefillEvent(const UObject* Instigator, const UMagazine* Magazine, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo);
 
 	UFUNCTION()
-	void CallFullEvent(const UObject* Instigator);
+	void CallFullEvent(const UObject* Instigator, const UMagazine* Magazine);
 
 	UFUNCTION()
-	void CallEmptyEvent(const UObject* Instigator);
+	void CallEmptyEvent(const UObject* Instigator, const UMagazine* Magazine);
 
 	void BindMagazineEvents(UMagazine* Magazine);
 

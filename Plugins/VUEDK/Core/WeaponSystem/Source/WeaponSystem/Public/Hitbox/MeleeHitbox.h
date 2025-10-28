@@ -38,6 +38,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetProcessedDamage();
 
+	UFUNCTION(BlueprintPure)
+	TSubclassOf<UDamageType> GetDamageType() const;
+
 	AWeaponMelee* GetWeaponMelee() const;
 
 private:

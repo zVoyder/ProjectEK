@@ -20,7 +20,6 @@ void UShooterBehaviourBase::Init(UShooter* InShooter)
 	}
 
 	Shooter = InShooter;
-	ShootPoints = ShootBarrel->GetShootPointsChildren();
 	ResetAll();
 	CreateHandlers();
 	EnableBehaviour();
@@ -31,11 +30,12 @@ void UShooterBehaviourBase::SetupShootBarrel(UShootBarrel* InShootBarrel)
 {
 	if (!IsValid(InShootBarrel))
 	{
-		UE_LOG(LogShooter, Error, TEXT("SetupShootBarrel: InShootBarrel in %s is null."), *GetName());
+		UE_LOG(LogShooter, Error, TEXT("UShooterBehaviourBase::SetupShootBarrel: InShootBarrel in %s is null."), *GetName());
 		return;
 	}
 
 	ShootBarrel = InShootBarrel;
+	ShootPoints = ShootBarrel->GetShootPointsChildren();
 }
 
 void UShooterBehaviourBase::CreateHandlers()
@@ -153,7 +153,7 @@ int32 UShooterBehaviourBase::RefillMagazine(const int32 Ammo, int32& OutRemainin
 	UMagazine* RelatedMagazine = GetRelatedMagazine();
 	if (!IsValid(RelatedMagazine))
 		return 0;
-	
+
 	return RelatedMagazine->Refill(Ammo, OutRemainingAmmo, this);
 }
 
@@ -244,14 +244,14 @@ void UShooterBehaviourBase::ChangeShootType(const EShootType NewShootType)
 	CurrentShootType = NewShootType;
 }
 
-void UShooterBehaviourBase::ChangeMagazine(const FGameplayTag& NewMagazineTag)
+void UShooterBehaviourBase::ChangeMagazine(const int32 NewMagazineIndex)
 {
 	UMagazine* OldMagazine = GetRelatedMagazine();
 	UnbindMagazineEvents(OldMagazine);
-	
-	CurrentMagazineTag = NewMagazineTag;
+
+	CurrentMagazineIndex = NewMagazineIndex;
 	UMagazine* NewMagazine = GetRelatedMagazine();
-	
+
 	BindMagazineEvents(NewMagazine);
 }
 
@@ -381,7 +381,7 @@ UMagazine* UShooterBehaviourBase::GetRelatedMagazine() const
 		return nullptr;
 	}
 
-	return Shooter->GetMagazineByTag(CurrentMagazineTag);
+	return Shooter->GetMagazine(CurrentMagazineIndex);
 }
 
 int32 UShooterBehaviourBase::GetShotsFired() const
@@ -456,7 +456,7 @@ void UShooterBehaviourBase::ResetShootType()
 
 void UShooterBehaviourBase::ResetMagazineTag()
 {
-	ChangeMagazine(ShootData->MagazineTag);
+	ChangeMagazine(ShootData->MagazineIndex);
 }
 
 UWorld* UShooterBehaviourBase::GetWorld() const
@@ -599,7 +599,7 @@ void UShooterBehaviourBase::ShootFail(const EShootFailReason FailReason)
 		break;
 	default: ;
 	}
-	
+
 	CallShootFailEvent(FailReason);
 }
 
@@ -779,41 +779,41 @@ void UShooterBehaviourBase::CallShootFailEvent(const EShootFailReason FailReason
 	OnBehaviourShootFail.Broadcast(this, FailReason);
 }
 
-void UShooterBehaviourBase::CallAmmoChangeEvent(const UObject* Instigator, int32 CurrentAmmo, int32 MagSize)
+void UShooterBehaviourBase::CallAmmoChangeEvent(const UObject* Instigator, const UMagazine* Magazine, int32 CurrentAmmo, int32 MagSize)
 {
 	if (Instigator != this)
 		return;
-	
+
 	UMagazine* RelatedMagazine = GetRelatedMagazine();
 	OnAmmoChange(RelatedMagazine, CurrentAmmo, MagSize);
 	OnBehaviourAmmoChanged.Broadcast(this, RelatedMagazine, CurrentAmmo, MagSize);
 }
 
-void UShooterBehaviourBase::CallRefillEvent(const UObject* Instigator, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
+void UShooterBehaviourBase::CallRefillEvent(const UObject* Instigator, const UMagazine* Magazine, int32 CurrentAmmo, int32 RefilledAmmo, int32 RemainingAmmo)
 {
 	if (Instigator != this)
 		return;
-	
+
 	UMagazine* RelatedMagazine = GetRelatedMagazine();
 	OnRefill(RelatedMagazine, CurrentAmmo, RefilledAmmo, RemainingAmmo);
 	OnBehaviourRefilled.Broadcast(this, RelatedMagazine, CurrentAmmo, RefilledAmmo, RemainingAmmo);
 }
 
-void UShooterBehaviourBase::CallFullEvent(const UObject* Instigator)
+void UShooterBehaviourBase::CallFullEvent(const UObject* Instigator, const UMagazine* Magazine)
 {
 	if (Instigator != this)
 		return;
-	
+
 	UMagazine* RelatedMagazine = GetRelatedMagazine();
 	OnFull(RelatedMagazine);
 	OnBehaviourFull.Broadcast(this, RelatedMagazine);
 }
 
-void UShooterBehaviourBase::CallEmptyEvent(const UObject* Instigator)
+void UShooterBehaviourBase::CallEmptyEvent(const UObject* Instigator, const UMagazine* Magazine)
 {
 	if (Instigator != this)
 		return;
-	
+
 	UMagazine* RelatedMagazine = GetRelatedMagazine();
 	OnEmpty(RelatedMagazine);
 	OnBehaviourEmpty.Broadcast(this, RelatedMagazine);
@@ -823,7 +823,7 @@ void UShooterBehaviourBase::BindMagazineEvents(UMagazine* Magazine)
 {
 	if (!IsValid(Magazine))
 		return;
-	
+
 	Magazine->OnMagazineAmmoChanged.AddDynamic(this, &UShooterBehaviourBase::CallAmmoChangeEvent);
 	Magazine->OnMagazineRefilled.AddDynamic(this, &UShooterBehaviourBase::CallRefillEvent);
 	Magazine->OnMagazineFull.AddDynamic(this, &UShooterBehaviourBase::CallFullEvent);

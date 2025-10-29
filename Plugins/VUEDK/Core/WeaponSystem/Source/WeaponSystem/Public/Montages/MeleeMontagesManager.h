@@ -16,18 +16,18 @@ class WEAPONSYSTEM_API UMeleeMontagesManager : public UWeaponMontagesManagerBase
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Speeds", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float BaseInterruptSpeed = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Speeds", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float BaseDefenseSpeed = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Speeds", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float BaseAttackSpeed = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Defense", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float DefenseCooldown = .5f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Defense", meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float BaseDefenseSpeed = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Defense")
 	FWeaponMontageData DefensiveMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks")
-	float BaseAttackSpeed = 1.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks")
 	TArray<UWeaponMeleeAttackData*> Attacks;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Interrupt")
-	float BaseInterruptSpeed = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks|Blends")
 	FAlphaBlendArgs StartBlendIn;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Attacks|Blends")

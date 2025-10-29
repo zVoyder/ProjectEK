@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Montages/Data/WeaponMontageData.h"
-#include "WeaponMontagesEventsHandler.generated.h"
+#include "WeaponSystemEventsHandler.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 	FOnAnyMontageBegin,
@@ -19,7 +19,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 );
 
 UCLASS()
-class WEAPONSYSTEM_API UWeaponMontagesEventsHandler : public UWorldSubsystem
+class WEAPONSYSTEM_API UWeaponSystemEventsHandler : public UWorldSubsystem
 {
 	GENERATED_BODY()
 

@@ -76,7 +76,6 @@ void UReloadManager::InsertAmmoInBehaviourOfIndex(const int32 BehaviourIndex)
 	if (RemainingAmmo <= 0)
 		return;
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Inserting ammo into behaviour %d"), BehaviourIndex));
 	const int32 InsertedAmmo = Behaviour->RefillMagazine(RemainingAmmo, RemainingAmmo);
 	OnReloadInsertedAmmo.Broadcast(Behaviour, InsertedAmmo, RemainingAmmo);
 }
@@ -144,9 +143,9 @@ void UReloadManager::EndReloadEvent(const bool bInterrupted)
 {
 	bIsReloading = false;
 	CurrentReloadIndex = 0;
-	StopListeningReloadEndedEvent();
 	OnReloadEnded.Broadcast(CurrentReloadEventData.Request, bInterrupted);
 	CurrentReloadEventData = FReloadEventData();
+	StopListeningReloadEndedEvent();
 }
 
 bool UReloadManager::TryStartReloadMontage(const int32 BehaviourIndex) const
@@ -234,10 +233,7 @@ void UReloadManager::StopListeningReloadEndedEvent()
 void UReloadManager::FillRemainingMagazines()
 {
 	for (const FReloadEntry& Entry : CurrentReloadEventData.Request.Entries)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Filling remaining magazine for behaviour %d"), Entry.BehaviourIndex));
 		InsertAmmoInBehaviourOfIndex(Entry.BehaviourIndex);
-	}
 }
 
 void UReloadManager::OnParallelReloadEnded(const FWeaponMontageData& WeaponMontageData, int32 MontageIndex, bool bInterrupted)

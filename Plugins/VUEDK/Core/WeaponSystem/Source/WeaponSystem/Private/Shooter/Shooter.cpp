@@ -51,7 +51,7 @@ void UShooter::SetupShootBarrel(UShootBarrel* InShootBarrel, const int32 Behavio
 
 bool UShooter::Shoot(const int32 BehaviourIndex) const
 {
-	if (!bCanShootInParallel && IsAnyBehaviourShooting())
+	if (!bCanShootInParallel && IsAnyBehaviourShooting(BehaviourIndex))
 		return false;
 
 	UShooterBehaviourBase* ShooterBehaviour = GetShooterBehaviour(BehaviourIndex);
@@ -114,10 +114,14 @@ UMagazine* UShooter::GetMagazine(const int32 MagazineIndex) const
 	return MagazinesManager->GetMagazine(MagazineIndex);
 }
 
-bool UShooter::IsAnyBehaviourShooting() const
+bool UShooter::IsAnyBehaviourShooting(const int32 IgnoreBehaviourIndex) const
 {
-	for (const auto Behaviour : ShooterBehaviours)
+	for (int32 i = 0; i < ShooterBehaviours.Num(); ++i)
 	{
+		if (i == IgnoreBehaviourIndex)
+			continue;
+
+		const UShooterBehaviourBase* Behaviour = ShooterBehaviours[i];
 		if (!IsValid(Behaviour))
 			continue;
 

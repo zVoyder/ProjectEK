@@ -5,6 +5,7 @@
 #include "Factories/WeaponAnimFactory.h"
 #include "GameFramework/Character.h"
 #include "Montages/Data/WeaponAnimMetaData.h"
+#include "Utility/WeaponSystemEventsHandler.h"
 
 UWeaponMontagesManagerBase::UWeaponMontagesManagerBase() : Weapon(nullptr),
                                                            bIsPlayingEquipMontage(false)
@@ -22,7 +23,7 @@ void UWeaponMontagesManagerBase::Init(AWeaponBase* InWeapon)
 		UActorComponent::SetActive(false);
 		return;
 	}
-	
+
 	SetOwnerAnimInstance();
 	BindEvents();
 }
@@ -69,7 +70,7 @@ void UWeaponMontagesManagerBase::StartWeaponMontageWithBlends(FWeaponMontageData
 	PlayMontageWithBlendInternal(GetWeaponAnimInstance(), WeaponMontageData, WeaponMontageData.GetWeaponMontage(), WeaponPlayRate, WeaponMontageData.bWeaponMontageStopAllMontages, WeaponBlendIn, !bHasCharacterPriority);
 }
 
-void UWeaponMontagesManagerBase::StopWeaponMontage(const FWeaponMontageData& WeaponMontageData)
+void UWeaponMontagesManagerBase::StopWeaponMontage(const FWeaponMontageData& WeaponMontageData) const
 {
 	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
 	if (IsValid(AnimInstance))
@@ -78,12 +79,9 @@ void UWeaponMontagesManagerBase::StopWeaponMontage(const FWeaponMontageData& Wea
 	UAnimInstance* WeaponAnimInstance = GetWeaponAnimInstance();
 	if (IsValid(WeaponAnimInstance))
 		WeaponAnimInstance->Montage_Stop(0.f, WeaponMontageData.GetWeaponMontage());
-
-	RemovePlayingMontage(WeaponMontageData.GetWeaponMontage());
-	RemovePlayingMontage(WeaponMontageData.GetCharacterMontage());
 }
 
-void UWeaponMontagesManagerBase::StopWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut)
+void UWeaponMontagesManagerBase::StopWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut) const
 {
 	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
 	if (IsValid(AnimInstance))
@@ -92,9 +90,6 @@ void UWeaponMontagesManagerBase::StopWeaponMontageWithBlends(const FWeaponMontag
 	UAnimInstance* WeaponAnimInstance = GetWeaponAnimInstance();
 	if (IsValid(WeaponAnimInstance))
 		WeaponAnimInstance->Montage_StopWithBlendOut(WeaponBlendOut, WeaponMontageData.GetWeaponMontage());
-
-	RemovePlayingMontage(WeaponMontageData.GetWeaponMontage());
-	RemovePlayingMontage(WeaponMontageData.GetCharacterMontage());
 }
 
 bool UWeaponMontagesManagerBase::IsPlayingWeaponMontage(const FWeaponMontageData& WeaponMontageData) const
@@ -131,7 +126,7 @@ UAnimInstance* UWeaponMontagesManagerBase::GetWeaponAnimInstance() const
 	const USkeletalMeshComponent* WeaponMesh = Weapon->GetWeaponMesh();
 	if (!IsValid(WeaponMesh))
 		return nullptr;
-	
+
 	return WeaponMesh->GetAnimInstance();
 }
 
@@ -206,13 +201,7 @@ void UWeaponMontagesManagerBase::PlayMontageInternal(UAnimInstance* AnimInstance
 		AnimInstance->Montage_Play(Montage, PlayRate, EMontagePlayReturnType::MontageLength, 0.f, bStopAll);
 
 		if (bRegisterPlayingMontage)
-		{
-			WeaponMontageData.CallBeginEvent(GetWorld());
-			WeaponMontageData.OnMontageEndedDelegate.Unbind();
-			WeaponMontageData.OnMontageEndedDelegate.BindUObject(this, &UWeaponMontagesManagerBase::OnMontageEnded);
-			AnimInstance->Montage_SetEndDelegate(WeaponMontageData.OnMontageEndedDelegate, Montage);
-			AddPlayingMontage(Montage, WeaponMontageData);
-		}
+			RegisterMontageBegin(AnimInstance, WeaponMontageData, Montage);
 	}
 }
 
@@ -222,16 +211,29 @@ void UWeaponMontagesManagerBase::PlayMontageWithBlendInternal(UAnimInstance* Ani
 	{
 		SetWeaponMetaData(Montage);
 		AnimInstance->Montage_PlayWithBlendIn(Montage, BlendIn, PlayRate, EMontagePlayReturnType::MontageLength, 0.f, bStopAll);
-		
+
 		if (bRegisterPlayingMontage)
-		{
-			WeaponMontageData.CallBeginEvent(GetWorld());
-			WeaponMontageData.OnMontageEndedDelegate.Unbind();
-			WeaponMontageData.OnMontageEndedDelegate.BindUObject(this, &UWeaponMontagesManagerBase::OnMontageEnded);
-			AnimInstance->Montage_SetEndDelegate(WeaponMontageData.OnMontageEndedDelegate, Montage);
-			AddPlayingMontage(Montage, WeaponMontageData);
-		}
+			RegisterMontageBegin(AnimInstance, WeaponMontageData, Montage);
 	}
+}
+
+void UWeaponMontagesManagerBase::RegisterMontageBegin(UAnimInstance* AnimInstance, FWeaponMontageData& WeaponMontageData, UAnimMontage* Montage)
+{
+	WeaponMontageData.OnMontageBegin.Broadcast();
+
+	const UWorld* World = GetWorld();
+	if (!IsValid(World))
+		return;
+
+	const UWeaponSystemEventsHandler* EventsHandler = World->GetSubsystem<UWeaponSystemEventsHandler>();
+	if (!IsValid(EventsHandler))
+		return;
+
+	EventsHandler->CallAnyMontageBeginEvent(WeaponMontageData);
+	WeaponMontageData.OnMontageEndedDelegate.Unbind();
+	WeaponMontageData.OnMontageEndedDelegate.BindUObject(this, &UWeaponMontagesManagerBase::OnMontageEnded);
+	AnimInstance->Montage_SetEndDelegate(WeaponMontageData.OnMontageEndedDelegate, Montage);
+	AddPlayingMontage(Montage, WeaponMontageData);
 }
 
 void UWeaponMontagesManagerBase::SetOwnerAnimInstance()
@@ -244,7 +246,7 @@ void UWeaponMontagesManagerBase::SetOwnerAnimInstance()
 		UE_LOG(LogWeaponSystem, Error, TEXT("AWeaponBase::SetOwnerAnimInstance: Weapon has no valid owner. Animations will not be played."));
 		return;
 	}
-	
+
 	if (WeaponOwner->IsA<ACharacter>() && !bUseTag) // If it's a character, get the anim instance from the character
 	{
 		const ACharacter* Character = Cast<ACharacter>(WeaponOwner);
@@ -328,6 +330,13 @@ void UWeaponMontagesManagerBase::OnMontageEnded(UAnimMontage* AnimMontage, bool 
 		return;
 	
 	const FWeaponMontageData& WeaponMontage = PlayingMontages[AnimMontage];
-	WeaponMontage.CallFinishEvent(GetWorld(), bInterrupted);
+	WeaponMontage.OnMontageFinished.Broadcast(bInterrupted);
+	const UWorld* World = GetWorld();
+	if (IsValid(World))
+	{
+		const UWeaponSystemEventsHandler* EventsHandler = World->GetSubsystem<UWeaponSystemEventsHandler>();
+		if (IsValid(EventsHandler))
+			EventsHandler->CallAnyMontageFinishedEvent(WeaponMontage, bInterrupted);
+	}
 	RemovePlayingMontage(AnimMontage);
 }

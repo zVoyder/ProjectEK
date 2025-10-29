@@ -84,7 +84,7 @@ public:
 	UMagazine* GetMagazine(const int32 MagazineIndex = 0) const;
 
 	UFUNCTION(BlueprintPure)
-	bool IsAnyBehaviourShooting() const;
+	bool IsAnyBehaviourShooting(const int32 IgnoreBehaviourIndex = -1) const;
 
 private:
 	void BindEvents() const;

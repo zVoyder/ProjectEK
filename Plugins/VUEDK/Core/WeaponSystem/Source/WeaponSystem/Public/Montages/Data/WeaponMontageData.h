@@ -50,10 +50,6 @@ struct WEAPONSYSTEM_API FWeaponMontageData
 	{
 	}
 
-	void CallBeginEvent(const UWorld* World) const;
-	
-	void CallFinishEvent(const UWorld* World, const bool bInterrupted) const;
-	
 	UAnimMontage* GetWeaponMontage() const
 	{
 		return WeaponMontage.LoadSynchronous();

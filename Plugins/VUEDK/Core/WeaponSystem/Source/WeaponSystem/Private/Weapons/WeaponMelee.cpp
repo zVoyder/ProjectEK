@@ -26,7 +26,13 @@ bool AWeaponMelee::IsWeaponBlocking() const
 
 bool AWeaponMelee::CanDefend_Implementation() const
 {
-	return IsValid(MeleeMontagesManager->DefensiveMontage.GetCharacterMontage());
+	if (!IsValid(MeleeMontagesManager))
+	{
+		UE_LOG(LogWeaponSystem, Warning, TEXT("AWeaponMelee::CanDefend: MeleeMontagesManager is not valid."));
+		return false;
+	}
+	
+	return !MeleeMontagesManager->IsBusy();
 }
 
 bool AWeaponMelee::StartDefense() const
@@ -40,9 +46,6 @@ bool AWeaponMelee::StartDefense() const
 
 bool AWeaponMelee::StopDefense()
 {
-	if (!CanDefend())
-		return false;
-	
 	MeleeMontagesManager->SetWantsToDefend(false);
 	bIsBlockActive = false;
 	return true;
@@ -200,10 +203,7 @@ bool AWeaponMelee::NativeDeployWeaponAttack()
 		return false;
 	}
 	
-	if (MeleeMontagesManager->IsBusy())
-		return false;
-
-	return true;
+	return !MeleeMontagesManager->IsBusy();
 }
 
 void AWeaponMelee::OnAttackPreHit_Implementation(UMeleeHitbox* Hitbox, FHitResult HitResult, float Damage)

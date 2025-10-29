@@ -2,7 +2,7 @@
 
 #include "Montages/FirearmMontagesManager.h"
 #include "WeaponSystem.h"
-#include "Montages/Utility/WeaponMontagesEventsHandler.h"
+#include "Utility/WeaponSystemEventsHandler.h"
 #include "Weapons/WeaponFirearm.h"
 #include "Weapons/Data/WeaponShootData.h"
 
@@ -154,7 +154,7 @@ void UFirearmMontagesManager::BindEvents()
 	if (!IsValid(World))
 		return;
 
-	if (UWeaponMontagesEventsHandler* EventsHandler = World->GetSubsystem<UWeaponMontagesEventsHandler>())
+	if (UWeaponSystemEventsHandler* EventsHandler = World->GetSubsystem<UWeaponSystemEventsHandler>())
 	{
 		EventsHandler->OnAnyMontageBegin.AddUniqueDynamic(this, &UFirearmMontagesManager::HandleAnyMontageBegin);
 		EventsHandler->OnAnyMontageFinished.AddUniqueDynamic(this, &UFirearmMontagesManager::HandleAnyMontageFinished);
@@ -171,7 +171,7 @@ void UFirearmMontagesManager::UnbindEvents()
 	if (!IsValid(World))
 		return;
 
-	if (UWeaponMontagesEventsHandler* EventsHandler = World->GetSubsystem<UWeaponMontagesEventsHandler>())
+	if (UWeaponSystemEventsHandler* EventsHandler = World->GetSubsystem<UWeaponSystemEventsHandler>())
 	{
 		EventsHandler->OnAnyMontageBegin.RemoveDynamic(this, &UFirearmMontagesManager::HandleAnyMontageBegin);
 		EventsHandler->OnAnyMontageFinished.RemoveDynamic(this, &UFirearmMontagesManager::HandleAnyMontageFinished);
@@ -241,7 +241,7 @@ void UFirearmMontagesManager::GetReloadPlayRates(const FWeaponMontageData& Weapo
 
 void UFirearmMontagesManager::HandleAnyMontageBegin(const FWeaponMontageData& WeaponMontageData)
 {
-	int32 Index = 0;
+	int32 Index;
 
 	if (ShootSuccessMontages.Contains(WeaponMontageData))
 	{
@@ -267,7 +267,7 @@ void UFirearmMontagesManager::HandleAnyMontageBegin(const FWeaponMontageData& We
 
 void UFirearmMontagesManager::HandleAnyMontageFinished(const FWeaponMontageData& WeaponMontageData, bool bInterrupted)
 {
-	int32 Index = 0;
+	int32 Index;
 
 	if (ShootSuccessMontages.Contains(WeaponMontageData))
 	{

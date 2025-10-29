@@ -64,9 +64,9 @@ TSubclassOf<UDamageType> UMeleeHitbox::GetDamageType() const
 		return UDamageType::StaticClass();
 
 	if (DamageProcessor->bUseCustomDamageType)
-		return DamageProcessor->CustomDamageType;
+		return DamageProcessor->GetDamageType();
 	
-	return UDamageType::StaticClass();
+	return WeaponMelee->WeaponMeleeData.DamageTypeClass;
 }
 
 AWeaponMelee* UMeleeHitbox::GetWeaponMelee() const

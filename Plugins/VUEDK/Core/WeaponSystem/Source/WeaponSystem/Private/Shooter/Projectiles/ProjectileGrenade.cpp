@@ -27,7 +27,6 @@ bool AProjectileGrenade::CanExplodeOnActor(const AActor* Actor) const
 	if (IsValid(ActorComponent))
 	{
 		const ECollisionChannel ActorChannel = ActorComponent->GetCollisionObjectType();
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Actor: %s, Channel: %d"), *Actor->GetName(), static_cast<int32>(ActorChannel)));
 		if ((ExplodeOnHitChannelMask & (1 << ActorChannel)) != 0)
 			return true;
 	}

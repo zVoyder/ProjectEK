@@ -549,6 +549,7 @@ void UShooterBehaviourBase::HandleShoot()
 			HandleSequentialShoot();
 			break;
 		}
+	default: ;
 	}
 }
 
@@ -557,8 +558,8 @@ void UShooterBehaviourBase::DeployShoot(UShootPoint* ShootPoint) const
 	const FVector ShooterTargetLocation = GetShooterTargetLocation();
 	const FVector DirectionToTarget = (ShooterTargetLocation - ShootPoint->GetShootPointLocation()).GetSafeNormal();
 	ShootPoint->GenerateSpreadDegree(GetSpread());
-	const FVector DirectionToTargetSpreaded = DirectionToTarget + FMath::VRandCone(DirectionToTarget, ShootPoint->GetSpreadRad());
-	OnDeployShoot(ShootPoint, ShooterTargetLocation, DirectionToTarget, DirectionToTargetSpreaded);
+	const FVector DirectionToTargetSpread = DirectionToTarget + FMath::VRandCone(DirectionToTarget, ShootPoint->GetSpreadRad());
+	OnDeployShoot(ShootPoint, ShooterTargetLocation, DirectionToTarget, DirectionToTargetSpread);
 }
 
 void UShooterBehaviourBase::ShootSuccess()
@@ -568,7 +569,7 @@ void UShooterBehaviourBase::ShootSuccess()
 		UE_LOG(LogShooter, Error, TEXT("ShootSuccess::Shooter in %s is null."), *GetName());
 		return;
 	}
-
+	
 	bIsShooting = true;
 	CallShootSuccessEvent();
 	CooldownHandler->StartCooldown();

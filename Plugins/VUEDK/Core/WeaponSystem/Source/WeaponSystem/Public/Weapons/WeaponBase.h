@@ -173,38 +173,38 @@ protected:
 	virtual bool NativeDeployWeaponAttack();
 
 	/**
-	 * Called to deploy a weapon attack. Can be overridden in Blueprint.
+	 * Called to deploy a weapon attack.
 	 * @return true if the attack was deployed successfully, false otherwise.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	bool DeployWeaponAttack();
 
 	/**
-	 * Called when a weapon attack ends. Can be overridden in Blueprint.
+	 * Called when a weapon attack ends.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnEndWeaponAttack();
 
 	/**
-	 * Called when a weapon attack is successful. Can be overridden in Blueprint.
+	 * Called when a weapon attack is successful.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnWeaponAttackSuccess();
 
 	/**
-	 * Called when a weapon attack fails. Can be overridden in Blueprint.
+	 * Called when a weapon attack fails.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnWeaponAttackFail();
 
 	/**
-	 * Called when the weapon is equipped. Can be overridden in Blueprint.
+	 * Called when the weapon is equipped.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnWeaponEquipped();
 
 	/**
-	 * Called when the weapon is unequipped. Can be overridden in Blueprint.
+	 * Called when the weapon is unequipped.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void OnWeaponUnequipped();

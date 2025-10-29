@@ -4,7 +4,7 @@
 
 TSubclassOf<UDamageType> UMeleeHitboxDamageProcessor::GetDamageType() const
 {
-	if (bUseCustomDamageType && CustomDamageType != nullptr)
+	if (bUseCustomDamageType)
 		return CustomDamageType;
 	
 	return UDamageType::StaticClass();

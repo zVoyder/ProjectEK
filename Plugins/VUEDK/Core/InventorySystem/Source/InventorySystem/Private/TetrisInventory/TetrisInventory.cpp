@@ -40,7 +40,7 @@ UTetrisSlot* UTetrisInventory::GetSlot(const FIntPoint SlotPosition) const
 {
 	if (!IsValidSlotPosition(SlotPosition))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Invalid slot position."));
+		UE_LOG(LogInventorySystem, Warning, TEXT("UTetrisInventory::GetSlot: Invalid SlotPosition (%d, %d)."), SlotPosition.X, SlotPosition.Y);
 		return nullptr;
 	}
 

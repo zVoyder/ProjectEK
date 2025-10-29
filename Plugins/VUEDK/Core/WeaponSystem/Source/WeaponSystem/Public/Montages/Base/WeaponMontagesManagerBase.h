@@ -49,9 +49,9 @@ public:
 	
 	void StartWeaponMontageWithBlends(FWeaponMontageData& WeaponMontageData, float WeaponPlayRate, float CharacterPlayRate, const FAlphaBlendArgs& WeaponBlendIn, const FAlphaBlendArgs& CharacterBlendIn);
 
-	void StopWeaponMontage(const FWeaponMontageData& WeaponMontageData);
+	void StopWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
 
-	void StopWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut);
+	void StopWeaponMontageWithBlends(const FWeaponMontageData& WeaponMontageData, const FAlphaBlendArgs& WeaponBlendOut, const FAlphaBlendArgs& CharacterBlendOut) const;
 
 	bool IsPlayingWeaponMontage(const FWeaponMontageData& WeaponMontageData) const;
 
@@ -99,10 +99,12 @@ private:
 	void AddPlayingMontage(UAnimMontage* Montage, const FWeaponMontageData& WeaponMontageData);
 	
 	void RemovePlayingMontage(const UAnimMontage* Montage);
-	
+
 	void PlayMontageInternal(UAnimInstance* AnimInstance, FWeaponMontageData& WeaponMontageData, UAnimMontage* Montage, float PlayRate, bool bStopAll, bool bRegisterPlayingMontage = true);
 
 	void PlayMontageWithBlendInternal(UAnimInstance* AnimInstance, FWeaponMontageData& WeaponMontageData, UAnimMontage* Montage, float PlayRate, bool bStopAll, const FAlphaBlendArgs& BlendIn, bool bRegisterPlayingMontage = true);
+
+	void RegisterMontageBegin(UAnimInstance* AnimInstance, FWeaponMontageData& WeaponMontageData, UAnimMontage* Montage);
 	
 	void SetOwnerAnimInstance();
 	

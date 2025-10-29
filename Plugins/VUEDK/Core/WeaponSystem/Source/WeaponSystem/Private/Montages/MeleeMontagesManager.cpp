@@ -16,7 +16,7 @@ void UMeleeMontagesManager::TickComponent(float DeltaTime, enum ELevelTick TickT
 
 bool UMeleeMontagesManager::IsBusy_Implementation() const
 {
-	return Super::IsBusy_Implementation() || IsMontageDefending() || IsMontageInterrupting();
+	return Super::IsBusy_Implementation() || IsMontageDefending() || IsMontageInterrupting() || IsMontageAttacking();
 }
 
 void UMeleeMontagesManager::SetAttackSpeedMultiplier(const float Multiplier)
@@ -283,10 +283,7 @@ void UMeleeMontagesManager::EndAttackSequence()
 
 void UMeleeMontagesManager::PlayDefensiveMontage()
 {
-	if (bIsDefenseInCooldown || bIsAttacking || bWantsToAttack)
-		return;
-
-	if (IsMontageDefending())
+	if (bIsDefenseInCooldown)
 		return;
 
 	if (!IsValid(DefensiveMontage.GetCharacterMontage()))

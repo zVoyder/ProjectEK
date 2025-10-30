@@ -21,9 +21,6 @@ protected:
 	UPROPERTY()
 	UShooterBehaviourBase* Behaviour;
 
-private:
-	bool bIsInitialized = false;
-
 public:
 	void Init(UShooterBehaviourBase* InBehaviour);
 	

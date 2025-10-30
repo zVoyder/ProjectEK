@@ -22,7 +22,7 @@ void UMenuWidget::Init(UMenuManager* InMenuManager)
 {
 	if (!IsValid(InMenuManager))
 	{
-		UE_LOG(LogBetterUI, Warning, TEXT("UMenuWidget::Init: MenuManager is not valid!"));
+		UE_LOG(LogBetterUI, Warning, TEXT("UMenuWidget::Init: MenuManager is not valid."));
 		return;
 	}
 

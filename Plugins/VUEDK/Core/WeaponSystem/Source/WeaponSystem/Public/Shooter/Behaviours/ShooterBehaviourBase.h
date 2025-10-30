@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Handlers/ShootModesHandler.h"
 #include "Shooter/ShootBarrel.h"
 #include "Shooter/ShootPoint.h"
 #include "Shooter/Data/ShootData.h"
@@ -124,11 +125,11 @@ private:
 	UPROPERTY()
 	USpreadHandler* SpreadHandler;
 	UPROPERTY()
+	UShootModesHandler* ShootModesHandler;
+	UPROPERTY()
 	UShootBarrel* ShootBarrel;
-	int32 ShotsFired;
 	int32 CurrentShootPointIndex;
 	bool bIsBehaviourActive;
-	bool bIsShooting;
 
 	// Cached Stats
 	float CurrentDamage;
@@ -170,23 +171,17 @@ public:
 	void DisableBehaviour();
 
 	/**
-	 * Executes the shoot action.
-	 * @return True if the shoot was successful, false otherwise.
+	 * Requests a shoot action.
+	 * @return True if request was successful, false otherwise.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
 	bool Shoot();
 
 	/**
-	 * Resets the cooldown of the shooter behaviour.
-	 */
-	UFUNCTION(BlueprintCallable)
-	void ResetCooldown() const;
-
-	/**
 	 * Ends the current shoot sequence.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void EndShootSequence();
+	void EndShootSequence() const;
 
 	/**
 	 * Resets the spread of the shooter behaviour.
@@ -308,6 +303,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ChangeMagazine(const int32 NewMagazineIndex);
 
+	UFUNCTION(BlueprintCallable)
+	void ChangeShootMode(const int32 NewShootModeIndex) const;
+
 	UFUNCTION(BlueprintPure)
 	bool IsBehaviourActive() const;
 
@@ -389,20 +387,26 @@ public:
 	EShootType GetShootType() const;
 
 	UFUNCTION(BlueprintPure)
+	UMagazine* GetRelatedMagazine() const;
+
+	UFUNCTION(BlueprintPure)
+	int32 GetShootModeIndex() const;
+
+	UFUNCTION(BlueprintPure)
+	UShootMode* GetShootMode() const;
+
+	UFUNCTION(BlueprintPure)
 	TEnumAsByte<ECollisionChannel> GetSightTraceChannel() const;
 
 	UFUNCTION(BlueprintPure)
 	TSubclassOf<UDamageType> GetDamageTypeClass() const;
 
-	UFUNCTION(BlueprintPure)
-	UMagazine* GetRelatedMagazine() const;
-
 	/**
-	 * Gets the number of shots fired by the shooter behaviour.
-	 * @return The number of shots fired.
+	 * Gets the number of handled shoot requests.
+	 * @return The count of handled shoot requests.
 	 */
 	UFUNCTION(BlueprintPure)
-	int32 GetShotsFired() const;
+	int32 GetShootHandledRequestsCount() const;
 
 	UFUNCTION(BlueprintPure)
 	UCooldownHandler* GetCooldownHandler() const;
@@ -415,6 +419,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ResetAll();
+
+	/**
+	 * Resets the cooldown of the shooter behaviour.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void ResetCooldown() const;
 
 	UFUNCTION(BlueprintCallable)
 	void ResetDamage();
@@ -446,6 +456,11 @@ public:
 	virtual bool ImplementsGetWorld() const override;
 #endif
 
+	/**
+     * Deploys the shoot action based on the current shoot type.
+     */
+	virtual void DeployShootOfType();
+
 protected:
 	/**
  	 * Tries to get the camera start, end, and hit points, as well as the rotation.
@@ -470,11 +485,6 @@ protected:
 	bool IsInLineOfSight(const FVector& StartPoint, const FVector& TargetPoint, const float Tolerance = 50.0f) const;
 
 	/**
-	 * Handles the shoot logic of the shooter behaviour.
-	 */
-	virtual void HandleShoot();
-
-	/**
 	 * Deploys the shoot action to the specified shoot point.
 	 * @param ShootPoint The shoot point to deploy the shoot action to.
 	 */
@@ -483,7 +493,7 @@ protected:
 	/**
 	 * Called when the shoot is successful.
 	 */
-	void ShootSuccess();
+	void ShootSuccess(const int32 RequestIndex);
 
 	/**
 	 * Called when the shoot fails.
@@ -555,7 +565,7 @@ protected:
 	 * @return Return true if the shoot can proceed, false otherwise.
 	 */
 	UFUNCTION(BlueprintNativeEvent)
-	bool OnShootCondition(UShootBarrel* OutShootBarrel) const;
+	bool GetShootCondition(UShootBarrel* OutShootBarrel) const;
 
 	/**
 	 * Called when the ammo in the magazine changes.
@@ -625,9 +635,10 @@ private:
 
 	void CallDisableEvent();
 
-	void CallEndShootSequenceEvent();
+	UFUNCTION()
+	void CallShootSequenceEndEvent();
 
-	void CallShootSuccessEvent();
+	void CallShootSuccessEvent(const int32 RequestIndex);
 
 	void CallShootFailEvent(EShootFailReason FailReason);
 
@@ -646,4 +657,7 @@ private:
 	void BindMagazineEvents(UMagazine* Magazine);
 
 	void UnbindMagazineEvents(UMagazine* Magazine);
+
+	UFUNCTION()
+	void OnHandleShootRequest(int32 RequestIndex, UShootMode* ShootMode, bool bDeployShoot, bool bSuccess);
 };

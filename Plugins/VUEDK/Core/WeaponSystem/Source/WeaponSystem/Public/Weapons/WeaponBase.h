@@ -14,11 +14,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(
 );
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(
-	FOnWeaponAttackFail
+	FOnWeaponAttackFailed
 );
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(
-	FOnEndWeaponAttack
+	FOnWeaponAttackEnded
 );
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(
@@ -36,11 +36,11 @@ class WEAPONSYSTEM_API AWeaponBase : public AActor
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnWeaponAttackSuccess OnWeaponAttackSuccessEvent;
+	FOnWeaponAttackSuccess OnWeaponAttacked;
 	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnWeaponAttackFail OnWeaponAttackFailEvent;
+	FOnWeaponAttackFailed OnWeaponAttackFailed;
 	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnEndWeaponAttack OnEndWeaponAttackEvent;
+	FOnWeaponAttackEnded OnWeaponAttackEnded;
 	UPROPERTY(BlueprintAssignable, Category = Events)
 	FOnWeaponEquipped OnWeaponEquippedEvent;
 	UPROPERTY(BlueprintAssignable, Category = Events)

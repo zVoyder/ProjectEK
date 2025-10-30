@@ -79,13 +79,13 @@ bool AWeaponBase::WeaponAttack()
 	{
 		bIsWeaponAttacking = true;
 		OnWeaponAttackSuccess();
-		OnWeaponAttackSuccessEvent.Broadcast();
+		OnWeaponAttacked.Broadcast();
 		return true;
 	}
 
 	bIsWeaponAttacking = false;
 	OnWeaponAttackFail();
-	OnWeaponAttackFailEvent.Broadcast();
+	OnWeaponAttackFailed.Broadcast();
 	return false;
 }
 
@@ -93,7 +93,7 @@ void AWeaponBase::EndWeaponAttack()
 {
 	bIsWeaponAttacking = false;
 	OnEndWeaponAttack();
-	OnEndWeaponAttackEvent.Broadcast();
+	OnWeaponAttackEnded.Broadcast();
 }
 
 void AWeaponBase::SetPayload(UObject* InPayload)

@@ -16,7 +16,7 @@ UCoreStatData* URPGInventoriesUtility::GetItemStatByID(const FGuid StatID)
 
 	if (!IsValid(InventoriesManager))
 	{
-		UE_LOG(LogTemp, Error, TEXT("URPGInventoriesUtility::GetRarityByID: RPGInventoriesManager is not valid!"));
+		UE_LOG(LogTemp, Error, TEXT("URPGInventoriesUtility::GetRarityByID: RPGInventoriesManager is not valid."));
 		return nullptr;
 	}
 

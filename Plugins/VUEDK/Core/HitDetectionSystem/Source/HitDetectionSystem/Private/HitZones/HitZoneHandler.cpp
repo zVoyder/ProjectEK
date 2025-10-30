@@ -10,7 +10,7 @@ void UHitZoneHandler::Init(AActor* InOwner, UPrimitiveComponent* InHitBox)
 
 	if (!Check())
 	{
-		UE_LOG(LogHitDetectionSystem, Warning, TEXT("UHitBoxHandler::Init: Owner is not valid!"));
+		UE_LOG(LogHitDetectionSystem, Warning, TEXT("UHitBoxHandler::Init: Owner is not valid."));
 		return;
 	}
 

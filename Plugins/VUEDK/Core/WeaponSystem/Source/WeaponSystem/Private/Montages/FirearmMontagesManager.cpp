@@ -17,8 +17,8 @@ void UFirearmMontagesManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	if (!Check())
 		return;
 
-	WeaponFirearm->OnWeaponAttackSuccessEvent.RemoveDynamic(this, &UFirearmMontagesManager::OnWeaponAttackSuccess);
-	WeaponFirearm->OnWeaponAttackFailEvent.RemoveDynamic(this, &UFirearmMontagesManager::OnWeaponAttackFail);
+	WeaponFirearm->OnWeaponAttacked.RemoveDynamic(this, &UFirearmMontagesManager::OnWeaponAttackSuccess);
+	WeaponFirearm->OnWeaponAttackFailed.RemoveDynamic(this, &UFirearmMontagesManager::OnWeaponAttackFail);
 }
 
 void UFirearmMontagesManager::PlayReloadMontage(const int32 MontageIndex)

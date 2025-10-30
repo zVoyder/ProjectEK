@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ShooterHandlerBase.h"
+#include "Base/ShooterHandlerBase.h"
 #include "UObject/Object.h"
 #include "RecoilHandler.generated.h"
 

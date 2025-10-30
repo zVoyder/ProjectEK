@@ -7,6 +7,7 @@
 #include "ShootType.h"
 #include "Curves/CurveVector.h"
 #include "Engine/DataAsset.h"
+#include "Shooter/Behaviours/ShootModes/Base/ShootMode.h"
 #include "ShootData.generated.h"
 
 UCLASS(Blueprintable, BlueprintType)
@@ -34,6 +35,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General", meta = (ClampMin = "0", UIMin = "0", ToolTip = "Maximum effective range of the weapon in meters."))
 	float MaxRange = 10000.f;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced, Category = "Modes")
+	TArray<UShootMode*> ShootModes;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Recoil")
 	bool bHasRecoil = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Recoil", meta = (EditCondition = "bHasRecoil", EditConditionHides, ClampMin = "0", UIMin = "0", ClampMax = "1", UIMax = "1"))
@@ -55,4 +59,17 @@ public:
 	float SpreadRecoveryRate = 15.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spread", meta = (EditCondition = "bHasSpread", EditConditionHides, ToolTip = "Curve defines spread per shot (X = shot index, Y = spread value)."))
 	UCurveFloat* SpreadCurve = nullptr;
+
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override
+	{
+		Super::PostEditChangeProperty(PropertyChangedEvent);
+
+		if (ShootModes.Num() == 0)
+		{
+			UShootMode* DefaultShootMode = NewObject<UShootMode>(this, UShootMode::StaticClass(), TEXT("DefaultShootMode"));
+			ShootModes.Add(DefaultShootMode);
+		}
+	}
+#endif
 };

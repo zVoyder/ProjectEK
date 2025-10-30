@@ -150,18 +150,18 @@ void UWeaponMontagesManagerBase::SetupWeapons(AWeaponBase* InWeapon)
 
 void UWeaponMontagesManagerBase::BindEvents()
 {
-	Weapon->OnWeaponAttackSuccessEvent.AddDynamic(this, &UWeaponMontagesManagerBase::OnWeaponAttackSuccess);
-	Weapon->OnWeaponAttackFailEvent.AddDynamic(this, &UWeaponMontagesManagerBase::OnWeaponAttackFail);
-	Weapon->OnEndWeaponAttackEvent.AddDynamic(this, &UWeaponMontagesManagerBase::OnWeaponEndAttack);
+	Weapon->OnWeaponAttacked.AddDynamic(this, &UWeaponMontagesManagerBase::OnWeaponAttackSuccess);
+	Weapon->OnWeaponAttackFailed.AddDynamic(this, &UWeaponMontagesManagerBase::OnWeaponAttackFail);
+	Weapon->OnWeaponAttackEnded.AddDynamic(this, &UWeaponMontagesManagerBase::OnWeaponEndAttack);
 	Weapon->OnWeaponEquippedEvent.AddDynamic(this, &UWeaponMontagesManagerBase::OnWeaponEquipped);
 	Weapon->OnWeaponUnequippedEvent.AddDynamic(this, &UWeaponMontagesManagerBase::OnWeaponUnequipped);
 }
 
 void UWeaponMontagesManagerBase::UnbindEvents()
 {
-	Weapon->OnWeaponAttackSuccessEvent.RemoveDynamic(this, &UWeaponMontagesManagerBase::OnWeaponAttackSuccess);
-	Weapon->OnWeaponAttackFailEvent.RemoveDynamic(this, &UWeaponMontagesManagerBase::OnWeaponAttackFail);
-	Weapon->OnEndWeaponAttackEvent.RemoveDynamic(this, &UWeaponMontagesManagerBase::OnWeaponEndAttack);
+	Weapon->OnWeaponAttacked.RemoveDynamic(this, &UWeaponMontagesManagerBase::OnWeaponAttackSuccess);
+	Weapon->OnWeaponAttackFailed.RemoveDynamic(this, &UWeaponMontagesManagerBase::OnWeaponAttackFail);
+	Weapon->OnWeaponAttackEnded.RemoveDynamic(this, &UWeaponMontagesManagerBase::OnWeaponEndAttack);
 	Weapon->OnWeaponEquippedEvent.RemoveDynamic(this, &UWeaponMontagesManagerBase::OnWeaponEquipped);
 	Weapon->OnWeaponUnequippedEvent.RemoveDynamic(this, &UWeaponMontagesManagerBase::OnWeaponUnequipped);
 }

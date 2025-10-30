@@ -1,6 +1,6 @@
 // Copyright VUEDK, Inc. All Rights Reserved.
 
-#include "Shooter/Behaviours/Handlers/ShooterHandlerBase.h"
+#include "Shooter/Behaviours/Handlers/Base/ShooterHandlerBase.h"
 #include "Shooter/Shooter.h"
 
 void UShooterHandlerBase::Init(UShooterBehaviourBase* InBehaviour)
@@ -13,7 +13,6 @@ void UShooterHandlerBase::Init(UShooterBehaviourBase* InBehaviour)
 		return;
 	}
 	
-	bIsInitialized = true;
 	BindEvents();
 	OnInit();
 }
@@ -73,5 +72,5 @@ UShootData* UShooterHandlerBase::GetShootData() const
 
 bool UShooterHandlerBase::Check() const
 {
-	return bIsInitialized;
+	return IsValid(Behaviour) && IsValid(Behaviour->ShootData);
 }

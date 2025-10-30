@@ -51,7 +51,7 @@ bool UInventoriesManager::Check() const
 	const bool bIsValid = Registry != nullptr;
 
 	if (!bIsValid)
-		UE_LOG(LogInventorySystem, Error, TEXT("Inventory registry is not valid!"));
+		UE_LOG(LogInventorySystem, Error, TEXT(" UInventoriesManager::Check: Inventory registry is not valid."));
 
 	return bIsValid;
 }

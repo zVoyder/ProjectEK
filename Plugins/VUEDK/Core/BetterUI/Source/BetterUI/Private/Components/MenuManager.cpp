@@ -99,7 +99,7 @@ UMenuWidget* UMenuManager::GetMenuByTag(const FGameplayTag Tag) const
 {
 	if (!MenuMap.Contains(Tag))
 	{
-		UE_LOG(LogBetterUI, Warning, TEXT("UMenuManager::GetMenuByTag: Menu with tag %s not found!"), *Tag.ToString());
+		UE_LOG(LogBetterUI, Warning, TEXT("UMenuManager::GetMenuByTag: Menu with tag %s not found."), *Tag.ToString());
 		return nullptr;
 	}
 
@@ -110,7 +110,7 @@ bool UMenuManager::IsMenuOpen(const FGameplayTag Tag) const
 {
 	if (!MenuMap.Contains(Tag))
 	{
-		UE_LOG(LogBetterUI, Warning, TEXT("UMenuManager::IsMenuOpen: Menu with tag %s not found!"), *Tag.ToString());
+		UE_LOG(LogBetterUI, Warning, TEXT("UMenuManager::IsMenuOpen: Menu with tag %s not found."), *Tag.ToString());
 		return false;
 	}
 

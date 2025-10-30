@@ -24,8 +24,8 @@ void URecoilHandler::ApplyRecoilImpulse()
 	if (!ShootData->bHasRecoil || !IsValid(ShootData->RecoilCurve))
 		return;
 
-	const float RecoilPitch = ShootData->RecoilCurve->GetVectorValue(Behaviour->GetShotsFired()).Y;
-	const float RecoilYaw = ShootData->RecoilCurve->GetVectorValue(Behaviour->GetShotsFired()).Z;
+	const float RecoilPitch = ShootData->RecoilCurve->GetVectorValue(Behaviour->GetShootHandledRequestsCount()).Y;
+	const float RecoilYaw = ShootData->RecoilCurve->GetVectorValue(Behaviour->GetShootHandledRequestsCount()).Z;
 	ImpulseRecoil = FRotator(RecoilPitch, RecoilYaw, 0.0f);
 	RecoilRemaining = ShootData->RecoilDuration;
 }

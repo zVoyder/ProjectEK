@@ -77,7 +77,7 @@ bool UISInventoriesUtility::DropItemWithOperation(UItemBase* Item)
 
 	if (!IsValid(Settings))
 	{
-		UE_LOG(LogInventorySystem, Error, TEXT("UISInventoriesUtility::DropItemWithOperation: UInventorySystemSettings is not valid!"));
+		UE_LOG(LogInventorySystem, Error, TEXT("UISInventoriesUtility::DropItemWithOperation: UInventorySystemSettings is not valid."));
 		return false;
 	}
 
@@ -85,7 +85,7 @@ bool UISInventoriesUtility::DropItemWithOperation(UItemBase* Item)
 
 	if (!DropOperationClass)
 	{
-		UE_LOG(LogInventorySystem, Error, TEXT("UISInventoriesUtility::DropItemWithOperation: ItemsDropOperationClass is not set!"));
+		UE_LOG(LogInventorySystem, Error, TEXT("UISInventoriesUtility::DropItemWithOperation: ItemsDropOperationClass is not set."));
 		return false;
 	}
 
@@ -93,7 +93,7 @@ bool UISInventoriesUtility::DropItemWithOperation(UItemBase* Item)
 
 	if (!IsValid(DropOperation))
 	{
-		UE_LOG(LogInventorySystem, Error, TEXT("UISInventoriesUtility::DropItemWithOperation: DropOperation is not valid!"));
+		UE_LOG(LogInventorySystem, Error, TEXT("UISInventoriesUtility::DropItemWithOperation: DropOperation is not valid."));
 		return false;
 	}
 
@@ -104,7 +104,7 @@ bool UISInventoriesUtility::Check()
 {
 	if (!IsValid(InventoriesManager))
 	{
-		UE_LOG(LogInventorySystem, Error, TEXT("InventoriesManager is not valid!"));
+		UE_LOG(LogInventorySystem, Error, TEXT("InventoriesManager is not valid."));
 		return false;
 	}
 

@@ -26,7 +26,7 @@ bool UDropItemOperation::TryDropItemAroundActor(UItemBase* Item, AActor* Actor, 
 {
 	if (!IsValid(Item) || !IsValid(Actor))
 	{
-		UE_LOG(LogInventorySystem, Error, TEXT("TryDropItemAroundActor: Item or Actor is not valid!"));
+		UE_LOG(LogInventorySystem, Error, TEXT("TryDropItemAroundActor: Item or Actor is not valid."));
 		return false;
 	}
 	
@@ -48,7 +48,7 @@ bool UDropItemOperation::TryDropItemAroundPlayer(UItemBase* Item, AItemDropActor
 
 	if (!IsValid(PlayerPawn))
 	{
-		UE_LOG(LogInventorySystem, Error, TEXT("TryDropItemAroundPlayer: PlayerPawn is not valid!"));
+		UE_LOG(LogInventorySystem, Error, TEXT("UDropItemOperation::TryDropItemAroundPlayer: PlayerPawn is not valid."));
 		return false;
 	}
 

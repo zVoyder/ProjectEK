@@ -59,7 +59,7 @@ void USpreadHandler::AddDynamicSpreadWithCurve()
 		return;
 	
 	AddDynamicSpread( 
-		ShootData->SpreadCurve->GetFloatValue(Behaviour->GetShotsFired()),
+		ShootData->SpreadCurve->GetFloatValue(Behaviour->GetShootHandledRequestsCount()),
 		ShootData->SpreadChangeRate,
 		ShootData->SpreadRecoveryRate
 	);

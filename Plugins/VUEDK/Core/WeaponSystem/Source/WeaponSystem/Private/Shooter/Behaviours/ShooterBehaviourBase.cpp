@@ -20,8 +20,8 @@ void UShooterBehaviourBase::Init(UShooter* InShooter)
 	}
 
 	Shooter = InShooter;
-	ResetAll();
 	CreateHandlers();
+	ResetAll();
 	EnableBehaviour();
 	OnInit();
 }
@@ -40,9 +40,12 @@ void UShooterBehaviourBase::SetupShootBarrel(UShootBarrel* InShootBarrel)
 
 void UShooterBehaviourBase::CreateHandlers()
 {
-	RecoilHandler = UHandlersFactory::CreateRecoilHandler(this);
-	CooldownHandler = UHandlersFactory::CreateCooldownHandler(this);
-	SpreadHandler = UHandlersFactory::CreateSpreadHandler(this);
+	RecoilHandler = UHandlersFactory::CreateHandler<URecoilHandler>(this);
+	CooldownHandler = UHandlersFactory::CreateHandler<UCooldownHandler>(this);
+	SpreadHandler = UHandlersFactory::CreateHandler<USpreadHandler>(this);
+	ShootModesHandler = UHandlersFactory::CreateHandler<UShootModesHandler>(this);
+	ShootModesHandler->OnShootRequestHandled.AddDynamic(this, &UShooterBehaviourBase::OnHandleShootRequest);
+	ShootModesHandler->OnShootSequenceEnded.AddDynamic(this, &UShooterBehaviourBase::CallShootSequenceEndEvent);
 }
 
 void UShooterBehaviourBase::SetOwner(APawn* InOwner)
@@ -117,30 +120,19 @@ bool UShooterBehaviourBase::Shoot()
 		return false;
 	}
 
-	if (!OnShootCondition(ShootBarrel))
+	if (!GetShootCondition(ShootBarrel))
 	{
 		ShootFail(EShootFailReason::Condition);
 		return false;
 	}
 
-	HandleShoot();
-	ShootSuccess();
+	ShootModesHandler->RequestShoot(CurrentShootType);
 	return true;
 }
 
-void UShooterBehaviourBase::ResetCooldown() const
+void UShooterBehaviourBase::EndShootSequence() const
 {
-	CooldownHandler->ResetCooldown();
-}
-
-void UShooterBehaviourBase::EndShootSequence()
-{
-	if (ShotsFired <= 0 || !bIsShooting)
-		return;
-
-	bIsShooting = false;
-	ShotsFired = 0;
-	CallEndShootSequenceEvent();
+	ShootModesHandler->EndSequence();
 }
 
 void UShooterBehaviourBase::ResetSpread(const float ChangeRate) const
@@ -255,6 +247,11 @@ void UShooterBehaviourBase::ChangeMagazine(const int32 NewMagazineIndex)
 	BindMagazineEvents(NewMagazine);
 }
 
+void UShooterBehaviourBase::ChangeShootMode(const int32 NewShootModeIndex) const
+{
+	ShootModesHandler->SetModeIndex(NewShootModeIndex);
+}
+
 bool UShooterBehaviourBase::IsBehaviourActive() const
 {
 	return bIsBehaviourActive;
@@ -262,7 +259,7 @@ bool UShooterBehaviourBase::IsBehaviourActive() const
 
 bool UShooterBehaviourBase::IsShooting() const
 {
-	return bIsShooting;
+	return ShootModesHandler->IsProcessingRequest();
 }
 
 bool UShooterBehaviourBase::IsMagazineEmpty() const
@@ -351,6 +348,27 @@ EShootType UShooterBehaviourBase::GetShootType() const
 	return CurrentShootType;
 }
 
+UMagazine* UShooterBehaviourBase::GetRelatedMagazine() const
+{
+	if (!IsValid(Shooter))
+	{
+		UE_LOG(LogShooter, Error, TEXT("UShooterBehaviourBase::GetRelatedMagazine: Shooter in %s is null."), *GetName());
+		return nullptr;
+	}
+
+	return Shooter->GetMagazine(CurrentMagazineIndex);
+}
+
+int32 UShooterBehaviourBase::GetShootModeIndex() const
+{
+	return ShootModesHandler->GetModeIndex();
+}
+
+UShootMode* UShooterBehaviourBase::GetShootMode() const
+{
+	return ShootModesHandler->GetShootMode();
+}
+
 TEnumAsByte<ECollisionChannel> UShooterBehaviourBase::GetSightTraceChannel() const
 {
 	if (!IsValid(ShootData))
@@ -373,20 +391,9 @@ TSubclassOf<UDamageType> UShooterBehaviourBase::GetDamageTypeClass() const
 	return ShootData->DamageTypeClass;
 }
 
-UMagazine* UShooterBehaviourBase::GetRelatedMagazine() const
+int32 UShooterBehaviourBase::GetShootHandledRequestsCount() const
 {
-	if (!IsValid(Shooter))
-	{
-		UE_LOG(LogShooter, Error, TEXT("UShooterBehaviourBase::GetRelatedMagazine: Shooter in %s is null."), *GetName());
-		return nullptr;
-	}
-
-	return Shooter->GetMagazine(CurrentMagazineIndex);
-}
-
-int32 UShooterBehaviourBase::GetShotsFired() const
-{
-	return ShotsFired;
+	return ShootModesHandler->GetHandledRequests();
 }
 
 UCooldownHandler* UShooterBehaviourBase::GetCooldownHandler() const
@@ -406,6 +413,7 @@ USpreadHandler* UShooterBehaviourBase::GetSpreadHandler() const
 
 void UShooterBehaviourBase::ResetAll()
 {
+	ResetCooldown();
 	ResetDamage();
 	ResetFireRate();
 	ResetMaxRange();
@@ -414,6 +422,11 @@ void UShooterBehaviourBase::ResetAll()
 	ResetInfiniteAmmo();
 	ResetShootType();
 	ResetMagazineTag();
+}
+
+void UShooterBehaviourBase::ResetCooldown() const
+{
+	CooldownHandler->ResetCooldown();
 }
 
 void UShooterBehaviourBase::ResetDamage()
@@ -475,6 +488,25 @@ bool UShooterBehaviourBase::ImplementsGetWorld() const
 }
 #endif
 
+void UShooterBehaviourBase::DeployShootOfType()
+{
+	switch (GetShootType())
+	{
+	case EShootType::Simultaneous:
+		{
+			HandleSimultaneousShoot();
+			break;
+		}
+
+	case EShootType::Sequential:
+		{
+			HandleSequentialShoot();
+			break;
+		}
+	default: ;
+	}
+}
+
 bool UShooterBehaviourBase::TryGetCameraPoints(FVector& OutStartPoint, FVector& OutEndPoint, FVector& OutHitPoint, FRotator& OutRotation, const FVector StartPointOffset) const
 {
 	if (!Check())
@@ -534,25 +566,6 @@ bool UShooterBehaviourBase::IsInLineOfSight(const FVector& StartPoint, const FVe
 	return true;
 }
 
-void UShooterBehaviourBase::HandleShoot()
-{
-	switch (GetShootType())
-	{
-	case EShootType::Simultaneous:
-		{
-			HandleSimultaneousShoot();
-			break;
-		}
-
-	case EShootType::Sequential:
-		{
-			HandleSequentialShoot();
-			break;
-		}
-	default: ;
-	}
-}
-
 void UShooterBehaviourBase::DeployShoot(UShootPoint* ShootPoint) const
 {
 	const FVector ShooterTargetLocation = GetShooterTargetLocation();
@@ -562,45 +575,22 @@ void UShooterBehaviourBase::DeployShoot(UShootPoint* ShootPoint) const
 	OnDeployShoot(ShootPoint, ShooterTargetLocation, DirectionToTarget, DirectionToTargetSpread);
 }
 
-void UShooterBehaviourBase::ShootSuccess()
+void UShooterBehaviourBase::ShootSuccess(const int32 RequestIndex)
 {
 	if (!IsValid(Shooter))
 	{
-		UE_LOG(LogShooter, Error, TEXT("ShootSuccess::Shooter in %s is null."), *GetName());
+		UE_LOG(LogShooter, Error, TEXT("UShooterBehaviourBase::ShootSuccess: Shooter in %s is null."), *GetName());
 		return;
 	}
 	
-	bIsShooting = true;
-	CallShootSuccessEvent();
+	CallShootSuccessEvent(RequestIndex);
 	CooldownHandler->StartCooldown();
 	RecoilHandler->ApplyRecoilImpulse();
 	SpreadHandler->AddDynamicSpreadWithCurve();
-	ShotsFired++;
 }
 
 void UShooterBehaviourBase::ShootFail(const EShootFailReason FailReason)
 {
-	switch (FailReason)
-	{
-	case EShootFailReason::Error:
-		bIsShooting = false;
-		break;
-	case EShootFailReason::CoolDown:
-		break;
-	case EShootFailReason::NoAmmo:
-		bIsShooting = false;
-		break;
-	case EShootFailReason::Condition:
-		break;
-	case EShootFailReason::NoShootPoints:
-		bIsShooting = false;
-		break;
-	case EShootFailReason::Disabled:
-		bIsShooting = false;
-		break;
-	default: ;
-	}
-
 	CallShootFailEvent(FailReason);
 }
 
@@ -650,7 +640,7 @@ void UShooterBehaviourBase::OnShootFail_Implementation(const EShootFailReason Fa
 {
 }
 
-bool UShooterBehaviourBase::OnShootCondition_Implementation(UShootBarrel* OutShootBarrel) const
+bool UShooterBehaviourBase::GetShootCondition_Implementation(UShootBarrel* OutShootBarrel) const
 {
 	return true;
 }
@@ -762,16 +752,16 @@ void UShooterBehaviourBase::CallDisableEvent()
 	OnBehaviourDisabled.Broadcast(this);
 }
 
-void UShooterBehaviourBase::CallEndShootSequenceEvent()
+void UShooterBehaviourBase::CallShootSequenceEndEvent()
 {
 	OnShootSequenceEnd();
 	OnBehaviourShootSequenceEnded.Broadcast(this);
 }
 
-void UShooterBehaviourBase::CallShootSuccessEvent()
+void UShooterBehaviourBase::CallShootSuccessEvent(const int32 RequestIndex)
 {
 	OnShootSuccess(ShootBarrel);
-	OnBehaviourShootSuccess.Broadcast(this, ShootBarrel, ShotsFired);
+	OnBehaviourShootSuccess.Broadcast(this, ShootBarrel, RequestIndex);
 }
 
 void UShooterBehaviourBase::CallShootFailEvent(const EShootFailReason FailReason)
@@ -840,4 +830,18 @@ void UShooterBehaviourBase::UnbindMagazineEvents(UMagazine* Magazine)
 	Magazine->OnMagazineRefilled.RemoveDynamic(this, &UShooterBehaviourBase::CallRefillEvent);
 	Magazine->OnMagazineFull.RemoveDynamic(this, &UShooterBehaviourBase::CallFullEvent);
 	Magazine->OnMagazineEmpty.RemoveDynamic(this, &UShooterBehaviourBase::CallEmptyEvent);
+}
+
+void UShooterBehaviourBase::OnHandleShootRequest(int32 RequestIndex, UShootMode* ShootMode, bool bDeployShoot, bool bSuccess)
+{
+	if (!bSuccess)
+	{
+		ShootFail(EShootFailReason::ShootMode);
+		return;
+	}
+
+	if (bDeployShoot)
+		DeployShootOfType();
+	
+	ShootSuccess(RequestIndex);
 }

@@ -11,8 +11,8 @@ void UWeaponCrosshairWidget::NativeDestruct()
 	if (!IsValid(Weapon))
 		return;
 
-	Weapon->OnWeaponAttackSuccessEvent.RemoveDynamic(this, &UWeaponCrosshairWidget::OnWeaponAttackSuccess);
-	Weapon->OnWeaponAttackFailEvent.RemoveDynamic(this, &UWeaponCrosshairWidget::OnWeaponAttackFailed);
+	Weapon->OnWeaponAttacked.RemoveDynamic(this, &UWeaponCrosshairWidget::OnWeaponAttackSuccess);
+	Weapon->OnWeaponAttackFailed.RemoveDynamic(this, &UWeaponCrosshairWidget::OnWeaponAttackFailed);
 }
 
 void UWeaponCrosshairWidget::OnInit_Implementation()
@@ -25,8 +25,8 @@ void UWeaponCrosshairWidget::OnInit_Implementation()
 		return;
 	}
 
-	Weapon->OnWeaponAttackSuccessEvent.AddDynamic(this, &UWeaponCrosshairWidget::OnWeaponAttackSuccess);
-	Weapon->OnWeaponAttackFailEvent.AddDynamic(this, &UWeaponCrosshairWidget::OnWeaponAttackFailed);
+	Weapon->OnWeaponAttacked.AddDynamic(this, &UWeaponCrosshairWidget::OnWeaponAttackSuccess);
+	Weapon->OnWeaponAttackFailed.AddDynamic(this, &UWeaponCrosshairWidget::OnWeaponAttackFailed);
 }
 
 void UWeaponCrosshairWidget::OnWeaponAttackSuccess_Implementation()

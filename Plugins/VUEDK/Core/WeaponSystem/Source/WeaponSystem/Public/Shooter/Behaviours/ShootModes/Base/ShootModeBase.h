@@ -5,19 +5,19 @@
 #include "CoreMinimal.h"
 #include "Shooter/Data/ShootType.h"
 #include "UObject/Object.h"
-#include "ShootMode.generated.h"
+#include "ShootModeBase.generated.h"
 
 class UShooterBehaviourBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	FOnShootRequestHandled,
-	UShootMode*, ShootMode,
+	UShootModeBase*, ShootMode,
 	bool, bDeployShoot,
 	bool, bSuccess
 );
 
-UCLASS(Blueprintable, BlueprintType, EditInlineNew)
-class WEAPONSYSTEM_API UShootMode : public UObject, public FTickableGameObject
+UCLASS(Abstract, Blueprintable, BlueprintType, EditInlineNew)
+class WEAPONSYSTEM_API UShootModeBase : public UObject, public FTickableGameObject
 {
 	GENERATED_BODY()
 
@@ -39,7 +39,9 @@ public:
 	
 	virtual TStatId GetStatId() const override;
 
-	void RequestShoot(const EShootType ShootType);
+	bool RequestShoot(const EShootType ShootType);
+
+	void EndSequence();
 
 	bool IsProcessingRequest() const;
 
@@ -49,18 +51,24 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void DeployShoot() const;
+
+	UFUNCTION(BlueprintCallable)
+	void CompleteProcessingRequest();
 	
 	UFUNCTION(BlueprintPure)
 	UShooterBehaviourBase* GetRelatedBehaviour() const;
 	
 	UFUNCTION(BlueprintCallable)
-	void FinishShootRequest(const bool bDeployShoot = true, const bool bSuccess = true);
+	void FinishShootRequest(const bool bDeployShoot = true, const bool bSuccess = true, const bool bEndProcessing = true);
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void OnRequestShoot(EShootType ShootType);
+	bool OnRequestShoot(EShootType ShootType);
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void OnProcessingRequest(const float DeltaTime);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnEndSequence();
 
 	bool Check() const;
 };

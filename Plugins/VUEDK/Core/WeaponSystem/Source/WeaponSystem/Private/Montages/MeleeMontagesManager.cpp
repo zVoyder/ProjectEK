@@ -173,7 +173,7 @@ void UMeleeMontagesManager::OnWeaponAttackInterrupted(UMeleeHitbox* Hitbox, FHit
 	UWeaponMeleeAttackData* WeaponMontage = CurrentAttack;
 	bIsInterrupting = true;
 	EndAttackSequence();
-	WeaponMontage->AttackInterruptMontage.OnMontageFinished.AddUniqueDynamic(this, &UMeleeMontagesManager::OnAttackInterruptFinished);
+	WeaponMontage->AttackInterruptMontage.OnWeaponMontageFinished.AddUniqueDynamic(this, &UMeleeMontagesManager::OnAttackInterruptFinished);
 	StartWeaponMontage(
 		WeaponMontage->AttackInterruptMontage,
 		GetInterruptSpeed(),

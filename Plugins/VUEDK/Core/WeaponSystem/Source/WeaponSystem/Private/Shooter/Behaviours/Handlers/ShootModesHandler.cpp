@@ -14,17 +14,26 @@ void UShootModesHandler::SetModeIndex(const int32 NewIndex)
 	ShootModeIndex = NewIndex;
 }
 
-void UShootModesHandler::RequestShoot(const EShootType ShootType) const
+bool UShootModesHandler::RequestShoot(const EShootType ShootType) const
 {
-	UShootMode* CurrentShootMode = GetShootMode();
+	UShootModeBase* CurrentShootMode = GetShootMode();
 	if (!IsValid(CurrentShootMode))
-		return;
+	{
+		UE_LOG(LogShooter, Warning, TEXT("UShootModesHandler::RequestShoot: Invalid ShootMode."));
+		return false;
+	}
 
-	CurrentShootMode->RequestShoot(ShootType);
+	return CurrentShootMode->RequestShoot(ShootType);
 }
 
 void UShootModesHandler::EndSequence()
 {
+	for (UShootModeBase* ShootMode : ShootModes)
+	{
+		if (IsValid(ShootMode))
+			ShootMode->EndSequence();
+	}
+	
 	if (GetHandledRequests() <= 0)
 		return;
 	
@@ -34,7 +43,7 @@ void UShootModesHandler::EndSequence()
 
 bool UShootModesHandler::IsProcessingRequest() const
 {
-	for (const UShootMode* ShootMode : ShootModes)
+	for (const UShootModeBase* ShootMode : ShootModes)
 	{
 		if (ShootMode->IsProcessingRequest())
 			return true;
@@ -53,7 +62,7 @@ int32 UShootModesHandler::GetHandledRequests() const
 	return HandledRequests;
 }
 
-UShootMode* UShootModesHandler::GetShootMode() const
+UShootModeBase* UShootModesHandler::GetShootMode() const
 {
 	if (!ShootModes.IsValidIndex(ShootModeIndex))
 		return nullptr;
@@ -66,11 +75,17 @@ void UShootModesHandler::OnInit()
 	Super::OnInit();
 
 	UShootData* ShootData = GetShootData();
-	for (const UShootMode* ShootMode : ShootData->ShootModes)
+	if (ShootData->ShootModes.IsEmpty())
+	{
+		UE_LOG(LogShooter, Warning, TEXT("UShootModesHandler::OnInit: No ShootModes defined in ShootData '%s'."), *ShootData->GetName());
+		return;
+	}
+	
+	for (const UShootModeBase* ShootMode : ShootData->ShootModes)
 	{
 		if (IsValid(ShootMode))
 		{
-			UShootMode* NewShootMode = DuplicateObject<UShootMode>(ShootMode, this);
+			UShootModeBase* NewShootMode = DuplicateObject<UShootModeBase>(ShootMode, this);
 			NewShootMode->Init(Behaviour);
 			NewShootMode->OnShootRequestHandled.AddDynamic(this, &UShootModesHandler::OnHandleShootRequest);
 			ShootModes.Add(NewShootMode);
@@ -78,7 +93,7 @@ void UShootModesHandler::OnInit()
 	}
 }
 
-void UShootModesHandler::OnHandleShootRequest(UShootMode* ShootMode, bool bDeployShoot, bool bSuccess)
+void UShootModesHandler::OnHandleShootRequest(UShootModeBase* ShootMode, bool bDeployShoot, bool bSuccess)
 {
 	OnShootRequestHandled.Broadcast(HandledRequests, ShootMode, bDeployShoot, bSuccess);
 	HandledRequests++;

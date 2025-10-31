@@ -6,12 +6,14 @@
 #include "MontageEndPriority.h"
 #include "WeaponMontageData.generated.h"
 
+struct FWeaponMontageData;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(
-	FOnMontageBegin
+	FOnWeaponMontageBegin
 );
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FOnMontageFinished,
+	FOnWeaponMontageFinished,
 	bool, bInterrupted
 );
 
@@ -20,10 +22,10 @@ struct WEAPONSYSTEM_API FWeaponMontageData
 {
 	GENERATED_BODY()
 	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnMontageBegin OnMontageBegin;
+	FOnWeaponMontageBegin OnWeaponMontageBegin;
 	UPROPERTY(BlueprintAssignable, Category = Events)
-	FOnMontageFinished OnMontageFinished;
-
+	FOnWeaponMontageFinished OnWeaponMontageFinished;
+	
 	FOnMontageEnded OnMontageEndedDelegate;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Montages")

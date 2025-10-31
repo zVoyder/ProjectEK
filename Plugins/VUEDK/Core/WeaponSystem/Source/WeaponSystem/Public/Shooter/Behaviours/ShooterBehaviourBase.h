@@ -393,7 +393,7 @@ public:
 	int32 GetShootModeIndex() const;
 
 	UFUNCTION(BlueprintPure)
-	UShootMode* GetShootMode() const;
+	UShootModeBase* GetShootMode() const;
 
 	UFUNCTION(BlueprintPure)
 	TEnumAsByte<ECollisionChannel> GetSightTraceChannel() const;
@@ -659,5 +659,5 @@ private:
 	void UnbindMagazineEvents(UMagazine* Magazine);
 
 	UFUNCTION()
-	void OnHandleShootRequest(int32 RequestIndex, UShootMode* ShootMode, bool bDeployShoot, bool bSuccess);
+	void OnHandleShootRequest(int32 RequestIndex, UShootModeBase* ShootMode, bool bDeployShoot, bool bSuccess);
 };

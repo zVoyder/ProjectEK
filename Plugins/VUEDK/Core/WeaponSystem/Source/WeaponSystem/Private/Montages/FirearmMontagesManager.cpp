@@ -2,7 +2,6 @@
 
 #include "Montages/FirearmMontagesManager.h"
 #include "WeaponSystem.h"
-#include "Utility/WeaponSystemEventsHandler.h"
 #include "Weapons/WeaponFirearm.h"
 #include "Weapons/Data/WeaponShootData.h"
 
@@ -149,16 +148,6 @@ void UFirearmMontagesManager::BindEvents()
 	Super::BindEvents();
 	WeaponFirearm->Shooter->OnBehaviourShootSuccess.AddDynamic(this, &UFirearmMontagesManager::OnBehaviourShootSuccess);
 	WeaponFirearm->Shooter->OnBehaviourShootFail.AddDynamic(this, &UFirearmMontagesManager::OnBehaviourShootFail);
-
-	const UWorld* World = GetWorld();
-	if (!IsValid(World))
-		return;
-
-	if (UWeaponSystemEventsHandler* EventsHandler = World->GetSubsystem<UWeaponSystemEventsHandler>())
-	{
-		EventsHandler->OnAnyMontageBegin.AddUniqueDynamic(this, &UFirearmMontagesManager::HandleAnyMontageBegin);
-		EventsHandler->OnAnyMontageFinished.AddUniqueDynamic(this, &UFirearmMontagesManager::HandleAnyMontageFinished);
-	}
 }
 
 void UFirearmMontagesManager::UnbindEvents()
@@ -166,16 +155,6 @@ void UFirearmMontagesManager::UnbindEvents()
 	Super::UnbindEvents();
 	WeaponFirearm->Shooter->OnBehaviourShootSuccess.RemoveDynamic(this, &UFirearmMontagesManager::OnBehaviourShootSuccess);
 	WeaponFirearm->Shooter->OnBehaviourShootFail.RemoveDynamic(this, &UFirearmMontagesManager::OnBehaviourShootFail);
-
-	const UWorld* World = GetWorld();
-	if (!IsValid(World))
-		return;
-
-	if (UWeaponSystemEventsHandler* EventsHandler = World->GetSubsystem<UWeaponSystemEventsHandler>())
-	{
-		EventsHandler->OnAnyMontageBegin.RemoveDynamic(this, &UFirearmMontagesManager::HandleAnyMontageBegin);
-		EventsHandler->OnAnyMontageFinished.RemoveDynamic(this, &UFirearmMontagesManager::HandleAnyMontageFinished);
-	}
 }
 
 bool UFirearmMontagesManager::Check() const
@@ -183,7 +162,7 @@ bool UFirearmMontagesManager::Check() const
 	return Super::Check() && IsValid(WeaponFirearm) && IsValid(WeaponFirearm->Shooter);
 }
 
-void UFirearmMontagesManager::OnBehaviourShootSuccess_Implementation(UShooterBehaviourBase* Behaviour, UShootBarrel* ShootBarrel, int32 ShotIndex)
+void UFirearmMontagesManager::OnBehaviourShootSuccess(UShooterBehaviourBase* Behaviour, UShootBarrel* ShootBarrel, int32 ShotIndex)
 {
 	if (IsAnimShooting())
 		return;
@@ -201,7 +180,7 @@ void UFirearmMontagesManager::OnBehaviourShootSuccess_Implementation(UShooterBeh
 	PlayShootMontage(MontageIndex);
 }
 
-void UFirearmMontagesManager::OnBehaviourShootFail_Implementation(UShooterBehaviourBase* Behaviour, EShootFailReason FailReason)
+void UFirearmMontagesManager::OnBehaviourShootFail(UShooterBehaviourBase* Behaviour, EShootFailReason FailReason)
 {
 	if (IsAnimFailShooting())
 		return;
@@ -217,6 +196,22 @@ void UFirearmMontagesManager::OnBehaviourShootFail_Implementation(UShooterBehavi
 	}
 
 	PlayFailShootMontage(MontageIndex);
+}
+
+void UFirearmMontagesManager::OnWeaponMontageBegin(const FWeaponMontageData& WeaponMontageData)
+{
+	Super::OnWeaponMontageBegin(WeaponMontageData);
+	HandleShootSuccessMontageBegin(WeaponMontageData);
+	HandleShootFailMontageBegin(WeaponMontageData);
+	HandleReloadMontageBegin(WeaponMontageData);
+}
+
+void UFirearmMontagesManager::OnWeaponMontageFinished(const FWeaponMontageData& WeaponMontageData, bool bInterrupted)
+{
+	Super::OnWeaponMontageFinished(WeaponMontageData, bInterrupted);
+	HandleShootSuccessMontageFinished(WeaponMontageData, bInterrupted);
+	HandleShootFailMontageFinished(WeaponMontageData, bInterrupted);
+	HandleReloadMontageFinished(WeaponMontageData, bInterrupted);
 }
 
 void UFirearmMontagesManager::GetShootPlayRates(const FWeaponMontageData& WeaponMontageData, float& WeaponPlayRate, float& CharacterPlayRate) const
@@ -239,54 +234,56 @@ void UFirearmMontagesManager::GetReloadPlayRates(const FWeaponMontageData& Weapo
 	CharacterPlayRate = IsValid(CharacterMontage) ? CharacterMontage->GetPlayLength() / ReloadTime : 1.f;
 }
 
-void UFirearmMontagesManager::HandleAnyMontageBegin(const FWeaponMontageData& WeaponMontageData)
+void UFirearmMontagesManager::HandleShootSuccessMontageBegin(const FWeaponMontageData& WeaponMontageData) const
 {
-	int32 Index;
-
-	if (ShootSuccessMontages.Contains(WeaponMontageData))
-	{
-		Index = ShootSuccessMontages.IndexOfByKey(WeaponMontageData);
-		OnShootMontagePlayed.Broadcast(WeaponMontageData, Index);
+	if (!ShootSuccessMontages.Contains(WeaponMontageData))
 		return;
-	}
 
-	if (ShootFailMontages.Contains(WeaponMontageData))
-	{
-		Index = ShootFailMontages.IndexOfByKey(WeaponMontageData);
-		OnFailShootMontagePlayed.Broadcast(WeaponMontageData, Index);
-		return;
-	}
-
-	if (ReloadMontages.Contains(WeaponMontageData))
-	{
-		Index = ReloadMontages.IndexOfByKey(WeaponMontageData);
-		OnReloadMontagePlayed.Broadcast(WeaponMontageData, Index);
-		return;
-	}
+	const int32 Index = ShootSuccessMontages.IndexOfByKey(WeaponMontageData);
+	OnShootMontagePlayed.Broadcast(WeaponMontageData, Index);
 }
 
-void UFirearmMontagesManager::HandleAnyMontageFinished(const FWeaponMontageData& WeaponMontageData, bool bInterrupted)
+void UFirearmMontagesManager::HandleShootFailMontageBegin(const FWeaponMontageData& WeaponMontageData) const
 {
-	int32 Index;
-
-	if (ShootSuccessMontages.Contains(WeaponMontageData))
-	{
-		Index = ShootSuccessMontages.IndexOfByKey(WeaponMontageData);
-		OnShootMontageEnded.Broadcast(WeaponMontageData, Index, bInterrupted);
+	if (!ShootFailMontages.Contains(WeaponMontageData))
 		return;
-	}
 
-	if (ShootFailMontages.Contains(WeaponMontageData))
-	{
-		Index = ShootFailMontages.IndexOfByKey(WeaponMontageData);
-		OnFailShootMontageEnded.Broadcast(WeaponMontageData, Index, bInterrupted);
-		return;
-	}
+	const int32 Index = ShootFailMontages.IndexOfByKey(WeaponMontageData);
+	OnFailShootMontagePlayed.Broadcast(WeaponMontageData, Index);
+}
 
-	if (ReloadMontages.Contains(WeaponMontageData))
-	{
-		Index = ReloadMontages.IndexOfByKey(WeaponMontageData);
-		OnReloadMontageEnded.Broadcast(WeaponMontageData, Index, bInterrupted);
+void UFirearmMontagesManager::HandleReloadMontageBegin(const FWeaponMontageData& WeaponMontageData) const
+{
+	if (!ReloadMontages.Contains(WeaponMontageData))
 		return;
-	}
+
+	const int32 Index = ReloadMontages.IndexOfByKey(WeaponMontageData);
+	OnReloadMontagePlayed.Broadcast(WeaponMontageData, Index);
+}
+
+void UFirearmMontagesManager::HandleShootSuccessMontageFinished(const FWeaponMontageData& WeaponMontageData, bool bInterrupted) const
+{
+	if (!ShootSuccessMontages.Contains(WeaponMontageData))
+		return;
+
+	const int32 Index = ShootSuccessMontages.IndexOfByKey(WeaponMontageData);
+	OnShootMontageEnded.Broadcast(WeaponMontageData, Index, bInterrupted);
+}
+
+void UFirearmMontagesManager::HandleShootFailMontageFinished(const FWeaponMontageData& WeaponMontageData, bool bInterrupted) const
+{
+	if (!ShootFailMontages.Contains(WeaponMontageData))
+		return;
+
+	const int32 Index = ShootFailMontages.IndexOfByKey(WeaponMontageData);
+	OnFailShootMontageEnded.Broadcast(WeaponMontageData, Index, bInterrupted);
+}
+
+void UFirearmMontagesManager::HandleReloadMontageFinished(const FWeaponMontageData& WeaponMontageData, bool bInterrupted) const
+{
+	if (!ReloadMontages.Contains(WeaponMontageData))
+		return;
+
+	const int32 Index = ReloadMontages.IndexOfByKey(WeaponMontageData);
+	OnReloadMontageEnded.Broadcast(WeaponMontageData, Index, bInterrupted);
 }

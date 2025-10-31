@@ -106,33 +106,30 @@ protected:
 	
 	virtual bool Check() const override;
 	
-	/**
-	 * Called when a shooting behaviour successfully executes a shot. By default, plays the corresponding shooting montage.
-	 * Override this function to customize behavior.
-	 * @param Behaviour The shooter behaviour that executed the shot.
-	 * @param ShootBarrel The barrel from which the shot was fired.
-	 * @param ShotIndex The index of the shot in the sequence.
-	 */
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION()
 	void OnBehaviourShootSuccess(UShooterBehaviourBase* Behaviour, UShootBarrel* ShootBarrel, int32 ShotIndex);
 
-	/**
-	 * Called when a shooting behaviour fails to execute a shot. By default, plays the corresponding fail shooting montage.
-	 * Override this function to customize behavior.
-	 * @param Behaviour The shooter behaviour that attempted the shot.
-	 * @param FailReason The reason for the shooting failure.
-	 */
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION()
 	void OnBehaviourShootFail(UShooterBehaviourBase* Behaviour, EShootFailReason FailReason);
+
+	virtual void OnWeaponMontageBegin(const FWeaponMontageData& WeaponMontageData) override;
+
+	virtual void OnWeaponMontageFinished(const FWeaponMontageData& WeaponMontageData, bool bInterrupted) override;
 
 private:
 	void GetShootPlayRates(const FWeaponMontageData& WeaponMontageData, float& WeaponPlayRate, float& CharacterPlayRate) const;
 
 	void GetReloadPlayRates(const FWeaponMontageData& WeaponMontageData, float& WeaponPlayRate, float& CharacterPlayRate) const;
+	
+	void HandleShootSuccessMontageBegin(const FWeaponMontageData& WeaponMontageData) const;
 
-	UFUNCTION()
-	void HandleAnyMontageBegin(const FWeaponMontageData& WeaponMontageData);
+	void HandleShootFailMontageBegin(const FWeaponMontageData& WeaponMontageData) const;
 
-	UFUNCTION()
-	void HandleAnyMontageFinished(const FWeaponMontageData& WeaponMontageData, bool bInterrupted);
+	void HandleReloadMontageBegin(const FWeaponMontageData& WeaponMontageData) const;
+
+	void HandleShootSuccessMontageFinished(const FWeaponMontageData& WeaponMontageData, bool bInterrupted) const;
+
+	void HandleShootFailMontageFinished(const FWeaponMontageData& WeaponMontageData, bool bInterrupted) const;
+
+	void HandleReloadMontageFinished(const FWeaponMontageData& WeaponMontageData, bool bInterrupted) const;
 };

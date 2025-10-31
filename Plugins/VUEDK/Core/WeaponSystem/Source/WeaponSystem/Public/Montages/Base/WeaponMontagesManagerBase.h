@@ -9,12 +9,28 @@
 
 class AWeaponBase;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnAnyWeaponMontageBegin,
+	const FWeaponMontageData&, WeaponMontageData
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnAnyWeaponMontageFinished,
+	const FWeaponMontageData&, WeaponMontageData,
+	bool, bInterrupted
+);
+
 UCLASS(Abstract, NotBlueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class WEAPONSYSTEM_API UWeaponMontagesManagerBase : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnAnyWeaponMontageBegin OnAnyWeaponMontageBegin;
+	UPROPERTY(BlueprintAssignable, Category = Events)
+	FOnAnyWeaponMontageFinished OnAnyWeaponMontageFinished;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions")
 	FWeaponMontageData EquipMontageData;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Actions")
@@ -92,6 +108,10 @@ protected:
 
 	UFUNCTION()
 	virtual void OnWeaponEndAttack();
+
+	virtual void OnWeaponMontageBegin(const FWeaponMontageData& WeaponMontageData);
+
+	virtual void OnWeaponMontageFinished(const FWeaponMontageData& WeaponMontageData, bool bInterrupted);
 
 	virtual bool Check() const;
 

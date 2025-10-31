@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Base/ShooterHandlerBase.h"
+#include "Shooter/Behaviours/ShootModes/Base/ShootModeBase.h"
 #include "ShootModesHandler.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FOnShootModeHandlerRequestHandled,
 	int32, RequestIndex,
-	UShootMode*, ShootMode,
+	UShootModeBase*, ShootMode,
 	bool, bDeployShoot,
 	bool, bSuccess
 );
@@ -31,12 +32,12 @@ private:
 	int32 ShootModeIndex = 0;
 	int32 HandledRequests = 0;
 	UPROPERTY()
-	TArray<UShootMode*> ShootModes;
+	TArray<UShootModeBase*> ShootModes;
 
 public:
 	void SetModeIndex(const int32 NewIndex);
 	
-	void RequestShoot(const EShootType ShootType) const;
+	bool RequestShoot(const EShootType ShootType) const;
 
 	void EndSequence();
 	
@@ -46,13 +47,13 @@ public:
 	
 	int32 GetHandledRequests() const;
 
-	UShootMode* GetShootMode() const;
+	UShootModeBase* GetShootMode() const;
 	
 protected:
 	virtual void OnInit() override;
 	
 	UFUNCTION()
-	void OnHandleShootRequest(UShootMode* ShootMode, bool bDeployShoot, bool bSuccess);
+	void OnHandleShootRequest(UShootModeBase* ShootMode, bool bDeployShoot, bool bSuccess);
 	
 	virtual bool Check() const override;
 };

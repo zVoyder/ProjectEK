@@ -114,20 +114,13 @@ bool UShooterBehaviourBase::Shoot()
 		return false;
 	}
 
-	if (!TryConsumeAmmoForShoot())
-	{
-		ShootFail(EShootFailReason::NoAmmo);
-		return false;
-	}
-
 	if (!GetShootCondition(ShootBarrel))
 	{
 		ShootFail(EShootFailReason::Condition);
 		return false;
 	}
 
-	ShootModesHandler->RequestShoot(CurrentShootType);
-	return true;
+	return ShootModesHandler->RequestShoot(CurrentShootType);
 }
 
 void UShooterBehaviourBase::EndShootSequence() const
@@ -364,7 +357,7 @@ int32 UShooterBehaviourBase::GetShootModeIndex() const
 	return ShootModesHandler->GetModeIndex();
 }
 
-UShootMode* UShooterBehaviourBase::GetShootMode() const
+UShootModeBase* UShooterBehaviourBase::GetShootMode() const
 {
 	return ShootModesHandler->GetShootMode();
 }
@@ -582,7 +575,7 @@ void UShooterBehaviourBase::ShootSuccess(const int32 RequestIndex)
 		UE_LOG(LogShooter, Error, TEXT("UShooterBehaviourBase::ShootSuccess: Shooter in %s is null."), *GetName());
 		return;
 	}
-	
+
 	CallShootSuccessEvent(RequestIndex);
 	CooldownHandler->StartCooldown();
 	RecoilHandler->ApplyRecoilImpulse();
@@ -832,7 +825,7 @@ void UShooterBehaviourBase::UnbindMagazineEvents(UMagazine* Magazine)
 	Magazine->OnMagazineEmpty.RemoveDynamic(this, &UShooterBehaviourBase::CallEmptyEvent);
 }
 
-void UShooterBehaviourBase::OnHandleShootRequest(int32 RequestIndex, UShootMode* ShootMode, bool bDeployShoot, bool bSuccess)
+void UShooterBehaviourBase::OnHandleShootRequest(int32 RequestIndex, UShootModeBase* ShootMode, bool bDeployShoot, bool bSuccess)
 {
 	if (!bSuccess)
 	{
@@ -840,8 +833,14 @@ void UShooterBehaviourBase::OnHandleShootRequest(int32 RequestIndex, UShootMode*
 		return;
 	}
 
+	if (!TryConsumeAmmoForShoot())
+	{
+		ShootFail(EShootFailReason::NoAmmo);
+		return;
+	}
+
 	if (bDeployShoot)
 		DeployShootOfType();
-	
+
 	ShootSuccess(RequestIndex);
 }

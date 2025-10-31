@@ -5,7 +5,6 @@
 #include "Factories/WeaponAnimFactory.h"
 #include "GameFramework/Character.h"
 #include "Montages/Data/WeaponAnimMetaData.h"
-#include "Utility/WeaponSystemEventsHandler.h"
 
 UWeaponMontagesManagerBase::UWeaponMontagesManagerBase() : Weapon(nullptr),
                                                            bIsPlayingEquipMontage(false)
@@ -178,6 +177,14 @@ void UWeaponMontagesManagerBase::OnWeaponEndAttack()
 {
 }
 
+void UWeaponMontagesManagerBase::OnWeaponMontageBegin(const FWeaponMontageData& WeaponMontageData)
+{
+}
+
+void UWeaponMontagesManagerBase::OnWeaponMontageFinished(const FWeaponMontageData& WeaponMontageData, bool bInterrupted)
+{
+}
+
 bool UWeaponMontagesManagerBase::Check() const
 {
 	return IsValid(Weapon);
@@ -219,17 +226,9 @@ void UWeaponMontagesManagerBase::PlayMontageWithBlendInternal(UAnimInstance* Ani
 
 void UWeaponMontagesManagerBase::RegisterMontageBegin(UAnimInstance* AnimInstance, FWeaponMontageData& WeaponMontageData, UAnimMontage* Montage)
 {
-	WeaponMontageData.OnMontageBegin.Broadcast();
-
-	const UWorld* World = GetWorld();
-	if (!IsValid(World))
-		return;
-
-	const UWeaponSystemEventsHandler* EventsHandler = World->GetSubsystem<UWeaponSystemEventsHandler>();
-	if (!IsValid(EventsHandler))
-		return;
-
-	EventsHandler->CallAnyMontageBeginEvent(WeaponMontageData);
+	OnWeaponMontageBegin(WeaponMontageData);
+	OnAnyWeaponMontageBegin.Broadcast(WeaponMontageData);
+	WeaponMontageData.OnWeaponMontageBegin.Broadcast();
 	WeaponMontageData.OnMontageEndedDelegate.Unbind();
 	WeaponMontageData.OnMontageEndedDelegate.BindUObject(this, &UWeaponMontagesManagerBase::OnMontageEnded);
 	AnimInstance->Montage_SetEndDelegate(WeaponMontageData.OnMontageEndedDelegate, Montage);
@@ -295,7 +294,7 @@ void UWeaponMontagesManagerBase::StartEquipMontage()
 		return;
 
 	bIsPlayingEquipMontage = true;
-	EquipMontageData.OnMontageFinished.AddUniqueDynamic(this, &UWeaponMontagesManagerBase::OnWeaponReadyToUse);
+	EquipMontageData.OnWeaponMontageFinished.AddUniqueDynamic(this, &UWeaponMontagesManagerBase::OnWeaponReadyToUse);
 	StartWeaponMontage(EquipMontageData, 1.0f, 1.0f);
 }
 
@@ -305,7 +304,7 @@ void UWeaponMontagesManagerBase::StartUnequipMontage()
 		return;
 
 	bIsPlayingEquipMontage = true;
-	UnequipMontageData.OnMontageFinished.AddUniqueDynamic(this, &UWeaponMontagesManagerBase::OnWeaponReadyToUse);
+	UnequipMontageData.OnWeaponMontageFinished.AddUniqueDynamic(this, &UWeaponMontagesManagerBase::OnWeaponReadyToUse);
 	StartWeaponMontage(UnequipMontageData, 1.0f, 1.0f);
 }
 
@@ -330,13 +329,8 @@ void UWeaponMontagesManagerBase::OnMontageEnded(UAnimMontage* AnimMontage, bool 
 		return;
 	
 	const FWeaponMontageData& WeaponMontage = PlayingMontages[AnimMontage];
-	WeaponMontage.OnMontageFinished.Broadcast(bInterrupted);
-	const UWorld* World = GetWorld();
-	if (IsValid(World))
-	{
-		const UWeaponSystemEventsHandler* EventsHandler = World->GetSubsystem<UWeaponSystemEventsHandler>();
-		if (IsValid(EventsHandler))
-			EventsHandler->CallAnyMontageFinishedEvent(WeaponMontage, bInterrupted);
-	}
+	OnWeaponMontageFinished(WeaponMontage, bInterrupted);
+	OnAnyWeaponMontageFinished.Broadcast(WeaponMontage, bInterrupted);
+	WeaponMontage.OnWeaponMontageFinished.Broadcast(bInterrupted);
 	RemovePlayingMontage(AnimMontage);
 }
